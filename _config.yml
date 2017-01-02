@@ -7,13 +7,13 @@
 
 # Site Settings
 locale                   : "en"
-title                    : "Site Title"
+title                    : "George Prichard"
 title_separator          : "-"
-name                     : "Your Name"
-description              : "An amazing website."
-url                      : "https://dgmp88.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+name                     : "George Prichard"
+description              : "The home page of George Prichard"
+url                      : "https://georgep.xyz" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
-repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
+repository               : dgmp88/dgmp88 # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 # breadcrumbs            : false # true, false (default)
 words_per_minute         : 200
@@ -77,19 +77,19 @@ analytics:
 
 # Site Author
 author:
-  name             : "Your Name"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an amazing person."
-  location         : "Somewhere"
-  email            :
-  uri              :
+  name             : "George Prichard"
+  avatar           : "/assets/images/bio.jpg"
+  bio              : "Researcher at Visii, tinkerer"
+  location         : "London, UK"
+  email            : dgmprichard@gmail.com
+  uri              : "https://www.visii.com"
   bitbucket        :
   codepen          :
   dribbble         :
   flickr           :
   facebook         :
   foursquare       :
-  github           :
+  github           : dgmp88
   google_plus      :
   keybase          :
   instagram        :
