@@ -18,7 +18,7 @@ Recently I’ve had some idea for deep learning projects, and wanted to use Pyth
 
 I’m comparing Tensorflow against [Keras](http://keras.io/) instead of [TFLearn](https://github.com/tflearn/tflearn), [TFSlim](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/slim), or another [TFLearn](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/learn/python/learn), mainly because Keras seems to be the most established in terms of buzz I’ve heard online, the amount of work done on each of those Github repos, and it felt like a general Keras-consensus on [this](https://www.reddit.com/r/MachineLearning/comments/50eokb/which_one_should_i_choose_keras_tensorlayer/) Reddit thread. NB: that thread suggests Keras may be somewhat slower than pure Tensorflow. However, for the sake of my projects rapid prototyping is initially more valuable than rapid training. Lets see if I live to regret that statement. 
 
-All the code is avaialble in [this](https://github.com/dgmp88/nn-playground/blob/master/frameworks/TensorFlow%20vs%20Keras.ipynb) Jupyter notebook.
+All the code is available in [this](https://github.com/dgmp88/nn-playground/blob/master/frameworks/TensorFlow%20vs%20Keras.ipynb) Jupyter notebook.
 
 ## The Task
 
@@ -259,10 +259,10 @@ The initially faster learning for TensorFlow was consistent, but they end up in 
 ## Speed
 While I still maintain this is secondary, it's easy and interesting to do  a benchmark. This isn't a great benchmark, as the network is so simple, but I'm curious to have an indication. So, the time it takes each to train each using ipythons %timeit:
 
-TensorFlow: 1.42s
-Keras: 1.45s
+- TensorFlow: 1.42s
+- Keras: 1.45s
 
-Pretty neck and neck. I ran it a few times and the results varied a lot, but I don't think there's anythin in it.
+Pretty neck and neck. I ran it a few times and the results varied a lot, but I don't think there's anything in it.However, [this](https://github.com/wagamamaz/tensorflow-wrapper-compare) found TensorFlow much (2x) faster and looks like a more real world test - I'd be slightly inclined to trust that more. But 2x isn't _too_ bad for me.
 
 ## Conclusion
 
