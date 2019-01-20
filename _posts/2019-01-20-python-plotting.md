@@ -28,22 +28,23 @@ These are deliberately very bare bones and are just examples of plots I do most 
 
 ### Data
 
+Generate some nice offset sine waves and a legend.
+
 ```python
 import numpy as np
 
 # Linearly spaced, 0 - 2 * pi
 x = np.linspace(0, np.pi*2, 1000)
 
-# Generate offset sine waves
 data = [('offset %1.2f' % i, np.sin(x+i)) for i in np.linspace(0, np.pi, 10)]
 legend, ys = zip(*data)
 ```
 
 ### Matplotlib 
-The first line needs to be called once to make outputs appear inline in jupyter
 
 ```python
 %matplotlib inline
+# The first line above needs to be called once to make outputs appear inline in jupyter
 
 import matplotlib.pyplot as plt
 
@@ -61,13 +62,12 @@ _ = plt.legend(legend)
 
 
 ### Plotly
-A little bit more boilerplate. Note that we have to 
+A little bit more boilerplate. We need to generate a bunch of 'traces', which are basically just dictionaries, and then hand them to the plotting function.
 
 ```python
 import plotly.graph_objs as go
 import plotly.offline as py
 
-# We need to hand a bunch of traces, which are basically just dictionaries, to the plotting function.
 traces = [] 
 
 for leg, y in zip(legend, ys):
@@ -81,7 +81,7 @@ py.iplot(traces)
 
 
 ### Bokeh
-Note that we have to set output_notebook to plot inside the notebook. The alternative is output_file('filename.html')
+Note that we have to set `output_notebook` to plot inside the notebook. The alternative is `output_file('filename.html')`.
 
 ```python
 from bokeh.plotting import figure, output_notebook, show
@@ -101,15 +101,16 @@ show(p)
 
 ### Interim conclusion
 
-I love the conciseness of the matplotlib API, the others feel clunky to me in comparsion. But maybe that's just what I'm used to. The interactivity and aesthetics of the others are great though. 
+I love the conciseness of the matplotlib API, the others feel clunky to me in comparsion. But maybe that's just what I'm used to. The interactivity and aesthetics of the others are definitely better though. 
 
 
 ## Basic examples: histogram
 
-I made scatter plots, they work similarly to the line plots. Perhaps a more interesting example is something a bit more complex but also something I use quite a lot - a histogram of the data to get an idea of its distribution. 
+I made scatter plots, they work similarly to the line plots and aren't that interesting to show. Perhaps a more interesting example is something more complex that I also use quite a lot - a histogram of the data to get an idea of its distribution.
 
 
-The data:
+The data, random and normally distributed.
+
 ```python
 x = np.random.normal(size=10000)
 ```
@@ -126,6 +127,8 @@ plt.hist(x)
 
 
 ### Plotly
+
+Also pretty terse.
 ```python
 traces = [go.Histogram(x=x)]
 
@@ -137,7 +140,7 @@ py.plot(traces)
 
 ### Bokeh
 
-By far the most complex as this isn't built in. This is adapted from [here](https://bokeh.pydata.org/en/latest/docs/gallery/histogram.html).
+By far the most complex as this isn't built in, so we're basically just making a bar plot (not sure why this is called 'quad' here). This is adapted from their docs [here](https://bokeh.pydata.org/en/latest/docs/gallery/histogram.html).
 
 ```python
 # Get the bins for the histogram
@@ -149,13 +152,13 @@ p.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:])
 show(p)
 ```
 
-<iframe width="100%" height="500px" src="{{ site.url }}{{ site.baseurl }}/iframes/bokeh_hist.html" frameborder="0"></iframe>
+<iframe width="100%" height="650px" src="{{ site.url }}{{ site.baseurl }}/iframes/bokeh_hist.html" frameborder="0"></iframe>
 
 
 ## Misc
 
-- Something kept crashing my jupyter notebook page. I _think_ the culprit was Bokeh, but it was a bit hard to reproduce. 
-- Both Bokeh and Plotly get a fair bit slower if you have loads of data. e.g. measuring time to render with a stopwatch (%timeit magic wont measure frontend bits) and changing the line plot to show 100 examples took:
+- Something kept crashing my jupyter notebook page after some time had gone by since plotting. It looks like the culprit was Bokeh, but it was a little hard to reproduce. 
+- Both Bokeh and Plotly get a fair bit slower if you have loads of data. e.g. measuring time to render with a stopwatch (`%timeit` magic wont measure frontend stuff) and changing the line plot to show 100 examples took:
  - 2.6s with matplotlib
  - 9.2s with plotly
  - 7.8s with bokeh.
@@ -164,17 +167,16 @@ show(p)
 ## Winners
 
 * Ease of use: matplotlib 
-Certainly for basic things mpl had the least lines of code and was most intuitive off the bat. Plotly would follow as it has more tools included. 
+For basic things mpl had the least lines of code and was most intuitive off the bat. Plotly would follow as it has more tools included.
 
 * Interactivity: bokeh
-Both are nice, if a little slow sometimes. I slightly prefer the lack of hover info by default in bokeh, and also click to drag just feels more natural as the default setting. Not much in it though. Apparently it is possible to get interactive plots inside jupyter with matplotlib, but I've always found it a hassle to setup and slightly unreliable.
+Both are nice, if a little slow sometimes. This was worse in jupyter than on this site. I slightly prefer the lack of hover info by default in bokeh, and also click to drag just feels more natural as the default setting. Not much in it though. Apparently it is possible to get interactive plots inside jupyter with matplotlib, but I've found it a hassle to setup and slightly unreliable.
 
 * Aesthetics: plotly
 Lovely looking plots as default. Personal preference, but a clear winner for me. 
 
-
 ## Conclusion 
 
-For client-facing tasks, I'll probably use plotly in the future. For generating quick plots to examine data for my own sake, I'll likely stick with matplotlib as it's much faster, both in terms of time to render and in terms of using the API. I sometimes use matplotlib with seaborn to make it prettier to show people internally if I'm feeling fancy. 
+For client-facing tasks, I'll use plotly in the future. For generating quick plots to examine data for my own sake, I'll stick with matplotlib as it's much faster, both in terms of time to render and in terms of using the API. I sometimes use matplotlib with seaborn to make it prettier to show people internally if I'm feeling fancy.
 
 It's a little rough, but you can see the Jupyter Notebook I based this on [here](https://github.com/dgmp88/dgmp88.github.io/tree/master/notebooks/Plotting.ipynb).
