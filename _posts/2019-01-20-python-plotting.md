@@ -159,20 +159,23 @@ show(p)
 
 - Something kept crashing my jupyter notebook page after some time had gone by since plotting. It looks like the culprit was Bokeh, but it was a little hard to reproduce. 
 - Both Bokeh and Plotly get a fair bit slower if you have loads of data. e.g. measuring time to render with a stopwatch (`%timeit` magic wont measure frontend stuff) and changing the line plot to show 100 examples took:
- - 2.6s with matplotlib
- - 9.2s with plotly
- - 7.8s with bokeh.
+  - 2.6s with matplotlib
+  - 9.2s with plotly
+  - 7.8s with bokeh.
 
 
 ## Winners
 
-* Ease of use: matplotlib 
+### Ease of use: matplotlib 
+
 For basic things mpl had the least lines of code and was most intuitive off the bat. Plotly would follow as it has more tools included.
 
-* Interactivity: bokeh
+### Interactivity: bokeh
+
 Both are nice, if a little slow sometimes. This was worse in jupyter than on this site. I slightly prefer the lack of hover info by default in bokeh, and also click to drag just feels more natural as the default setting. Not much in it though. Apparently it is possible to get interactive plots inside jupyter with matplotlib, but I've found it a hassle to setup and slightly unreliable.
 
-* Aesthetics: plotly
+### Aesthetics: plotly
+
 Lovely looking plots as default. Personal preference, but a clear winner for me. 
 
 ## Conclusion 
