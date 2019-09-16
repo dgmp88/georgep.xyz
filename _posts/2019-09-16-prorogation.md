@@ -41,5 +41,5 @@ Fishy.
 
 ### Sources
 
-You can see how this was calculated and a couple more plots [here](https://github.com/dgmp88/dgmp88.github.io/tree/master/notebooks/Prorogation.ipynb).
+You can see how this was calculated and a couple more plots [here](https://github.com/dgmp88/dgmp88.github.io/tree/master/notebook/Prorogation.ipynb).
 
