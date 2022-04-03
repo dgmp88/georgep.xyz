@@ -1,20 +1,13 @@
 ---
-title: "Python Plotting Libraries"
-categories:
-  - frameworks
-tags:
-  - python
-  - plotly
-  - bokeh
-  - matplotlib
-comments: true
+title: 'Python Plotting Libraries'
+date: 2019/01/20
 ---
 
 TLDR: Use matplotlib for speed if you're just doing a quick analysis for yourself. If you're sharing the plots, plotly is definitely worth checking out.
 
-I've used [matplotlib](https://matplotlib.org/) for a while and it's awesome - simple API, lots of plotting options. The defaults can be a little ugly, but [seaborn](https://seaborn.pydata.org/) can very easily make them all much nicer.  However, the graphs generated are pngs/svgs, so don't scale that easily and miss out on some cool interactive features of other libraries.
+I've used [matplotlib](https://matplotlib.org/) for a while and it's awesome - simple API, lots of plotting options. The defaults can be a little ugly, but [seaborn](https://seaborn.pydata.org/) can very easily make them all much nicer. However, the graphs generated are pngs/svgs, so don't scale that easily and miss out on some cool interactive features of other libraries.
 
-[Bokeh](https://bokeh.pydata.org/en/latest/) and [Plotly](https://plot.ly/) are two good alternatives. Both are open source, though plotly has a for profit branch linked to Dash, a framework for building analytical webapps. You don't need to use it, but default/examples on their docs often do. 
+[Bokeh](https://bokeh.pydata.org/en/latest/) and [Plotly](https://plot.ly/) are two good alternatives. Both are open source, though plotly has a for profit branch linked to Dash, a framework for building analytical webapps. You don't need to use it, but default/examples on their docs often do.
 
 Here I want to compare the 3 on ease of use, functionality and aesthetics.
 
@@ -24,7 +17,7 @@ Plotly and Matplotlib are very easy with pip or conda (`conda install plotly/mat
 
 ## Basic examples: Line Plot
 
-These are deliberately very bare bones and are just examples of plots I do most frequently. All of the frameworks are super customisable, but if you're running a quick analysis you often just want the core features, so I'm not generally bothering with axis labels and legends. 
+These are deliberately very bare bones and are just examples of plots I do most frequently. All of the frameworks are super customisable, but if you're running a quick analysis you often just want the core features, so I'm not generally bothering with axis labels and legends.
 
 ### Data
 
@@ -40,7 +33,7 @@ data = [('offset %1.2f' % i, np.sin(x+i)) for i in np.linspace(0, np.pi, 10)]
 legend, ys = zip(*data)
 ```
 
-### Matplotlib 
+### Matplotlib
 
 ```python
 %matplotlib inline
@@ -57,18 +50,17 @@ for y in ys:
 _ = plt.legend(legend)
 ```
 
-
-![Matplotlib]({{ site.url }}{{ site.baseurl }}/assets/images/plotting/matplotlib_line.png)
-
+![Matplotlib](/images/plotting/matplotlib_line.png)
 
 ### Plotly
+
 A little bit more boilerplate. We need to generate a bunch of 'traces', which are basically just dictionaries, and then hand them to the plotting function.
 
 ```python
 import plotly.graph_objs as go
 import plotly.offline as py
 
-traces = [] 
+traces = []
 
 for leg, y in zip(legend, ys):
     traces.append(go.Scatter(x=x, y=y, name=leg))
@@ -76,11 +68,10 @@ for leg, y in zip(legend, ys):
 py.iplot(traces)
 ```
 
-
-<iframe width="100%" height="500px" src="{{ site.url }}{{ site.baseurl }}/iframes/plotly_line.html" frameborder="0"></iframe>
-
+<iframe width="100%" height="500px" src="/iframes/plotly_line.html" frameborder="0"></iframe>
 
 ### Bokeh
+
 Note that we have to set `output_notebook` to plot inside the notebook. The alternative is `output_file('filename.html')`.
 
 ```python
@@ -96,18 +87,15 @@ for leg, y in zip(legend, ys):
 show(p)
 ```
 
-
-<iframe width="100%" height="650px" src="{{ site.url }}{{ site.baseurl }}/iframes/bokeh_line.html" frameborder="0"></iframe>
+<iframe width="100%" height="650px" src="/iframes/bokeh_line.html" frameborder="0"></iframe>
 
 ### Interim conclusion
 
-I love the conciseness of the matplotlib API, the others feel clunky to me in comparsion. But maybe that's just what I'm used to. The interactivity and aesthetics of the others are definitely better though. 
-
+I love the conciseness of the matplotlib API, the others feel clunky to me in comparsion. But maybe that's just what I'm used to. The interactivity and aesthetics of the others are definitely better though.
 
 ## Basic examples: histogram
 
 I made scatter plots, they work similarly to the line plots and aren't that interesting to show. Perhaps a more interesting example is something more complex that I also use quite a lot - a histogram of the data to get an idea of its distribution.
-
 
 The data, random and normally distributed.
 
@@ -115,28 +103,27 @@ The data, random and normally distributed.
 x = np.random.normal(size=10000)
 ```
 
-### Matplotlib 
+### Matplotlib
 
-It doesn't get much more concise than this. 
+It doesn't get much more concise than this.
 
 ```python
 plt.hist(x)
 ```
 
-![Matplotlib]({{ site.url }}{{ site.baseurl }}/assets/images/plotting/matplotlib_hist.png)
-
+![Matplotlib](/images/plotting/matplotlib_hist.png)
 
 ### Plotly
 
 Also pretty terse.
+
 ```python
 traces = [go.Histogram(x=x)]
 
 py.plot(traces)
 ```
 
-<iframe width="100%" height="500px" src="{{ site.url }}{{ site.baseurl }}/iframes/plotly_hist.html" frameborder="0"></iframe>
-
+<iframe width="100%" height="500px" src="/iframes/plotly_hist.html" frameborder="0"></iframe>
 
 ### Bokeh
 
@@ -152,21 +139,19 @@ p.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:])
 show(p)
 ```
 
-<iframe width="100%" height="650px" src="{{ site.url }}{{ site.baseurl }}/iframes/bokeh_hist.html" frameborder="0"></iframe>
-
+<iframe width="100%" height="650px" src="/iframes/bokeh_hist.html" frameborder="0"></iframe>
 
 ## Misc
 
-- Something kept crashing my jupyter notebook page after some time had gone by since plotting. It looks like the culprit was Bokeh, but it was a little hard to reproduce. 
+- Something kept crashing my jupyter notebook page after some time had gone by since plotting. It looks like the culprit was Bokeh, but it was a little hard to reproduce.
 - Both Bokeh and Plotly get a fair bit slower if you have loads of data. e.g. measuring time to render with a stopwatch (`%timeit` magic wont measure frontend stuff) and changing the line plot to show 100 examples took:
   - 2.6s with matplotlib
   - 9.2s with plotly
   - 7.8s with bokeh.
 
-
 ## Winners
 
-### Ease of use: matplotlib 
+### Ease of use: matplotlib
 
 For basic things mpl had the least lines of code and was most intuitive off the bat. Plotly would follow as it has more tools included.
 
@@ -176,9 +161,9 @@ Both are nice, if a little slow sometimes. This was worse in jupyter than on thi
 
 ### Aesthetics: plotly
 
-Lovely looking plots as default. Personal preference, but a clear winner for me. 
+Lovely looking plots as default. Personal preference, but a clear winner for me.
 
-## Conclusion 
+## Conclusion
 
 For client-facing tasks, I'll use plotly in the future. For generating quick plots to examine data for my own sake, I'll stick with matplotlib as it's much faster, both in terms of time to render and in terms of using the API. I sometimes use matplotlib with seaborn to make it prettier to show people internally if I'm feeling fancy.
 

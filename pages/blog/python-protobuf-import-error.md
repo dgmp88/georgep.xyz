@@ -1,11 +1,6 @@
 ---
-title: "Python3 Protobuf Import Error"
-categories:
-  - python3
-tags:
-  - python3
-  - protobuf
-comments: true
+title: 'Python3 Protobuf Import Error'
+date: 2017/01/02
 ---
 
 # Python 3 error
