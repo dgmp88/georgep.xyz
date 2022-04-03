@@ -1,7 +1,7 @@
 import Link from 'next/link';
 export function Header() {
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar">
       <div className="flex-1">
         <Link href="/">
           <a className="btn btn-ghost normal-case text-xl">George Prichard</a>
