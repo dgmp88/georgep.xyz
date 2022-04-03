@@ -1,11 +1,8 @@
 const nextra = require('nextra');
 
-module.exports = nextra('./components/layout.js')({
+exp = nextra('./components/layout.js')({
   experimental: {
     turboMode: true,
-  },
-  images: {
-    domains: ['pbs.twimg.com', 'abs.twimg.com'],
   },
   headers() {
     return [
@@ -21,3 +18,5 @@ module.exports = nextra('./components/layout.js')({
     ];
   },
 });
+
+module.exports = exp;
