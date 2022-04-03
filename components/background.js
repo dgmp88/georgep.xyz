@@ -298,7 +298,7 @@ class Background extends Component {
   render() {
     return (
       <div>
-        <div className="fixed" style={{ 'z-index': '-1' }}>
+        <div className="fixed" style={{ zIndex: '-1' }}>
           <canvas id="canvas"></canvas>
         </div>
         <a
