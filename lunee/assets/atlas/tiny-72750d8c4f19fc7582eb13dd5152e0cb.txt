@@ -1,0 +1,19 @@
+tiny.png
+size: 182, 216
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+cross
+  rotate: false
+  xy: 1, 1
+  size: 180, 180
+  orig: 180, 180
+  offset: 0, 0
+  index: -1
+goal
+  rotate: false
+  xy: 1, 183
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

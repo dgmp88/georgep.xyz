@@ -1,0 +1,33 @@
+game_1.png
+size: 859, 1171
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+planet
+  rotate: false
+  xy: 604, 737
+  size: 254, 254
+  orig: 254, 254
+  offset: 0, 0
+  index: -1
+shooter
+  rotate: false
+  xy: 1, 1
+  size: 734, 734
+  orig: 734, 734
+  offset: 0, 0
+  index: -1
+spaceship
+  rotate: true
+  xy: 1, 737
+  size: 433, 601
+  orig: 433, 601
+  offset: 0, 0
+  index: -1
+square
+  rotate: false
+  xy: 737, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
