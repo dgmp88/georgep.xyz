@@ -1,0 +1,81 @@
+
+menubuttons.png
+size: 1024, 1024
+format: RGBA8888
+filter: MipMapLinearNearest, Nearest
+repeat: none
+back
+  rotate: false
+  xy: 5, 496
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+play
+  rotate: false
+  xy: 5, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+play_down
+  rotate: false
+  xy: 522, 522
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+refresh
+  rotate: false
+  xy: 496, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+
+menubuttons2.png
+size: 1024, 1024
+format: RGBA8888
+filter: MipMapLinearNearest, Nearest
+repeat: none
+refresh_down
+  rotate: false
+  xy: 5, 496
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+trophy
+  rotate: false
+  xy: 5, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+trophy_down
+  rotate: false
+  xy: 496, 496
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+tutorial
+  rotate: false
+  xy: 496, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+
+menubuttons3.png
+size: 512, 512
+format: RGBA8888
+filter: MipMapLinearNearest, Nearest
+repeat: none
+tutorial_down
+  rotate: false
+  xy: 5, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1

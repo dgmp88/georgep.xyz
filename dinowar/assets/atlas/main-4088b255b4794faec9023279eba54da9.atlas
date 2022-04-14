@@ -1,0 +1,157 @@
+
+main.png
+size: 1024, 1024
+format: RGBA8888
+filter: MipMapLinearNearest, Nearest
+repeat: none
+Dinosaur__Blue Air
+  rotate: false
+  xy: 5, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+Dinosaur__Blue Land
+  rotate: false
+  xy: 522, 522
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+Dinosaur__Blue Sea
+  rotate: false
+  xy: 496, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+hand
+  rotate: false
+  xy: 5, 496
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+white
+  rotate: false
+  xy: 522, 507
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+
+main2.png
+size: 1024, 1024
+format: RGBA8888
+filter: MipMapLinearNearest, Nearest
+repeat: none
+Dinosaur__Green Air
+  rotate: false
+  xy: 5, 496
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+Dinosaur__Green Land
+  rotate: false
+  xy: 5, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+Dinosaur__Green Sea
+  rotate: false
+  xy: 496, 496
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+Dinosaur__Red Air
+  rotate: false
+  xy: 496, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+
+main3.png
+size: 1024, 1024
+format: RGBA8888
+filter: MipMapLinearNearest, Nearest
+repeat: none
+Dinosaur__Red Land
+  rotate: false
+  xy: 5, 496
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+Dinosaur__Red Sea
+  rotate: false
+  xy: 5, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+Dinosaur__Yellow Air
+  rotate: false
+  xy: 496, 496
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+Dinosaur__Yellow Land
+  rotate: false
+  xy: 496, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+
+main4.png
+size: 1024, 512
+format: RGBA8888
+filter: MipMapLinearNearest, Nearest
+repeat: none
+Dinosaur__Yellow Sea
+  rotate: false
+  xy: 5, 5
+  size: 486, 486
+  orig: 486, 486
+  offset: 0, 0
+  index: -1
+arrow
+  rotate: false
+  xy: 751, 425
+  size: 160, 66
+  orig: 160, 66
+  offset: 0, 0
+  index: -1
+black
+  rotate: false
+  xy: 629, 136
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+circle
+  rotate: false
+  xy: 496, 108
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+sharp_circle
+  rotate: false
+  xy: 496, 241
+  size: 250, 250
+  orig: 250, 250
+  offset: 0, 0
+  index: -1
+solid_black
+  rotate: false
+  xy: 751, 320
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
