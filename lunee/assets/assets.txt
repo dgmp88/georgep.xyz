@@ -1,10 +1,10 @@
 d:assets:assets:0:application/unknown:1
 d:constellations:constellations:0:application/unknown:1
-t:constellations/canis_major.json:constellations/canis_major-0666210619b74ae98372cb8c5e87df62.json:323:application/json:1
-t:constellations/1.json:constellations/1-3c5d3bd32647a916010010738273a7ab.json:271:application/json:1
-t:constellations/2.json:constellations/2-20816e9650242fc1ec2286cc106276e2.json:278:application/json:1
-t:constellations/ursa_major.json:constellations/ursa_major-0a17e78fcfc467ea42164a2301288f35.json:693:application/json:1
-t:constellations/big_dipper.json:constellations/big_dipper-3c5d3bd32647a916010010738273a7ab.json:271:application/json:1
+t:constellations/canis_major.json:constellations/canis_major-0666210619b74ae98372cb8c5e87df62.json:323:application/unknown:1
+t:constellations/1.json:constellations/1-3c5d3bd32647a916010010738273a7ab.json:271:application/unknown:1
+t:constellations/2.json:constellations/2-20816e9650242fc1ec2286cc106276e2.json:278:application/unknown:1
+t:constellations/ursa_major.json:constellations/ursa_major-0a17e78fcfc467ea42164a2301288f35.json:693:application/unknown:1
+t:constellations/big_dipper.json:constellations/big_dipper-3c5d3bd32647a916010010738273a7ab.json:271:application/unknown:1
 d:atlas:atlas:0:application/unknown:1
 i:atlas/tiny.png:atlas/tiny-8feaad3cb6ba6b3b9b2db8f64d821a54.png:2223:image/png:1
 i:atlas/gamemenu.png:atlas/gamemenu-27a571b88b0eaa470cea176b77ba8d85.png:16854:image/png:1
