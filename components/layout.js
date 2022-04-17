@@ -24,6 +24,7 @@ export default function Blog(props) {
           {sharedHead}
           <Header />
           <div className="prose lg:prose-lg mx-auto px-4 py-8">
+            <h2>{meta.title}</h2>
             <MDXProvider components={components}>{children}</MDXProvider>
           </div>
         </>
