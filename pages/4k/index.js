@@ -1,8 +1,9 @@
-import { colors, lerpColors, lerpPalette } from './colors.js';
+import { colors, lerpPalette } from './colors.js';
 import { Component } from 'react';
 
 import _ from 'lodash';
-class FourKWeeks extends Component {
+
+class FourK extends Component {
   componentDidMount() {
     var canvas = document.getElementById('canvas');
     const w = 600;
@@ -88,11 +89,6 @@ class FourKWeeks extends Component {
     }
 
     dobInput.addEventListener('change', dateChange);
-
-    // setTimeout(() => {
-    //   dobInput.value = '2000-01-01';
-    //   dateChange();
-    // });
   }
   render() {
     return (
@@ -118,4 +114,4 @@ class FourKWeeks extends Component {
   }
 }
 
-export { FourKWeeks };
+export default FourK;
