@@ -1,4 +1,4 @@
-import { colors, lerpPalette } from '../../components/colors.js';
+import { colors, lerpPalette } from '../../lib/colors.js';
 import { Component } from 'react';
 
 import _ from 'lodash';
