@@ -11,6 +11,11 @@ class PostPage extends Component {
   }
   render() {
     const { meta, content } = this.props;
+
+    if (meta == undefined) {
+      // Fix for build
+      return '';
+    }
     return (
       <>
         <Header />
