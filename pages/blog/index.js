@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Header } from '../../components/header';
-import { getSortedPostsData } from '../../lib/posts';
+import { getSortedPostsList } from '../../lib/posts';
 
 function Home({ posts }) {
   return (
@@ -32,7 +32,7 @@ export default Home;
 // It won't be called on client-side, so you can even do
 // direct database queries.
 export async function getStaticProps() {
-  const posts = getSortedPostsData();
+  const posts = getSortedPostsList();
   return {
     props: {
       posts,
