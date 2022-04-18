@@ -1,7 +1,3 @@
-import { serialize } from 'next-mdx-remote/serialize';
-import { MDXRemote } from 'next-mdx-remote';
-
-import { FourKWeeks } from '../../components/4k/4k.js';
 import { Header } from '../../components/header';
 import { React, Component } from 'react';
 import { getSortedPostsList, getPost } from '../../lib/posts';
@@ -9,19 +5,18 @@ import { getSortedPostsList, getPost } from '../../lib/posts';
 import Prism from 'prismjs';
 require('prismjs/components/prism-python');
 
-const components = { FourKWeeks };
 class PostPage extends Component {
   componentDidMount() {
     Prism.highlightAll();
   }
   render() {
-    const { data, content } = this.props;
+    const { meta, content } = this.props;
     return (
       <>
         <Header />
         <div className="prose lg:prose-lg mx-auto px-4 py-8">
-          <h1>{data.title}</h1>
-          <MDXRemote {...content} components={components} />
+          <h1>{meta.title}</h1>
+          <div dangerouslySetInnerHTML={{ __html: content }}></div>
         </div>
       </>
     );
@@ -29,10 +24,10 @@ class PostPage extends Component {
 }
 
 async function getStaticProps({ params: { slug } }) {
-  let { data, content } = getPost(slug);
-  content = await serialize(content);
+  let { meta, content } = getPost(slug);
+
   return {
-    props: { data, content },
+    props: { meta, content },
   };
 }
 
