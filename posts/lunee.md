@@ -9,4 +9,5 @@ It's far from finished, but I was quite proud of certain aspects of it. The simu
 
 This is buggy and incomplete, but the library [LibGDX](https://libgdx.com/) allows online release, so I figured why not. If I get around to it, I'll fix up the graphics (I really dislike the color scheme) and iron out the creases.
 
-[Play here](/lunee/index.html).
+<iframe id="playFrame" src="/play?game=lunee" >
+</iframe>
