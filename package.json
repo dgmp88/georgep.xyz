@@ -6,15 +6,17 @@
     "export": "next export"
   },
   "dependencies": {
-    "@mdx-js/react": "^1.6.22",
+    "@mdx-js/loader": "^1.6.22",
     "chroma-js": "^2.4.2",
     "daisyui": "^2.14.0",
+    "gray-matter": "^4.0.3",
+    "lodash": "^4.17.21",
     "next": "^12.1.4",
-    "nextra": "^1.1.0",
-    "ogl": "^0.0.50",
+    "next-mdx-remote": "^3.0.4",
     "pixi.js": "^6.3.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-syntax-highlighter": "^15.4.4",
     "three": "^0.139.2"
   },
   "devDependencies": {
