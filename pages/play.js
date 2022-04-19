@@ -27,22 +27,24 @@ class Play extends Component {
   setupOnClick() {
     var iframe = document.getElementById('gameIframe');
 
-    if (typeof iframe !== 'undefined') {
-      function openFullscreen() {
-        if (iframe.requestFullscreen) {
-          iframe.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) {
-          /* Safari */
-          iframe.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) {
-          /* IE11 */
-          iframe.msRequestFullscreen();
-        }
+    function openFullscreen() {
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        /* Safari */
+        iframe.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        /* IE11 */
+        iframe.msRequestFullscreen();
       }
-
-      var iframeDoc = iframe.contentWindow.document;
-      iframeDoc.onclick = openFullscreen;
     }
+
+    var iframeDoc = iframe.contentWindow.document;
+    iframeDoc.onclick = openFullscreen;
+    iframeDoc.ontouchstart = openFullscreen;
+    document.onfullscreenerror = (error) => {
+      console.log(error);
+    };
   }
 
   render() {
