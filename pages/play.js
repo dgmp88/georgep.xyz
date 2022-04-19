@@ -48,7 +48,7 @@ class Play extends Component {
   render() {
     return (
       <>
-        <div ref={this.iframeContainer} className="m-auto pt-5">
+        <div ref={this.iframeContainer} className="m-auto">
           <iframe
             id="gameIframe"
             width="100%"
