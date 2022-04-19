@@ -7,5 +7,4 @@ My friend [David](https://www.dglencross.com/) and I made this game together a f
 
 Instead, here it is in html. Some features don't work (e.g. leaderboard) and it may be a little buggy, but it's nice to have it playable somewhere.
 
-<iframe id="playFrame" src="/play?game=dinowar" >
-</iframe>
+<a href="/play?game=dinowar" >Play</a>
