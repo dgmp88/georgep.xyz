@@ -9,7 +9,7 @@ Expected value is the idea how much value does an action have, accounting for th
 
 | Bet | Probability | Amount         | Calculation          | Expected Value |
 | --- | ----------- | -------------- | -------------------- | -------------- |
-| a   | 90%         | £1,000,00      | 0.9 x £1,000,000     | £900,000       |
+| a   | 90%         | £1,000,000     | 0.9 x £1,000,000     | £900,000       |
 | b   | 10%         | £1,000,000,000 | 0.1 x £1,000,000,000 | £100,000,000   |
 
 You can only pick one, which should you pick? In terms of expected value, option b is far higher.
