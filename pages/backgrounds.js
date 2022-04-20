@@ -25,16 +25,57 @@ const darkRainbow = [
   '9b2226',
 ];
 
-const redsBlues = ['#03045E', '#11488e', '#032550'];
+const retiPage = ['#03045E', '#11488e', '#032550'];
 
-const cols = redsBlues;
+class Triangles {
+  constructor(n, w, h, draw, border = 200, cols = darkRainbow) {
+    this.n = n;
+    this.w = w;
+    this.h = h;
+    this.draw = draw;
+    this.border = border;
+    this.cscale = chroma.scale(cols).mode('lch');
+    this.setPoints();
+  }
 
-function edgesOfTriangle(t) {
-  return [3 * t, 3 * t + 1, 3 * t + 2];
-}
+  edgesOfTriangle(t) {
+    return [3 * t, 3 * t + 1, 3 * t + 2];
+  }
 
-function pointsOfTriangle(delaunay, t) {
-  return edgesOfTriangle(t).map((e) => delaunay.triangles[e]);
+  pointsOfTriangle(t) {
+    return this.edgesOfTriangle(t).map((e) => this.delaunay.triangles[e]);
+  }
+
+  setPoints() {
+    let points = [];
+
+    let getRnd = (xy) =>
+      Math.round((xy + this.border * 2) * Math.random() - this.border);
+
+    for (let i = 0; i < this.n; i++) {
+      points.push([getRnd(this.w), getRnd(this.h)]);
+    }
+
+    this.orig_points = points;
+    this.points = points;
+  }
+
+  drawTriangles() {
+    this.delaunay = Delaunator.from(this.points);
+
+    for (let t = 0; t < this.delaunay.triangles.length / 3; t++) {
+      const tpoints = this.pointsOfTriangle(t).map((p) => this.points[p]);
+      let [[x1, y1], [x2, y2], [x3, y3]] = tpoints;
+      let avgX = (x1 + x2 + x3) / 3;
+      let avgY = (y1 + y2 + y3) / 3;
+
+      const col = this.cscale((avgX / this.w + avgY / this.h) / 2);
+      this.draw
+        .polygon(`${x1},${y1} ${x2},${y2} ${x3},${y3}`)
+        .fill(col.hex())
+        .stroke({ width: 1, color: col.hex() });
+    }
+  }
 }
 
 function download(data, filename, type) {
@@ -52,59 +93,29 @@ function download(data, filename, type) {
   }, 0);
 }
 
-function getPoints(n, w, h, border = 200) {
-  let points = [];
-
-  let getRnd = (xy) => Math.round((xy + border * 2) * Math.random() - border);
-
-  for (let i = 0; i < n; i++) {
-    points.push([getRnd(w), getRnd(h)]);
-  }
-
-  return points;
-}
-
 class Background extends Component {
   mounted = false;
   componentDidMount() {
     if (this.mounted) {
       return;
     }
-    const n = 400;
     const w = window.innerWidth,
       h = window.innerHeight;
     var draw = SVG().addTo('#svg').size(w, h);
 
-    let cscale = chroma.scale(cols).mode('lch');
+    var triangles = new Triangles(400, w, h, draw);
 
-    var points = getPoints(n, w, h);
-
-    const delaunay = Delaunator.from(points);
-
-    for (let t = 0; t < delaunay.triangles.length / 3; t++) {
-      const tpoints = pointsOfTriangle(delaunay, t).map((p) => points[p]);
-      let [[x1, y1], [x2, y2], [x3, y3]] = tpoints;
-      let avgX = (x1 + x2 + x3) / 3;
-      let avgY = (y1 + y2 + y3) / 3;
-
-      const col = cscale((avgX / w + avgY / h) / 2);
-      draw
-        .polygon(`${x1},${y1} ${x2},${y2} ${x3},${y3}`)
-        .fill(col.hex())
-        .stroke({ width: 1, color: col.hex() });
-    }
-
-    draw.svg();
+    triangles.drawTriangles();
 
     this.mounted = true;
 
     let dld = () => download(draw.svg(), 'background.svg', 'plain/text');
 
-    window.onclick = dld;
+    window.onmousedown = dld;
+    // window.onmousemove = (x, y) => triangles.mouseMoved(event);
   }
 
   render() {
-    console.log('render');
     return (
       <>
         <div id="svg"></div>
