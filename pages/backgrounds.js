@@ -30,7 +30,7 @@ const retiPage = ['#03045E', '#11488e', '#032550'];
 class Triangles {
   refreshPause = 200;
   refreshTimeout;
-  constructor(n = defaultN, border = 200, colors = lightRainbow) {
+  constructor(n = defaultN, border = 200, colors = darkRainbow) {
     this.n = n;
     this.border = border;
     this.colors = colors;
