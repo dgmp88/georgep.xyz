@@ -3,19 +3,7 @@ import { SVG } from '@svgdotjs/svg.js';
 import chroma from 'chroma-js';
 import _ from 'lodash';
 
-const darkRainbow = [
-  '001219',
-  '005f73',
-  '0a9396',
-  '94d2bd',
-  'e9d8a6',
-  'ee9b00',
-  'ca6702',
-  'bb3e03',
-  'ae2012',
-  '9b2226',
-];
-
+const retiPage = ['#03045E', '#11488e', '#032550'];
 class Vector2 {
   constructor(x, y) {
     this.x = x;
@@ -37,14 +25,9 @@ function randSign() {
 class Lines {
   refreshPause = 200;
   debug = false;
-  bzXMinFrac = 0.01;
+  bzXMinFrac = 0.1;
   refreshTimeout;
-  constructor(
-    nLines = 10,
-    nPointsPerLine = 4,
-    bzMax = 200,
-    colors = darkRainbow
-  ) {
+  constructor(nLines = 4, nPointsPerLine = 4, bzMax = 100, colors = retiPage) {
     this.nLines = nLines;
     this.nPointsPerLine = nPointsPerLine;
     this.bzMax = bzMax;
