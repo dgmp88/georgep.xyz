@@ -3,11 +3,13 @@ import { SVG } from '@svgdotjs/svg.js';
 import chroma from 'chroma-js';
 import _ from 'lodash';
 
-const retiPage = ['#03045E', '#11488e', '#032550'];
+// const retiPage = ['#03045E', '#11488e', '#032550'];
+const retiPage = ['#11488e', '#032550'];
+
 class Vector2 {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
+    this.x = Math.round(x);
+    this.y = Math.round(y);
   }
 
   negate() {
@@ -25,57 +27,64 @@ function randSign() {
 class Lines {
   refreshPause = 200;
   debug = false;
-  bzXMinFrac = 0.1;
   refreshTimeout;
-  constructor(nLines = 4, nPointsPerLine = 4, bzMax = 100, colors = retiPage) {
+  constructor(
+    nLines = 6,
+    nPointsPerLine = 3,
+    bzMinY = 0,
+    bzMaxY = 300,
+    xOffsetMax = 0,
+    colors = retiPage
+  ) {
     this.nLines = nLines;
     this.nPointsPerLine = nPointsPerLine;
-    this.bzMax = bzMax;
+    this.bzMinY = bzMinY;
+    this.bzMaxY = bzMaxY;
+    this.xOffsetMax = xOffsetMax;
     this.colors = colors;
     this.cscale = chroma.scale(colors).mode('lch');
 
     this.draw = SVG().addTo('#svg');
     this.setSize();
     this.drawLines();
+
     window.onresize = () => {
       window.setTimeout(() => {
         this.setSize();
         this.drawLines();
       }),
-        500;
+        this.refreshPause;
     };
+  }
+
+  log(str) {
+    if (this.debug) {
+      console.log(str);
+    }
   }
 
   setSize() {
     this.w = window.innerWidth;
     this.h = window.innerHeight;
-
-    this.bzXMin = this.w * this.bzXMinFrac;
+    this.xGap = this.w / this.nPointsPerLine;
     this.draw.size(this.w, this.h);
   }
 
-  bezierBetween(p1, p2, lastOffset = undefined) {
+  bezierBetween(p1, p2, sign) {
     let randOffset = () => {
       return new Vector2(
-        Math.max(Math.random() * this.bzMax, this.bzXMin),
-        Math.random() * this.bzMax * randSign()
+        Math.random() * this.xGap,
+        Math.max(Math.random() * this.bzMaxY, this.bzMinY)
       );
     };
 
-    if (lastOffset === undefined) {
-      lastOffset = randOffset();
-    }
+    let offset = randOffset();
 
-    let nextOffset = randOffset();
+    let c = { x: p1.x + offset.x, y: p1.y + offset.y };
 
-    let c1 = { x: p1.x - lastOffset.x, y: p1.y - lastOffset.y };
-    let c2 = { x: p2.x - nextOffset.x, y: p2.y - nextOffset.y };
-
-    let string = `C${c1.x} ${c1.y}
-    ${c2.x} ${c2.y}
-    ${p2.x} ${p2.y} `;
-
-    return { string, c1, c2, offset: nextOffset.negate() };
+    let str = `S${c.x} ${c.y}
+    ${p2.x} ${p2.y}`;
+    return { str, p1, p2, c };
   }
 
   getLinePoints(yUpper, yLower) {
@@ -88,8 +97,8 @@ class Lines {
 
     for (let i = 0; i < this.nPointsPerLine; i++) {
       let x = (i / (this.nPointsPerLine - 1)) * this.w;
+      x += Math.random() * this.xOffsetMax;
       points.push(new Vector2(x, y));
-      console.log(x, y);
     }
     return points;
   }
@@ -97,47 +106,47 @@ class Lines {
   drawLines() {
     // Fill the background with color
     this.draw.rect(this.w, this.h).fill(this.cscale(0).hex());
-    let c1s = [],
-      c2s = [];
 
     let yGap = this.h / this.nLines;
     for (let lN = 0; lN < this.nLines; lN += 1) {
+      let lines = [];
       let yUpper = lN * yGap;
       let yLower = yUpper + yGap;
-
       let points = this.getLinePoints(yUpper, yLower);
       // Go to start
-      let pathStr = `M0 ${this.h} V${points[0].y} `;
-      let lastOffset;
+      let start = `M0 ${this.h} V${points[0].y} `;
+      let pathStr = start;
+
+      // Draw lines between consecutive points
 
       for (let i = 0; i < this.nPointsPerLine - 1; i++) {
         let p1 = points[i];
         let p2 = points[i + 1];
-        let bz = this.bezierBetween(p1, p2, lastOffset);
-        pathStr += bz.string;
-        lastOffset = bz.offset;
-        c1s.push(bz.c1);
-        c2s.push(bz.c2);
+
+        let sign = i % 2 == 0 ? 1 : -1;
+
+        let bz = this.bezierBetween(p1, p2, sign);
+        pathStr += bz.str;
+        lines.push(bz);
       }
 
       // Go to end
-      pathStr += `H${this.w} V${this.h} z`;
+      let end = `H${this.w} V${this.h} z`;
+      pathStr += end;
       let colFrac = (lN + 1) / this.nLines;
       let col = this.cscale(colFrac).hex();
       this.draw.path(pathStr).fill(col);
 
       if (this.debug) {
-        for (let p of c1s) {
-          this.draw.circle(5).move(p.x, p.y).fill('white');
-        }
-        for (let p of c2s) {
-          this.draw.circle(5).move(p.x, p.y).fill('gray');
+        for (const line of lines) {
+          const { p1, p2, c } = line;
+          this.draw.circle(5).move(p1.x, p1.y).fill('white');
+          this.draw.circle(5).move(p2.x, p2.y).fill('white');
+
+          this.draw.circle(5).move(c.x, c.y).fill('green');
         }
       }
     }
-
-    // To animate
-    // https://svgjs.dev/docs/3.0/shape-elements/#path-plot
   }
 
   refreshAfterPause() {
