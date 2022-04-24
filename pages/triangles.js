@@ -295,13 +295,7 @@ function Background() {
                     placeholder="#B6211B,#E77833,#ECD817,#98E1F2"
                   ></textarea>
                   <p>Or try these:</p>
-                  {[
-                    '#B6211B, #E77833, #ECD817, #98E1F2',
-                    '#03071e, #370617, #6a040f, #9d0208, #d00000, #dc2f02, #e85d04, #f48c06, #faa307, #ffba08',
-                    '#d9ed92, #b5e48c, #99d98c, #76c893, #52b69a, #34a0a4, #168aad, #1a759f, #1e6091, #184e77',
-                    '#5f0f40, #9a031e, #fb8b24, #e36414, #0f4c5c',
-                    '#ffffff, #000000',
-                  ].map((palette) => (
+                  {colorUtils.examplePalettes.map((palette) => (
                     <Palette
                       colors={palette}
                       clickHandler={() => {
