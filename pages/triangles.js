@@ -14,7 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const defaultColors = colorUtils.darkRainbow;
-let defaultEdgeCol = defaultColors[0];
+let defaultEdgeCol = '#ee9b0055'; // with some opacity
 let edgesOn = false;
 const defaultN = 500;
 
@@ -218,7 +218,7 @@ function Background() {
                   <div key={idx}>
                     <input
                       type="text"
-                      className="input-sm w-24 m-2 flex-1"
+                      className="input-sm w-28 m-2 flex-1"
                       style={{
                         backgroundColor: color,
                         color: colorUtils.getContrastingBlackOrWhite(color),
@@ -347,14 +347,14 @@ function Background() {
                           triangles.setEdgeCol(false);
                         }
                       }}
-                      checked={edges}
+                      value={edges}
                     ></input>
                   </label>
                 </div>
                 <div className="w-2/3 text-right">
                   <input
                     type="text"
-                    className={`input-sm w-24 m-2 ${
+                    className={`input-sm w-28 m-2 ${
                       edges ? 'opacity-1' : 'opacity-0'
                     }`}
                     style={{
@@ -363,8 +363,8 @@ function Background() {
                     }}
                     onChange={(event) => {
                       let col = event.target.value;
+                      setEdgeCol(col);
                       if (chroma.valid(col)) {
-                        setEdgeCol(col);
                         triangles.setEdgeCol(col);
                       }
                     }}
