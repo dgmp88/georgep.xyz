@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SVG } from '@svgdotjs/svg.js';
 import Delaunator from 'delaunator';
+
 import chroma from 'chroma-js';
 import * as colorUtils from '../components/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,14 +14,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const defaultColors = colorUtils.darkRainbow;
-
+let defaultEdgeCol = defaultColors[0];
+let edgesOn = false;
 const defaultN = 500;
 
 class Triangles {
   refreshPause = 150;
   refreshTimeout;
   constructor(n = defaultN, border = 200, colors = [...defaultColors]) {
-    this.n = n;
+    (this.edgeCol = edgesOn ? defaultEdgeCol : undefined), (this.n = n);
     this.border = border;
     this.colors = colors;
   }
@@ -82,7 +84,7 @@ class Triangles {
       this.draw
         .polygon(`${x1},${y1} ${x2},${y2} ${x3},${y3}`)
         .fill(hex)
-        .stroke({ width: 1, color: hex });
+        .stroke({ width: 1, color: this.edgeCol || hex });
     }
   }
 
@@ -101,6 +103,14 @@ class Triangles {
 
   setN(n) {
     this.n = n;
+  }
+
+  setEdgeCol(col) {
+    if (chroma.valid(col)) {
+      this.edgeCol = chroma(col).hex();
+    } else if (col == false) {
+      this.edgeCol = false;
+    }
   }
 
   cleanup() {
@@ -142,6 +152,8 @@ class Triangles {
 
 function Background() {
   const [triangles, setTriangles] = useState(new Triangles());
+  const [edges, setEdges] = useState(edgesOn);
+  const [edgeCol, setEdgeCol] = useState(defaultEdgeCol);
   const [colors, setColors] = useState(defaultColors);
   useEffect(() => {
     triangles.init();
@@ -155,7 +167,7 @@ function Background() {
       <div className="absolute -z-1" id="svg"></div>
       <div className="hero min-h-screen">
         <div className="hero-content text-center max-w-xl">
-          <div className="rounded p-5 bg-base-100 bg-opacity-50">
+          <div className="rounded p-5 bg-base-100 bg-opacity-75">
             <h1 className="text-3xl font-bold">Background Designer</h1>
             <p className="py-6">
               Resize the window to get the export size you want
@@ -240,7 +252,7 @@ function Background() {
                     Paste colors below. Try{' '}
                     <a className="link" href="https://coolors.co/">
                       coolors
-                    </a>
+                    </a>{' '}
                     or{' '}
                     <a className="link" href="https://www.colourlovers.com/">
                       Colour Lovers
@@ -252,10 +264,10 @@ function Background() {
                     className="bg-slate-200 w-full"
                     placeholder="#B6211B,#E77833,#ECD817,#98E1F2"
                   ></textarea>
-                  <div class="modal-action">
+                  <div className="modal-action">
                     <label
-                      for="my-modal"
-                      class="btn"
+                      htmlFor="my-modal"
+                      className="btn"
                       onClick={() => {
                         const text =
                           document.getElementById('colorTextArea').value;
@@ -274,6 +286,47 @@ function Background() {
                       Done
                     </label>
                   </div>
+                </div>
+              </div>
+              <div className="flex">
+                <div className="form-control w-1/3">
+                  <label className="label cursor-pointer">
+                    <span className="label-text font-medium">Edges</span>
+                    <input
+                      type="checkbox"
+                      className="toggle"
+                      onChange={() => {
+                        setEdges(!edges);
+                        // this seems backwards, but is correct as we just chagned it
+                        if (!edges) {
+                          triangles.setEdgeCol(edgeCol);
+                        } else {
+                          triangles.setEdgeCol(false);
+                        }
+                      }}
+                      checked={edges}
+                    ></input>
+                  </label>
+                </div>
+                <div className="w-2/3 text-right">
+                  <input
+                    type="text"
+                    className={`input-sm w-24 m-2 ${
+                      edges ? 'opacity-1' : 'opacity-0'
+                    }`}
+                    style={{
+                      backgroundColor: edgeCol,
+                      color: colorUtils.getContrastingBlackOrWhite(edgeCol),
+                    }}
+                    onChange={(event) => {
+                      let col = event.target.value;
+                      if (chroma.valid(col)) {
+                        setEdgeCol(col);
+                        triangles.setEdgeCol(col);
+                      }
+                    }}
+                    value={edgeCol}
+                  ></input>
                 </div>
               </div>
             </div>
