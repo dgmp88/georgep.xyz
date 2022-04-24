@@ -10,7 +10,7 @@ import {
   faDownload,
   faXmark,
   faPlus,
-  faPaste,
+  faFileImport,
 } from '@fortawesome/free-solid-svg-icons';
 
 const defaultColors = colorUtils.darkRainbow;
@@ -150,6 +150,28 @@ class Triangles {
   }
 }
 
+function Palette(props) {
+  const [colors, setColors] = useState(props.colors.split(','));
+  return (
+    <>
+      <div
+        className="flex flex-wrap justify-center bg-gray-100 m-2 rounded cursor-pointer"
+        onClick={() => props.clickHandler(colors)}
+      >
+        {colors.map((color, idx) => (
+          <div
+            key={idx}
+            className="m-2 w-4 h-4 rounded-xl"
+            style={{
+              backgroundColor: color,
+            }}
+          ></div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function Background() {
   const [triangles, setTriangles] = useState(new Triangles());
   const [edges, setEdges] = useState(edgesOn);
@@ -239,7 +261,7 @@ function Background() {
                 htmlFor="my-modal"
                 className="btn btn-secondary btn-xs m-3 modal-button"
               >
-                <FontAwesomeIcon icon={faPaste} />
+                <FontAwesomeIcon icon={faFileImport} />
               </label>
               <input
                 type="checkbox"
@@ -250,11 +272,19 @@ function Background() {
                 <div className="modal-box">
                   <p className="py-4">
                     Paste colors below. Try{' '}
-                    <a className="link" href="https://coolors.co/">
+                    <a
+                      className="link"
+                      href="https://coolors.co/"
+                      target="_blank"
+                    >
                       coolors
                     </a>{' '}
                     or{' '}
-                    <a className="link" href="https://www.colourlovers.com/">
+                    <a
+                      className="link"
+                      href="https://www.colourlovers.com/"
+                      target="_blank"
+                    >
                       Colour Lovers
                     </a>{' '}
                     .{' '}
@@ -264,6 +294,23 @@ function Background() {
                     className="bg-slate-200 w-full"
                     placeholder="#B6211B,#E77833,#ECD817,#98E1F2"
                   ></textarea>
+                  <p>Or try these:</p>
+                  {[
+                    '#B6211B, #E77833, #ECD817, #98E1F2',
+                    '#03071e, #370617, #6a040f, #9d0208, #d00000, #dc2f02, #e85d04, #f48c06, #faa307, #ffba08',
+                    '#d9ed92, #b5e48c, #99d98c, #76c893, #52b69a, #34a0a4, #168aad, #1a759f, #1e6091, #184e77',
+                    '#5f0f40, #9a031e, #fb8b24, #e36414, #0f4c5c',
+                    '#ffffff, #000000',
+                  ].map((palette) => (
+                    <Palette
+                      colors={palette}
+                      clickHandler={() => {
+                        let cols = colorUtils.getColsFromString(palette);
+                        setColors(cols);
+                        triangles.setColors(cols);
+                      }}
+                    ></Palette>
+                  ))}
                   <div className="modal-action">
                     <label
                       htmlFor="my-modal"
@@ -272,11 +319,7 @@ function Background() {
                         const text =
                           document.getElementById('colorTextArea').value;
 
-                        let newCols = [
-                          ...text.matchAll(/([0-9a-fA-F]{3}){1,2}/g),
-                        ];
-
-                        newCols = newCols.map((item) => '#' + item[0]);
+                        let newCols = colorUtils.getColsFromString(text);
                         if (newCols.length > 1) {
                           setColors(newCols);
                           triangles.setColors(newCols);

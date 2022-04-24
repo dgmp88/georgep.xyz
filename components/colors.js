@@ -43,4 +43,17 @@ function getContrastingBlackOrWhite(col) {
   }
 }
 
-export { lightRainbow, darkRainbow, getContrastingBlackOrWhite, reti };
+function getColsFromString(string) {
+  let cols = [...string.matchAll(/([0-9a-fA-F]{3}){1,2}/g)];
+
+  cols = cols.map((item) => '#' + item[0]);
+  return cols;
+}
+
+export {
+  lightRainbow,
+  darkRainbow,
+  getContrastingBlackOrWhite,
+  getColsFromString,
+  reti,
+};
