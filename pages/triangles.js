@@ -67,7 +67,7 @@ class Triangles {
   }
 
   drawTriangles() {
-    this.cscale = chroma.scale(this.colors).mode('lch');
+    this.cscale = chroma.scale(this.colors);
     this.setPoints();
     this.delaunay = Delaunator.from(this.points);
 
@@ -76,8 +76,8 @@ class Triangles {
       let [[x1, y1], [x2, y2], [x3, y3]] = tpoints;
       let avgX = (x1 + x2 + x3) / 3;
       let avgY = (y1 + y2 + y3) / 3;
-
-      const col = this.cscale((avgX / this.w + avgY / this.h) / 2);
+      const colFrac = (avgX / this.w + avgY / this.h) / 2;
+      const col = this.cscale(colFrac);
       const hex = col.hex();
       this.draw
         .polygon(`${x1},${y1} ${x2},${y2} ${x3},${y3}`)
@@ -111,13 +111,13 @@ class Triangles {
   setColors(colors) {
     for (let color of colors) {
       if (!chroma.valid(color)) {
-        console.log('failed, not updating');
+        console.log('invalid color, not updating');
         return;
       }
     }
     // Make a copy, so invalid options aren't automatically set too
     this.colors = [...colors];
-    console.log('updated');
+    console.log('colors updated');
     this.refresh();
   }
 
@@ -186,7 +186,7 @@ function Background() {
                       type="text"
                       className="input-sm w-24 m-2 flex-1"
                       style={{
-                        'background-color': color,
+                        backgroundColor: color,
                         color: colorUtils.getContrastingBlackOrWhite(color),
                       }}
                       value={color}
@@ -238,14 +238,14 @@ function Background() {
                 <div className="modal-box">
                   <p className="py-4">
                     Paste colors below. Try{' '}
-                    <a className="link" href="https://www.colourlovers.com/">
-                      Colour Lovers
-                    </a>{' '}
-                    or{' '}
                     <a className="link" href="https://coolors.co/">
                       coolors
                     </a>
-                    . For example:{' '}
+                    or{' '}
+                    <a className="link" href="https://www.colourlovers.com/">
+                      Colour Lovers
+                    </a>{' '}
+                    .{' '}
                   </p>
                   <textarea
                     id="colorTextArea"
@@ -264,7 +264,7 @@ function Background() {
                           ...text.matchAll(/([0-9a-fA-F]{3}){1,2}/g),
                         ];
 
-                        newCols = newCols.map((item) => item[0]);
+                        newCols = newCols.map((item) => '#' + item[0]);
                         if (newCols.length > 1) {
                           setColors(newCols);
                           triangles.setColors(newCols);
