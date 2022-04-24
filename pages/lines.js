@@ -2,9 +2,9 @@ import { Component } from 'react';
 import { SVG } from '@svgdotjs/svg.js';
 import chroma from 'chroma-js';
 import _ from 'lodash';
+import * as colors from '../components/colors';
 
-// const retiPage = ['#03045E', '#11488e', '#032550'];
-const retiPage = ['#11488e', '#032550'];
+const defaultColor = colors.reti;
 
 class Vector2 {
   constructor(x, y) {
@@ -34,7 +34,7 @@ class Lines {
     bzMinY = 0,
     bzMaxY = 300,
     xOffsetMax = 0,
-    colors = retiPage
+    colors = defaultColor
   ) {
     this.nLines = nLines;
     this.nPointsPerLine = nPointsPerLine;
@@ -127,12 +127,14 @@ class Lines {
 
         let bz = this.bezierBetween(p1, p2, sign);
         pathStr += bz.str;
+        animStr += bz.anim;
         lines.push(bz);
       }
 
       // Go to end
       let end = `H${this.w} V${this.h} z`;
       pathStr += end;
+      animStr += end;
       let colFrac = (lN + 1) / this.nLines;
       let col = this.cscale(colFrac).hex();
       this.draw.path(pathStr).fill(col);

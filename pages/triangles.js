@@ -2,43 +2,25 @@ import { Component } from 'react';
 import { SVG } from '@svgdotjs/svg.js';
 import Delaunator from 'delaunator';
 import chroma from 'chroma-js';
+import * as colors from '../components/colors';
+
+const defaultColors = colors.darkRainbow;
+
 const defaultN = 500;
-const lightRainbow = [
-  '#2175D8',
-  '#DC5DCE',
-  '#CC223D',
-  '#F07414',
-  '#FDEE61',
-  '#74C425',
-];
-
-const darkRainbow = [
-  '001219',
-  '005f73',
-  '0a9396',
-  '94d2bd',
-  'e9d8a6',
-  'ee9b00',
-  'ca6702',
-  'bb3e03',
-  'ae2012',
-  '9b2226',
-];
-
-const retiPage = ['#03045E', '#11488e', '#032550'];
 
 class Triangles {
-  refreshPause = 200;
+  refreshPause = 150;
   refreshTimeout;
-  constructor(n = defaultN, border = 200, colors = darkRainbow) {
+  constructor(n = defaultN, border = 200, colors = defaultColors) {
     this.n = n;
     this.border = border;
     this.colors = colors;
-    this.cscale = chroma.scale(colors).mode('lch');
+  }
 
+  init() {
     this.draw = SVG().addTo('#svg');
     this.setSize();
-    this.setPoints();
+    this.drawTriangles();
     window.onresize = () => {
       window.setTimeout(() => {
         this.setSize();
@@ -77,6 +59,8 @@ class Triangles {
   }
 
   drawTriangles() {
+    this.cscale = chroma.scale(this.colors).mode('lch');
+    this.setPoints();
     this.delaunay = Delaunator.from(this.points);
 
     for (let t = 0; t < this.delaunay.triangles.length / 3; t++) {
@@ -103,7 +87,6 @@ class Triangles {
 
   refresh() {
     this.draw.clear();
-    this.setPoints();
     this.drawTriangles();
   }
 
@@ -111,7 +94,13 @@ class Triangles {
     this.n = n;
   }
 
+  setColors(colors) {
+    this.colors = colors;
+    this.drawTriangles();
+  }
+
   download() {
+    console.log(this);
     let data = this.draw.svg();
     let filename = 'background.svg';
     let type = 'plain/text';
@@ -133,20 +122,26 @@ class Triangles {
 class Background extends Component {
   constructor(props) {
     super(props);
-    this.state = { mounted: false };
+    let triangles = new Triangles();
+    this.state = {
+      mounted: false,
+      triangles: triangles,
+      colors: triangles.colors,
+    };
     this.download = this.download.bind(this);
     this.refresh = this.refresh.bind(this);
     this.changeN = this.changeN.bind(this);
+    this.removeColor = this.removeColor.bind(this);
+    // this.getColors = this.getColors.bind(this);
   }
+
   componentDidMount() {
     if (this.state.mounted) {
       return;
     }
 
-    let triangles = new Triangles();
-    triangles.drawTriangles();
+    this.state.triangles.init();
 
-    this.state.triangles = triangles;
     this.state.mounted = true;
   }
 
@@ -159,9 +154,16 @@ class Background extends Component {
   }
 
   changeN(event) {
-    let n = parseInt(event.target.value);
+    let n = parseInt(event.target.value) ** 2;
     this.state.triangles.setN(n);
     this.state.triangles.refreshAfterPause();
+  }
+
+  removeColor(event) {
+    let inpt = event.target.parentElement.querySelector('input');
+    let idx = this.state.colors.indexOf(inpt.value);
+    console.log('remove', idx);
+    this.state.colors.splice(idx, 1);
   }
 
   render() {
@@ -171,8 +173,8 @@ class Background extends Component {
         <div className="hero min-h-screen">
           <div className="hero-content text-center">
             <div
-              className="rounded p-5"
-              style={{ 'background-color': 'rgba(255, 255, 255, 0.5)' }}
+              className="rounded p-5 bg-base-100 bg-opacity-50"
+              // style={{ 'background-color': 'rgba(255, 255, 255, 0.5)' }}
             >
               <h1 className="text-3xl font-bold">Background Designer</h1>
               <p className="py-6">
@@ -180,12 +182,11 @@ class Background extends Component {
               </p>
               <div>
                 <div className="font-medium">Number of triangles</div>
-
                 <input
                   type="range"
-                  min="20"
-                  max="3000"
-                  defaultValue={defaultN}
+                  min="10"
+                  max="100"
+                  defaultValue={defaultN ** 0.5}
                   className="range"
                   onChange={this.changeN}
                 ></input>
@@ -193,21 +194,44 @@ class Background extends Component {
 
               <div className="pb-2">
                 <div className="font-medium">Colors</div>
-                {/* <div>
-                  {this.state.triangles.colors.map((item) => (
-                    <input
-                      type="text"
-                      className="input-sm w-24 mx-2"
-                      value="a"
-                    ></input>
+                <div className="flex flex-wrap">
+                  {this.state.colors.map((item) => (
+                    <div key={item}>
+                      <input
+                        type="text"
+                        className="input-sm w-24 mx-2 flex-1"
+                        value={item}
+                        onChange={(event) => {
+                          console.log(event.target);
+                        }}
+                      ></input>
+                      <span
+                        className="text-red-500"
+                        onClick={(event) => {
+                          let colors = this.state.colors;
+                          let idx = colors.indexOf(item);
+                          colors.splice(idx, 1);
+                          this.setState({ colors });
+                          this.state.triangles.setColors(colors);
+                        }}
+                      >
+                        x
+                      </span>
+                    </div>
                   ))}
-                </div> */}
+                </div>
               </div>
 
-              <button className="btn btn-secondary" onClick={this.refresh}>
+              <button
+                className="btn btn-secondary"
+                onClick={() => this.state.triangles.refresh()}
+              >
                 Refresh
               </button>
-              <button className="btn btn-primary" onClick={this.download}>
+              <button
+                className="btn btn-primary"
+                onClick={() => this.state.triangles.download()}
+              >
                 Download SVG
               </button>
             </div>
