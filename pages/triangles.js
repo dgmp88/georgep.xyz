@@ -1,17 +1,17 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { SVG } from '@svgdotjs/svg.js';
 import Delaunator from 'delaunator';
 import chroma from 'chroma-js';
 import * as colors from '../components/colors';
 
-const defaultColors = colors.darkRainbow;
+const defaultColors = colors.reti;
 
 const defaultN = 500;
 
 class Triangles {
   refreshPause = 150;
   refreshTimeout;
-  constructor(n = defaultN, border = 200, colors = defaultColors) {
+  constructor(n = defaultN, border = 200, colors = [...defaultColors]) {
     this.n = n;
     this.border = border;
     this.colors = colors;
@@ -70,10 +70,11 @@ class Triangles {
       let avgY = (y1 + y2 + y3) / 3;
 
       const col = this.cscale((avgX / this.w + avgY / this.h) / 2);
+      const hex = col.hex();
       this.draw
         .polygon(`${x1},${y1} ${x2},${y2} ${x3},${y3}`)
-        .fill(col.hex())
-        .stroke({ width: 1, color: col.hex() });
+        .fill(hex)
+        .stroke({ width: 1, color: hex });
     }
   }
 
@@ -94,13 +95,22 @@ class Triangles {
     this.n = n;
   }
 
+  cleanup() {
+    this.draw.clear();
+    this.draw.remove();
+  }
+
   setColors(colors) {
+    for (let color of colors) {
+      if (!chroma.valid(color)) {
+        return;
+      }
+    }
     this.colors = colors;
-    this.drawTriangles();
+    this.refresh();
   }
 
   download() {
-    console.log(this);
     let data = this.draw.svg();
     let filename = 'background.svg';
     let type = 'plain/text';
@@ -119,127 +129,91 @@ class Triangles {
   }
 }
 
-class Background extends Component {
-  constructor(props) {
-    super(props);
-    let triangles = new Triangles();
-    this.state = {
-      mounted: false,
-      triangles: triangles,
-      colors: triangles.colors,
+function Background() {
+  const [triangles, setTriangles] = useState(new Triangles());
+  const [colors, setColors] = useState(defaultColors);
+  useEffect(() => {
+    triangles.init();
+    return function cleanup() {
+      triangles.cleanup();
     };
-    this.download = this.download.bind(this);
-    this.refresh = this.refresh.bind(this);
-    this.changeN = this.changeN.bind(this);
-    this.removeColor = this.removeColor.bind(this);
-    // this.getColors = this.getColors.bind(this);
-  }
+  });
 
-  componentDidMount() {
-    if (this.state.mounted) {
-      return;
-    }
-
-    this.state.triangles.init();
-
-    this.state.mounted = true;
-  }
-
-  download() {
-    this.state.triangles.download();
-  }
-
-  refresh() {
-    this.state.triangles.refresh();
-  }
-
-  changeN(event) {
-    let n = parseInt(event.target.value) ** 2;
-    this.state.triangles.setN(n);
-    this.state.triangles.refreshAfterPause();
-  }
-
-  removeColor(event) {
-    let inpt = event.target.parentElement.querySelector('input');
-    let idx = this.state.colors.indexOf(inpt.value);
-    console.log('remove', idx);
-    this.state.colors.splice(idx, 1);
-  }
-
-  render() {
-    return (
-      <>
-        <div className="absolute -z-1" id="svg"></div>
-        <div className="hero min-h-screen">
-          <div className="hero-content text-center">
-            <div
-              className="rounded p-5 bg-base-100 bg-opacity-50"
-              // style={{ 'background-color': 'rgba(255, 255, 255, 0.5)' }}
-            >
-              <h1 className="text-3xl font-bold">Background Designer</h1>
-              <p className="py-6">
-                Resize the window to get the export size you want
-              </p>
-              <div>
-                <div className="font-medium">Number of triangles</div>
-                <input
-                  type="range"
-                  min="10"
-                  max="100"
-                  defaultValue={defaultN ** 0.5}
-                  className="range"
-                  onChange={this.changeN}
-                ></input>
-              </div>
-
-              <div className="pb-2">
-                <div className="font-medium">Colors</div>
-                <div className="flex flex-wrap">
-                  {this.state.colors.map((item) => (
-                    <div key={item}>
-                      <input
-                        type="text"
-                        className="input-sm w-24 mx-2 flex-1"
-                        value={item}
-                        onChange={(event) => {
-                          console.log(event.target);
-                        }}
-                      ></input>
-                      <span
-                        className="text-red-500"
-                        onClick={(event) => {
-                          let colors = this.state.colors;
-                          let idx = colors.indexOf(item);
-                          colors.splice(idx, 1);
-                          this.setState({ colors });
-                          this.state.triangles.setColors(colors);
-                        }}
-                      >
-                        x
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                className="btn btn-secondary"
-                onClick={() => this.state.triangles.refresh()}
-              >
-                Refresh
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => this.state.triangles.download()}
-              >
-                Download SVG
-              </button>
+  return (
+    <>
+      <div className="absolute -z-1" id="svg"></div>
+      <div className="hero min-h-screen">
+        <div className="hero-content text-center">
+          <div className="rounded p-5 bg-base-100 bg-opacity-50">
+            <h1 className="text-3xl font-bold">Background Designer</h1>
+            <p className="py-6">
+              Resize the window to get the export size you want
+            </p>
+            <div>
+              <div className="font-medium">Number of triangles</div>
+              <input
+                type="range"
+                min="10"
+                max="100"
+                defaultValue={defaultN ** 0.5}
+                className="range"
+                onChange={(event) => {
+                  let n = parseInt(event.target.value) ** 2;
+                  triangles.setN(n);
+                  triangles.refreshAfterPause();
+                }}
+              ></input>
             </div>
+
+            <div className="pb-2">
+              <div className="font-medium">Colors</div>
+              <div className="flex flex-wrap">
+                {colors.map((color, idx) => (
+                  <div key={idx}>
+                    <input
+                      type="text"
+                      className="input-sm w-24 mx-2 flex-1"
+                      value={color}
+                      onChange={(event) => {
+                        colors[idx] = event.target.value;
+                        setColors([...colors]);
+                        triangles.setColors([...colors]);
+                      }}
+                    ></input>
+                    <span
+                      className="text-red-500"
+                      onClick={(event) => {
+                        let idx = colors.indexOf(color);
+                        let colorsTmp = [...colors];
+                        colorsTmp.splice(idx, 1);
+                        setColors(colorsTmp);
+                        triangles.setColors(colorsTmp);
+                      }}
+                    >
+                      x
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button
+              className="btn btn-secondary"
+              onClick={() => triangles.refresh()}
+            >
+              Refresh
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => triangles.download()}
+            >
+              Download SVG
+            </button>
           </div>
         </div>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
 }
 
 export default Background;
