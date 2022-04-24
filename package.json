@@ -6,6 +6,9 @@
     "export": "next export"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
     "@svgdotjs/svg.js": "^3.1.2",
     "chroma-js": "^2.4.2",
     "daisyui": "^2.14.1",

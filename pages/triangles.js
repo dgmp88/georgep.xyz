@@ -2,9 +2,17 @@ import { useState, useEffect } from 'react';
 import { SVG } from '@svgdotjs/svg.js';
 import Delaunator from 'delaunator';
 import chroma from 'chroma-js';
-import * as colors from '../components/colors';
+import * as colorUtils from '../components/colors';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faArrowsRotate,
+  faDownload,
+  faXmark,
+  faPlus,
+  faPaste,
+} from '@fortawesome/free-solid-svg-icons';
 
-const defaultColors = colors.reti;
+const defaultColors = colorUtils.darkRainbow;
 
 const defaultN = 500;
 
@@ -103,10 +111,13 @@ class Triangles {
   setColors(colors) {
     for (let color of colors) {
       if (!chroma.valid(color)) {
+        console.log('failed, not updating');
         return;
       }
     }
-    this.colors = colors;
+    // Make a copy, so invalid options aren't automatically set too
+    this.colors = [...colors];
+    console.log('updated');
     this.refresh();
   }
 
@@ -143,12 +154,13 @@ function Background() {
     <>
       <div className="absolute -z-1" id="svg"></div>
       <div className="hero min-h-screen">
-        <div className="hero-content text-center">
+        <div className="hero-content text-center max-w-xl">
           <div className="rounded p-5 bg-base-100 bg-opacity-50">
             <h1 className="text-3xl font-bold">Background Designer</h1>
             <p className="py-6">
               Resize the window to get the export size you want
             </p>
+
             <div>
               <div className="font-medium">Number of triangles</div>
               <input
@@ -167,12 +179,16 @@ function Background() {
 
             <div className="pb-2">
               <div className="font-medium">Colors</div>
-              <div className="flex flex-wrap">
+              <div className="flex flex-wrap justify-center">
                 {colors.map((color, idx) => (
                   <div key={idx}>
                     <input
                       type="text"
-                      className="input-sm w-24 mx-2 flex-1"
+                      className="input-sm w-24 m-2 flex-1"
+                      style={{
+                        'background-color': color,
+                        color: colorUtils.getContrastingBlackOrWhite(color),
+                      }}
                       value={color}
                       onChange={(event) => {
                         colors[idx] = event.target.value;
@@ -181,7 +197,7 @@ function Background() {
                       }}
                     ></input>
                     <span
-                      className="text-red-500"
+                      className="btn btn-error btn-xs"
                       onClick={(event) => {
                         let idx = colors.indexOf(color);
                         let colorsTmp = [...colors];
@@ -190,25 +206,91 @@ function Background() {
                         triangles.setColors(colorsTmp);
                       }}
                     >
-                      x
+                      <FontAwesomeIcon icon={faXmark} />
                     </span>
                   </div>
                 ))}
               </div>
-            </div>
+              <span
+                className="btn btn-secondary btn-xs m-3"
+                onClick={(event) => {
+                  let colorsTmp = [...colors];
+                  colorsTmp.push(chroma.random().hex());
+                  setColors(colorsTmp);
+                  triangles.setColors(colorsTmp);
+                }}
+              >
+                <FontAwesomeIcon icon={faPlus} />
+              </span>
 
-            <button
-              className="btn btn-secondary"
-              onClick={() => triangles.refresh()}
-            >
-              Refresh
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={() => triangles.download()}
-            >
-              Download SVG
-            </button>
+              <label
+                htmlFor="my-modal"
+                className="btn btn-secondary btn-xs m-3 modal-button"
+              >
+                <FontAwesomeIcon icon={faPaste} />
+              </label>
+              <input
+                type="checkbox"
+                id="my-modal"
+                className="modal-toggle"
+              ></input>
+              <div className="modal">
+                <div className="modal-box">
+                  <p className="py-4">
+                    Paste colors below. Try{' '}
+                    <a className="link" href="https://www.colourlovers.com/">
+                      Colour Lovers
+                    </a>{' '}
+                    or{' '}
+                    <a className="link" href="https://coolors.co/">
+                      coolors
+                    </a>
+                    . For example:{' '}
+                  </p>
+                  <textarea
+                    id="colorTextArea"
+                    className="bg-slate-200 w-full"
+                    placeholder="#B6211B,#E77833,#ECD817,#98E1F2"
+                  ></textarea>
+                  <div class="modal-action">
+                    <label
+                      for="my-modal"
+                      class="btn"
+                      onClick={() => {
+                        const text =
+                          document.getElementById('colorTextArea').value;
+
+                        let newCols = [
+                          ...text.matchAll(/([0-9a-fA-F]{3}){1,2}/g),
+                        ];
+
+                        newCols = newCols.map((item) => item[0]);
+                        if (newCols.length > 1) {
+                          setColors(newCols);
+                          triangles.setColors(newCols);
+                        }
+                      }}
+                    >
+                      Done
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <button
+                className="btn btn-primary m-2"
+                onClick={() => triangles.refresh()}
+              >
+                <FontAwesomeIcon icon={faArrowsRotate} />
+              </button>
+              <button
+                className="btn btn-secondary m-2"
+                onClick={() => triangles.download()}
+              >
+                <FontAwesomeIcon icon={faDownload} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

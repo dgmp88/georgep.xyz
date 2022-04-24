@@ -1,3 +1,5 @@
+import chroma from 'chroma-js';
+
 const lightRainbow = [
   '#2175D8',
   '#DC5DCE',
@@ -22,4 +24,23 @@ const darkRainbow = [
 
 const reti = ['#03045E', '#11488e', '#032550'];
 
-export { lightRainbow, darkRainbow, reti };
+const WHITE = chroma('white');
+const BLACK = chroma('black');
+const GRAY = chroma('gray');
+
+function getContrastingBlackOrWhite(col) {
+  if (!chroma.valid(col)) {
+    return GRAY;
+  }
+  col = chroma(col);
+  let b = chroma.contrast(col, BLACK);
+  let w = chroma.contrast(col, WHITE);
+
+  if (w > b) {
+    return WHITE;
+  } else {
+    return BLACK;
+  }
+}
+
+export { lightRainbow, darkRainbow, getContrastingBlackOrWhite, reti };
