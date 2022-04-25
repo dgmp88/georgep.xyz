@@ -69,7 +69,7 @@ function Color(props) {
   );
 }
 
-function Background() {
+function Main() {
   const [nTriangles, setNTriangles] = useState(defaultNTriangles);
   const [edges, setEdges] = useState(edgesOn);
   const [edgeCol, setEdgeCol] = useState(defaultEdgeCol);
@@ -296,4 +296,4 @@ function Background() {
   );
 }
 
-export default Background;
+export default Main;
