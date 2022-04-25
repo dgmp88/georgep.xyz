@@ -3,44 +3,24 @@ import { SVG } from '@svgdotjs/svg.js';
 import chroma from 'chroma-js';
 import _ from 'lodash';
 import * as colors from '../lib/colors';
+import { Vector2 } from '../lib/math';
 
 const defaultColor = colors.reti;
-
-class Vector2 {
-  constructor(x, y) {
-    this.x = Math.round(x);
-    this.y = Math.round(y);
-  }
-
-  negate() {
-    return new Vector2(-this.x, -this.y);
-  }
-}
-
-function randSign() {
-  if (Math.random() > 0.5) {
-    return 1;
-  }
-  return -1;
-}
 
 class Lines {
   refreshPause = 200;
   debug = false;
+  border = 1.0;
   refreshTimeout;
   constructor(
-    nLines = 6,
-    nPointsPerLine = 3,
-    bzMinY = 0,
-    bzMaxY = 300,
-    xOffsetMax = 0,
+    nLines = 5,
+    nPointsPerLine = 4,
+    bzMaxY = 550,
     colors = defaultColor
   ) {
     this.nLines = nLines;
     this.nPointsPerLine = nPointsPerLine;
-    this.bzMinY = bzMinY;
     this.bzMaxY = bzMaxY;
-    this.xOffsetMax = xOffsetMax;
     this.colors = colors;
     this.cscale = chroma.scale(colors).mode('lch');
 
@@ -71,16 +51,10 @@ class Lines {
   }
 
   bezierBetween(p1, p2, sign) {
-    let randOffset = () => {
-      return new Vector2(
-        Math.random() * this.xGap,
-        Math.max(Math.random() * this.bzMaxY, this.bzMinY)
-      );
-    };
+    let dX = Math.random() * (p2.x - p1.x);
+    let dY = Math.random() * this.bzMaxY;
 
-    let offset = randOffset();
-
-    let c = { x: p1.x + offset.x, y: p1.y + offset.y };
+    let c = { x: p1.x + dX, y: p1.y + dY };
 
     let str = `S${c.x} ${c.y}
     ${p2.x} ${p2.y}`;
@@ -94,10 +68,14 @@ class Lines {
     let y = yUpper + yRange / 2;
 
     // For a single line
+    let border = this.border * this.w;
 
+    let xStart = -border * Math.random();
+    let xEnd = this.w + border * Math.random();
+    let xTot = xEnd - xStart;
     for (let i = 0; i < this.nPointsPerLine; i++) {
-      let x = (i / (this.nPointsPerLine - 1)) * this.w;
-      x += Math.random() * this.xOffsetMax;
+      let xFrac = i / (this.nPointsPerLine - 1);
+      let x = xTot * xFrac;
       points.push(new Vector2(x, y));
     }
     return points;
@@ -127,14 +105,12 @@ class Lines {
 
         let bz = this.bezierBetween(p1, p2, sign);
         pathStr += bz.str;
-        animStr += bz.anim;
         lines.push(bz);
       }
 
       // Go to end
       let end = `H${this.w} V${this.h} z`;
       pathStr += end;
-      animStr += end;
       let colFrac = (lN + 1) / this.nLines;
       let col = this.cscale(colFrac).hex();
       this.draw.path(pathStr).fill(col);
@@ -144,7 +120,6 @@ class Lines {
           const { p1, p2, c } = line;
           this.draw.circle(5).move(p1.x, p1.y).fill('white');
           this.draw.circle(5).move(p2.x, p2.y).fill('white');
-
           this.draw.circle(5).move(c.x, c.y).fill('green');
         }
       }
