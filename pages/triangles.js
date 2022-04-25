@@ -14,7 +14,7 @@ import {
 
 const defaultNTriangles = 500;
 const defaultColors = colorUtils.darkRainbow;
-let defaultEdgeCol = '#ee9b0055'; // with some opacity
+let defaultEdgeCol = '#ee9b00'; // with some opacity
 let edgesOn = false;
 
 function Main() {
@@ -140,28 +140,18 @@ function Palette(props) {
 
 function Color(props) {
   const [color, setColor] = useState(props.color);
-  const [text, setText] = useState(props.color);
-
   return (
     <>
       <input
-        type="text"
-        className="input-sm w-28 m-2 flex-1"
-        style={{
-          backgroundColor: color,
-          color: colorUtils.getContrastingBlackOrWhite(color),
-        }}
-        value={text}
+        type="color"
+        className="input-sm w-10 p-0 m-2 border-none"
+        value={color}
         onChange={(event) => {
-          let t = event.target.value;
-          setText(t);
-          let c = t;
-          if (chroma.valid(t)) {
-            props.onColorUpdate(c);
-          } else {
-            c = '#979797';
-          }
+          let c = event.target.value;
           setColor(c);
+        }}
+        onBlur={(event) => {
+          props.onColorUpdate(color);
         }}
       ></input>
     </>
@@ -231,9 +221,9 @@ function Colors({ colors, setColors }) {
   return (
     <>
       <div className="font-medium">Colors</div>
-      <div className="flex flex-wrap justify-center">
+      <div className="flex flex-wrap justify-center align-middle">
         {colors.map((color, idx) => (
-          <div key={color}>
+          <div key={color} className="px-1">
             <Color
               color={color}
               onColorUpdate={(col) => {
@@ -242,7 +232,8 @@ function Colors({ colors, setColors }) {
               }}
             />
             <span
-              className="btn btn-error btn-xs"
+              className="inline-block align-top cursor-pointer 
+              "
               onClick={() => {
                 let colorsTmp = [...colors];
                 colorsTmp.splice(idx, 1);
