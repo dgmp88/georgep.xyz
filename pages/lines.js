@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { SVG } from '@svgdotjs/svg.js';
 import chroma from 'chroma-js';
 import _ from 'lodash';
-import * as colors from '../components/colors';
+import * as colors from '../lib/colors';
 
 const defaultColor = colors.reti;
 
