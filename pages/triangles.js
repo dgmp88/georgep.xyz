@@ -29,11 +29,11 @@ function Main() {
 
   useEffect(
     () => {
+      // We have to create this in useEffect, as we can only open the SVG class when the page has rendered
       const d = SVG().addTo('#svg');
       setDraw(d);
 
       const t = new Triangles(d, nTriangles, colors, edges, edgeCol);
-      t.refresh();
       window.addEventListener('resize', () => runAfterPause(() => t.refresh()));
       setTriangles(t);
 
