@@ -9,7 +9,7 @@ const apps = {
 };
 
 export default function Backgrounds() {
-  const [current, setCurrent] = useState('triangles');
+  const [current, setCurrent] = useState('lines');
   let app = apps[current];
   return (
     <>

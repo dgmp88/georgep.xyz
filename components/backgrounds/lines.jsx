@@ -140,7 +140,7 @@ class Lines {
   }
 
   setN(n) {
-    this.n = n;
+    this.nLines = n;
   }
 
   download() {
@@ -195,6 +195,7 @@ export class LinesApp extends Component {
   }
 
   changeN(event) {
+    console.log('changing');
     let n = parseInt(event.target.value);
     this.state.lines.setN(n);
     this.state.lines.refreshAfterPause();
@@ -205,28 +206,14 @@ export class LinesApp extends Component {
       <>
         <div>
           <div className="font-medium">Number of lines</div>
-
           <input
             type="range"
-            min="20"
-            max="3000"
+            min="1"
+            max="50"
             defaultValue={3}
             className="range"
             onChange={this.changeN}
           ></input>
-        </div>
-
-        <div className="pb-2">
-          <div className="font-medium">Colors</div>
-          {/* <div>
-                  {this.state.lines.colors.map((item) => (
-                    <input
-                      type="text"
-                      className="input-sm w-24 mx-2"
-                      value="a"
-                    ></input>
-                  ))}
-                </div> */}
         </div>
 
         <button className="btn btn-secondary" onClick={this.refresh}>
