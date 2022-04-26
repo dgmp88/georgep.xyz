@@ -13,9 +13,9 @@ class Lines {
   border = 1.0;
   refreshTimeout;
   constructor(
-    nLines = 5,
+    nLines = 2,
     nPointsPerLine = 4,
-    bzMaxY = 550,
+    bzMaxY = 150,
     colors = defaultColor
   ) {
     this.nLines = nLines;
@@ -204,7 +204,7 @@ class Background extends Component {
           <div className="hero-content text-center">
             <div
               className="rounded p-5"
-              style={{ 'background-color': 'rgba(255, 255, 255, 0.5)' }}
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
             >
               <h1 className="text-3xl font-bold">Background Designer</h1>
               <p className="py-6">
