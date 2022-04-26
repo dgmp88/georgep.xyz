@@ -2,8 +2,8 @@ import { Component } from 'react';
 import { SVG } from '@svgdotjs/svg.js';
 import chroma from 'chroma-js';
 import _ from 'lodash';
-import * as colors from '../lib/colors';
-import { Vector2 } from '../lib/math';
+import * as colors from '../../lib/colors';
+import { Vector2 } from '../../lib/math';
 
 const defaultColor = colors.reti;
 
@@ -13,8 +13,8 @@ class Lines {
   border = 1.0;
   refreshTimeout;
   constructor(
-    nLines = 2,
-    nPointsPerLine = 4,
+    nLines = 4,
+    nPointsPerLine = 6,
     bzMaxY = 150,
     colors = defaultColor
   ) {
@@ -162,7 +162,7 @@ class Lines {
   }
 }
 
-class Background extends Component {
+export class LinesApp extends Component {
   constructor(props) {
     super(props);
 
@@ -172,14 +172,18 @@ class Background extends Component {
     this.changeN = this.changeN.bind(this);
   }
   componentDidMount() {
-    if (this.state.mounted) {
-      return;
-    }
-
+    console.log('lines mounted');
     let lines = new Lines();
 
     this.state.lines = lines;
     this.state.mounted = true;
+  }
+
+  componentWillUnmount() {
+    let d = this.state.lines.draw;
+    d.clear();
+    d.remove();
+    console.log('lines unmounted');
   }
 
   download() {
@@ -199,33 +203,22 @@ class Background extends Component {
   render() {
     return (
       <>
-        <div className="absolute -z-1" id="svg"></div>
-        <div className="hero min-h-screen hidden">
-          <div className="hero-content text-center">
-            <div
-              className="rounded p-5"
-              style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}
-            >
-              <h1 className="text-3xl font-bold">Background Designer</h1>
-              <p className="py-6">
-                Resize the window to get the export size you want
-              </p>
-              <div>
-                <div className="font-medium">Number of lines</div>
+        <div>
+          <div className="font-medium">Number of lines</div>
 
-                <input
-                  type="range"
-                  min="20"
-                  max="3000"
-                  defaultValue={3}
-                  className="range"
-                  onChange={this.changeN}
-                ></input>
-              </div>
+          <input
+            type="range"
+            min="20"
+            max="3000"
+            defaultValue={3}
+            className="range"
+            onChange={this.changeN}
+          ></input>
+        </div>
 
-              <div className="pb-2">
-                <div className="font-medium">Colors</div>
-                {/* <div>
+        <div className="pb-2">
+          <div className="font-medium">Colors</div>
+          {/* <div>
                   {this.state.lines.colors.map((item) => (
                     <input
                       type="text"
@@ -234,20 +227,15 @@ class Background extends Component {
                     ></input>
                   ))}
                 </div> */}
-              </div>
-
-              <button className="btn btn-secondary" onClick={this.refresh}>
-                Refresh
-              </button>
-              <button className="btn btn-primary" onClick={this.download}>
-                Download SVG
-              </button>
-            </div>
-          </div>
         </div>
+
+        <button className="btn btn-secondary" onClick={this.refresh}>
+          Refresh
+        </button>
+        <button className="btn btn-primary" onClick={this.download}>
+          Download SVG
+        </button>
       </>
     );
   }
 }
-
-export default Background;

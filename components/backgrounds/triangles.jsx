@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import chroma from 'chroma-js';
 import { SVG } from '@svgdotjs/svg.js';
-import * as colorUtils from '../lib/colors';
-import { Triangles } from '../lib/triangles';
+import * as colorUtils from '../../lib/colors';
+import { Triangles } from '../../lib/triangles';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowsRotate,
@@ -17,7 +18,7 @@ const defaultColors = colorUtils.darkRainbow;
 let defaultEdgeCol = '#ee9b00'; // with some opacity
 let edgesOn = false;
 
-function Main() {
+export function TrianglesApp() {
   const [nTriangles, setNTriangles] = useState(defaultNTriangles);
   const [edges, setEdges] = useState(edgesOn);
   const [edgeCol, setEdgeCol] = useState(defaultEdgeCol);
@@ -29,6 +30,7 @@ function Main() {
 
   useEffect(
     () => {
+      console.log('useEffect Triangles');
       // We have to create this in useEffect, as we can only open the SVG class when the page has rendered
       const d = SVG().addTo('#svg');
       setDraw(d);
@@ -38,6 +40,7 @@ function Main() {
       setTriangles(t);
 
       return function cleanup() {
+        console.log('cleanUp triangles');
         d.clear();
         d.remove();
       };
@@ -73,44 +76,31 @@ function Main() {
 
   return (
     <>
-      <div className="absolute -z-1" id="svg">
-        {/* This is the actual background  */}
-      </div>
-      <div className="hero min-h-screen">
-        <div className="hero-content text-center max-w-xl">
-          <div className="rounded p-5 bg-base-100 bg-opacity-75">
-            <h1 className="text-3xl font-bold">Background Designer</h1>
-            <p className="py-6">
-              Resize the window to get the export size you want
-            </p>
-            <NumberSlider
-              setNTriangles={(n) => runAfterPause(() => setNTriangles(n))}
-            ></NumberSlider>
+      <NumberSlider
+        setNTriangles={(n) => runAfterPause(() => setNTriangles(n))}
+      ></NumberSlider>
 
-            <div className="pb-2">
-              <Colors colors={colors} setColors={setColors}></Colors>
-              <Edges
-                edges={edges}
-                setEdges={setEdges}
-                edgeCol={edgeCol}
-                setEdgeCol={setEdgeCol}
-              ></Edges>
-            </div>
-            <div className="flex justify-center">
-              <button
-                className="btn btn-primary m-2"
-                onClick={() => {
-                  triangles.refresh();
-                }}
-              >
-                <FontAwesomeIcon icon={faArrowsRotate} />
-              </button>
-              <button className="btn btn-secondary m-2" onClick={download}>
-                <FontAwesomeIcon icon={faDownload} />
-              </button>
-            </div>
-          </div>
-        </div>
+      <div className="pb-2">
+        <Colors colors={colors} setColors={setColors}></Colors>
+        <Edges
+          edges={edges}
+          setEdges={setEdges}
+          edgeCol={edgeCol}
+          setEdgeCol={setEdgeCol}
+        ></Edges>
+      </div>
+      <div className="flex justify-center">
+        <button
+          className="btn btn-primary m-2"
+          onClick={() => {
+            triangles.refresh();
+          }}
+        >
+          <FontAwesomeIcon icon={faArrowsRotate} />
+        </button>
+        <button className="btn btn-secondary m-2" onClick={download}>
+          <FontAwesomeIcon icon={faDownload} />
+        </button>
       </div>
     </>
   );
@@ -318,5 +308,3 @@ function Edges({ edges, setEdges, edgeCol, setEdgeCol }) {
     </>
   );
 }
-
-export default Main;
