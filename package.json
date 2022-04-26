@@ -1,9 +1,8 @@
 {
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "export": "next export",
+    "dev": "vite",
+    "export": "vite build",
+    "preview": "vite preview",
     "debug": "node lib/math.js"
   },
   "dependencies": {
@@ -16,19 +15,23 @@
     "delaunator": "^5.0.0",
     "gray-matter": "^4.0.3",
     "lodash": "^4.17.21",
-    "next": "^12.1.5",
     "pixi.js": "^6.3.0",
     "prismjs": "^1.28.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-router-dom": "^6.3.0",
     "showdown": "^2.0.3",
     "three": "^0.139.2"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.2",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^1.3.0",
     "autoprefixer": "^10.0.4",
     "postcss": "^8.1.10",
-    "tailwindcss": "^3.0.24"
+    "tailwindcss": "^3.0.24",
+    "vite": "^2.9.5"
   },
   "prettier": {
     "printWidth": 80,

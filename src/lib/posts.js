@@ -3,7 +3,6 @@ import path from 'path';
 import matter from 'gray-matter';
 import _ from 'lodash';
 var showdown = require('showdown');
-
 const postsDirectory = path.join(process.cwd(), 'posts/');
 
 export function getSortedPostsList() {

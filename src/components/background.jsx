@@ -297,17 +297,23 @@ class Background extends Component {
   }
   render() {
     return (
-      <div>
-        <div className="fixed" style={{ zIndex: '-1' }}>
-          <canvas id="canvas"></canvas>
+      <>
+        <div className="opacity-0 h-0 w-0">
+          This is stupid, but needs to be here for the background guy to
+          position properly
         </div>
-        <a
-          href="https://codepen.io/soju22/pen/xxGqJxj"
-          className="fixed bottom-0 right-0 p-2 text-gray-100 text-xs"
-        >
-          Background source
-        </a>
-      </div>
+        <div className="absolute w-full h-full" style={{ zIndex: '-1' }}>
+          <div className="parent">
+            <canvas id="canvas"></canvas>
+            <a
+              href="https://codepen.io/soju22/pen/xxGqJxj"
+              className="absolute bottom-0 right-0 p-2 text-gray-100 text-xs"
+            >
+              Background source
+            </a>
+          </div>
+        </div>
+      </>
     );
   }
 }
