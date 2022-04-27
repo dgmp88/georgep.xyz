@@ -1,69 +1,70 @@
-import { Component } from 'react';
 import { Lines } from '../../lib/lines';
+import { useState, useEffect } from 'react';
+import * as colorUtils from '../../lib/colors';
+import { Colors } from './colors';
+import { NumberSlider } from './numberslider';
+import { SVG } from '@svgdotjs/svg.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsRotate, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { downloadSVG } from './svg';
 
 import _ from 'lodash';
 
-export class LinesApp extends Component {
-  constructor(props) {
-    super(props);
+const defaultNLines = 5;
+const defaultColors = colorUtils.darkRainbow;
 
-    this.state = { mounted: false };
-    this.download = this.download.bind(this);
-    this.refresh = this.refresh.bind(this);
-    this.changeN = this.changeN.bind(this);
-  }
-  componentDidMount() {
-    console.log('lines mounted');
-    let lines = new Lines();
+export function LinesApp() {
+  const [nLines, setNLines] = useState(10);
+  const [colors, setColors] = useState([...defaultColors]);
+  const [lines, setLines] = useState(10);
 
-    this.state.lines = lines;
-    this.state.mounted = true;
-  }
+  useEffect(
+    () => {
+      // We have to create this in useEffect, as we can only open the SVG class when the page has rendered
+      const d = SVG().addTo('#svg');
+      const l = new Lines(d, nLines, colors);
+      window.addEventListener('resize', () => l.refresh());
+      setLines(l);
 
-  componentWillUnmount() {
-    let d = this.state.lines.draw;
-    d.clear();
-    d.remove();
-    console.log('lines unmounted');
-  }
+      return function cleanup() {
+        d.clear();
+        d.remove();
+      };
+    },
+    // Only update when these change
+    [nLines, colors]
+  );
 
-  download() {
-    this.state.lines.download();
-  }
+  return (
+    <>
+      <div>
+        <div className="font-medium">Number of lines</div>
+        <NumberSlider
+          min={3}
+          max={100}
+          defaultNumber={defaultNLines}
+          value={nLines}
+          setNumber={(n) => setNLines(n)}
+        ></NumberSlider>
+      </div>
 
-  refresh() {
-    this.state.lines.refresh();
-  }
-
-  changeN(event) {
-    console.log('changing');
-    let n = parseInt(event.target.value);
-    this.state.lines.setN(n);
-    this.state.lines.refreshAfterPause();
-  }
-
-  render() {
-    return (
-      <>
-        <div>
-          <div className="font-medium">Number of lines</div>
-          <input
-            type="range"
-            min="1"
-            max="50"
-            defaultValue={3}
-            className="range"
-            onChange={this.changeN}
-          ></input>
-        </div>
-
-        <button className="btn btn-secondary" onClick={this.refresh}>
-          Refresh
+      <Colors colors={colors} setColors={setColors}></Colors>
+      <div className="flex justify-center">
+        <button
+          className="btn btn-primary m-2"
+          onClick={() => {
+            lines.refresh();
+          }}
+        >
+          <FontAwesomeIcon icon={faArrowsRotate} />
         </button>
-        <button className="btn btn-primary" onClick={this.download}>
-          Download SVG
+        <button
+          className="btn btn-secondary m-2"
+          onClick={() => downloadSVG(lines.draw)}
+        >
+          <FontAwesomeIcon icon={faDownload} />
         </button>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
 }

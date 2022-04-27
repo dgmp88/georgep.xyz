@@ -1,5 +1,5 @@
 import { Header } from '../components/header';
-import { Background } from '../components/background';
+import { Background } from '../components/homeBackground';
 
 function Home() {
   return (

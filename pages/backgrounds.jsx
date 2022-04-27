@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect, createElement } from 'react';
 
 import { TrianglesApp } from '../components/backgrounds/triangles';
 import { LinesApp } from '../components/backgrounds/lines';
 
 const apps = {
-  triangles: <TrianglesApp></TrianglesApp>,
-  lines: <LinesApp></LinesApp>,
+  triangles: TrianglesApp,
+  lines: LinesApp,
 };
 
 export default function Backgrounds() {
   const [current, setCurrent] = useState('lines');
+
   let app = apps[current];
   return (
     <>
@@ -27,6 +28,7 @@ export default function Backgrounds() {
               {Object.keys(apps).map((name) => {
                 return (
                   <div
+                    key={name}
                     className={`tab tab-lifted ${
                       name === current ? 'tab-active' : ''
                     }`}
@@ -40,7 +42,7 @@ export default function Backgrounds() {
 
             {/* <TrianglesApp></TrianglesApp> */}
             {/* <LinesApp></LinesApp> */}
-            {app}
+            {createElement(app)}
           </div>
         </div>
       </div>

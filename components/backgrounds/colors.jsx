@@ -91,68 +91,49 @@ function Color(props) {
 function Colors({ colors, setColors }) {
   return (
     <>
-      <div className="font-medium">Colors</div>
-      <div className="flex flex-wrap justify-center align-middle">
-        {colors.map((color, idx) => (
-          <div key={color} className="px-1">
-            <Color
-              color={color}
-              onColorUpdate={(col) => {
-                colors[idx] = col;
-                setColors([...colors]);
-              }}
-            />
-            <span
-              className="inline-block align-top cursor-pointer 
-              "
-              onClick={() => {
-                let colorsTmp = [...colors];
-                colorsTmp.splice(idx, 1);
-                setColors(colorsTmp);
-              }}
-            >
-              <FontAwesomeIcon icon={faXmark} />
-            </span>
-          </div>
-        ))}
-      </div>
-      <span
-        className="btn btn-secondary btn-xs m-3"
-        onClick={(event) => {
-          let colorsTmp = [...colors];
-          colorsTmp.push(chroma.random().hex());
-          setColors(colorsTmp);
-        }}
-      >
-        <FontAwesomeIcon icon={faPlus} />
-      </span>
-      <label
-        htmlFor="my-modal"
-        className="btn btn-secondary btn-xs m-3 modal-button"
-      >
-        <FontAwesomeIcon icon={faFileImport} />
-      </label>
-      <PasteModal setColors={setColors}></PasteModal>
-    </>
-  );
-}
-
-function NumberSlider({ defaultNumber, setNumber, min, max }) {
-  return (
-    <>
       <div>
-        <div className="font-medium">Number of triangles</div>
-        <input
-          type="range"
-          min={min}
-          max={max}
-          defaultValue={defaultNumber}
-          className="range"
-          onChange={(event) => {
-            let n = parseInt(event.target.value);
-            setNumber(n);
+        <div className="font-medium">Colors</div>
+        <div className="flex flex-wrap justify-center align-middle">
+          {colors.map((color, idx) => (
+            <div key={color} className="px-1">
+              <Color
+                color={color}
+                onColorUpdate={(col) => {
+                  colors[idx] = col;
+                  setColors([...colors]);
+                }}
+              />
+              <span
+                className="inline-block align-top cursor-pointer 
+              "
+                onClick={() => {
+                  let colorsTmp = [...colors];
+                  colorsTmp.splice(idx, 1);
+                  setColors(colorsTmp);
+                }}
+              >
+                <FontAwesomeIcon icon={faXmark} />
+              </span>
+            </div>
+          ))}
+        </div>
+        <span
+          className="btn btn-secondary btn-xs m-3"
+          onClick={(event) => {
+            let colorsTmp = [...colors];
+            colorsTmp.push(chroma.random().hex());
+            setColors(colorsTmp);
           }}
-        ></input>
+        >
+          <FontAwesomeIcon icon={faPlus} />
+        </span>
+        <label
+          htmlFor="my-modal"
+          className="btn btn-secondary btn-xs m-3 modal-button"
+        >
+          <FontAwesomeIcon icon={faFileImport} />
+        </label>
+        <PasteModal setColors={setColors}></PasteModal>
       </div>
     </>
   );
@@ -180,4 +161,4 @@ function Palette(props) {
   );
 }
 
-export { NumberSlider, Color, Colors, Palette };
+export { Color, Colors, Palette };
