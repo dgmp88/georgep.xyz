@@ -75,8 +75,9 @@ export function LinesApp() {
       </div>
 
       <div>
-        <div className="font-medium">Ripple</div>
+        <div className="font-medium">Ripple*</div>
         <Switch value={animate} setValue={(x) => setAnimate(x)}></Switch>
+        <p className="text-2xs">*Not yet downloadable</p>
       </div>
 
       <Colors colors={colors} setColors={setColors}></Colors>

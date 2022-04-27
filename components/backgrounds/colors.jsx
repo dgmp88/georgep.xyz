@@ -3,11 +3,7 @@ import chroma from 'chroma-js';
 import * as colorUtils from '../../lib/colors';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faXmark,
-  faPlus,
-  faFileImport,
-} from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faPlus, faBars } from '@fortawesome/free-solid-svg-icons';
 
 function PasteModal({ setColors }) {
   return (
@@ -131,7 +127,7 @@ function Colors({ colors, setColors }) {
           htmlFor="my-modal"
           className="btn btn-secondary btn-xs m-3 modal-button"
         >
-          <FontAwesomeIcon icon={faFileImport} />
+          <FontAwesomeIcon icon={faBars} />
         </label>
         <PasteModal setColors={setColors}></PasteModal>
       </div>
