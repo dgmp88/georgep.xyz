@@ -8,12 +8,12 @@ function Home({ posts }) {
       <Background></Background>
       <NavBar />
       <div className="overflow-x-auto w-2/3 m-auto py-20">
-        <table className="table w-full bg-red-100 rounded-lg">
+        <table className="table w-full rounded-lg bg-base-100/75">
           <tbody>
             {posts.map((p) => (
               <tr key={p.id}>
-                <td className="bg-red-500">{p.date}</td>
-                <td>
+                <td className="bg-inherit">{p.date}</td>
+                <td className="bg-inherit">
                   <Link href={'blog/' + p.id}>
                     <a className="block font-bold">{p.title}</a>
                   </Link>

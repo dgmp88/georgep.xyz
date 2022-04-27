@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import * as colorUtils from '../../lib/colors';
 import { Colors } from './colors';
 import { NumberSlider } from './numberslider';
+import { Switch } from './switch';
 import { SVG } from '@svgdotjs/svg.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate, faDownload } from '@fortawesome/free-solid-svg-icons';
@@ -19,6 +20,7 @@ export function LinesApp() {
   const [nLines, setNLines] = useState(defaultNLines);
   const [nPoints, setNPoints] = useState(defaultNPoints);
   const [maxHeight, setMaxHeight] = useState(defaultMaxHeight);
+  const [animate, setAnimate] = useState(false);
   // const [nLines, setNLines] = useState(10);
   const [colors, setColors] = useState([...defaultColors]);
   const [lines, setLines] = useState(undefined);
@@ -27,7 +29,7 @@ export function LinesApp() {
     () => {
       // We have to create this in useEffect, as we can only open the SVG class when the page has rendered
       const d = SVG().addTo('#svg');
-      const l = new Lines(d, nLines, colors, nPoints, maxHeight);
+      const l = new Lines(d, nLines, colors, nPoints, maxHeight, animate);
       window.addEventListener('resize', () => l.refresh());
       setLines(l);
 
@@ -37,7 +39,7 @@ export function LinesApp() {
       };
     },
     // Only update when these change
-    [nLines, maxHeight, nPoints, colors]
+    [nLines, maxHeight, animate, nPoints, colors]
   );
 
   return (
@@ -70,6 +72,11 @@ export function LinesApp() {
           value={nPoints}
           setNumber={(n) => setNPoints(n)}
         ></NumberSlider>
+      </div>
+
+      <div>
+        <div className="font-medium">Ripple</div>
+        <Switch value={animate} setValue={(x) => setAnimate(x)}></Switch>
       </div>
 
       <Colors colors={colors} setColors={setColors}></Colors>

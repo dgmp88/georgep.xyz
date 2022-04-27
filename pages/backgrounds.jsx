@@ -1,5 +1,6 @@
 import { useState, useEffect, createElement } from 'react';
 
+import { NavBar } from '../components/navbar';
 import { TrianglesApp } from '../components/backgrounds/triangles';
 import { LinesApp } from '../components/backgrounds/lines';
 
@@ -18,6 +19,7 @@ export default function Backgrounds() {
       <div className="absolute -z-1" id="svg">
         {/* This is the actual background  */}
       </div>
+      <NavBar />
       <div
         className="hero min-h-screen"
         onClick={() => {
