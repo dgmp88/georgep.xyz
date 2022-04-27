@@ -1,7 +1,7 @@
 import Link from 'next/link';
-export function Header() {
+export function NavBar() {
   return (
-    <div className="navbar">
+    <div className="navbar text-gray-100 ">
       <div className="flex-1">
         <Link href="/">
           <a className="btn btn-ghost normal-case text-xl">George Prichard</a>
@@ -10,6 +10,7 @@ export function Header() {
       <div className="flex-none">
         <ul className="menu menu-horizontal p-0">
           <li>
+            <Link href="/backgrounds">Backgrounds</Link>
             <Link href="/blog">Blog</Link>
           </li>
         </ul>

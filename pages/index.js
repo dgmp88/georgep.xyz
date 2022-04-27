@@ -1,12 +1,12 @@
-import { Header } from '../components/header';
+import { NavBar } from '../components/navbar';
 import { Background } from '../components/homeBackground';
 
 function Home() {
   return (
     <>
       <Background></Background>
-      <Header />
-      <div className="max-w-md m-auto my-10">
+      <NavBar />
+      <div className="max-w-md m-auto my-16">
         <div className="card m-3 glass p-3">
           <figure>
             <img className="rounded-lg" src="/images/me.jpg" alt="George"></img>

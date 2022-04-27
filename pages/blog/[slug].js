@@ -1,6 +1,7 @@
-import { Header } from '../../components/header';
+import { NavBar } from '../../components/navbar';
 import { React, Component } from 'react';
 import { getSortedPostsList, getPost } from '../../lib/posts';
+import { Background } from '../../components/homeBackground';
 
 import Prism from 'prismjs';
 require('prismjs/components/prism-python');
@@ -18,8 +19,9 @@ class PostPage extends Component {
     }
     return (
       <>
-        <Header />
-        <div className="prose lg:prose-lg mx-auto px-4 py-8">
+        <Background />
+        <NavBar />
+        <div className="prose lg:prose-lg mx-auto px-4 py-8 bg-base-100/75 rounded-lg">
           <h1>{meta.title}</h1>
           <div dangerouslySetInnerHTML={{ __html: content }}></div>
         </div>

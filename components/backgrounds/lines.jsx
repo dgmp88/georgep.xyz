@@ -11,18 +11,23 @@ import { downloadSVG } from './svg';
 import _ from 'lodash';
 
 const defaultNLines = 5;
+const defaultMaxHeight = 150;
+const defaultNPoints = 4;
 const defaultColors = colorUtils.darkRainbow;
 
 export function LinesApp() {
-  const [nLines, setNLines] = useState(10);
+  const [nLines, setNLines] = useState(defaultNLines);
+  const [nPoints, setNPoints] = useState(defaultNPoints);
+  const [maxHeight, setMaxHeight] = useState(defaultMaxHeight);
+  // const [nLines, setNLines] = useState(10);
   const [colors, setColors] = useState([...defaultColors]);
-  const [lines, setLines] = useState(10);
+  const [lines, setLines] = useState(undefined);
 
   useEffect(
     () => {
       // We have to create this in useEffect, as we can only open the SVG class when the page has rendered
       const d = SVG().addTo('#svg');
-      const l = new Lines(d, nLines, colors);
+      const l = new Lines(d, nLines, colors, nPoints, maxHeight);
       window.addEventListener('resize', () => l.refresh());
       setLines(l);
 
@@ -32,7 +37,7 @@ export function LinesApp() {
       };
     },
     // Only update when these change
-    [nLines, colors]
+    [nLines, maxHeight, nPoints, colors]
   );
 
   return (
@@ -42,9 +47,28 @@ export function LinesApp() {
         <NumberSlider
           min={3}
           max={100}
-          defaultNumber={defaultNLines}
           value={nLines}
           setNumber={(n) => setNLines(n)}
+        ></NumberSlider>
+      </div>
+
+      <div>
+        <div className="font-medium">Maximum Height</div>
+        <NumberSlider
+          min={0}
+          max={2000}
+          value={maxHeight}
+          setNumber={(n) => setMaxHeight(n)}
+        ></NumberSlider>
+      </div>
+
+      <div>
+        <div className="font-medium">Number of Curves</div>
+        <NumberSlider
+          min={1}
+          max={300}
+          value={nPoints}
+          setNumber={(n) => setNPoints(n)}
         ></NumberSlider>
       </div>
 

@@ -1,12 +1,6 @@
 import { useState } from 'react';
 
-export function NumberSlider({
-  defaultNumber,
-  setNumber,
-  min,
-  max,
-  pauseTime = 200,
-}) {
+export function NumberSlider({ value, setNumber, min, max, pauseTime = 200 }) {
   const [timeoutTimer, setTimeoutTimer] = useState(undefined);
 
   const runAfterTimeout = (fun) => {
@@ -23,8 +17,8 @@ export function NumberSlider({
         type="range"
         min={min}
         max={max}
-        defaultValue={defaultNumber}
-        className="range"
+        defaultValue={value}
+        className="range range-primary"
         onChange={(event) => {
           let n = parseInt(event.target.value);
           runAfterTimeout(() => setNumber(n));
