@@ -11,7 +11,7 @@ export default function () {
       <div className="w-2/3 m-auto py-20">
         <div className="prose text-center lg:prose-lg mx-auto px-4 py-8 bg-base-100/75 rounded-lg ">
           <p>
-            These were originally made as apps using{' '}
+            These were originally made as android apps using{' '}
             <a href="https://libgdx.com/">LibGDX</a> several years back. They're
             now relatively easy to compile for the browser, so it's fun to have
             them here. They may be a touch buggy, but the core features seem to
