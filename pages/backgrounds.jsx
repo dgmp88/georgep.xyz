@@ -25,7 +25,7 @@ export default function Backgrounds() {
       </div>
       <NavBar />
       <div
-        className="hero min-h-screen"
+        className="hero min-h-screen py-12"
         onClick={() => {
           console.log('hit');
           // setUiHidden(~uiHidden);
@@ -61,7 +61,7 @@ export default function Backgrounds() {
             {createElement(app, { draw, refreshRef })}
             <div className="flex justify-center">
               <button
-                className="btn btn-primary m-2"
+                className="btn btn-primary btn-sm m-2"
                 onClick={() => {
                   refreshRef.current();
                 }}
@@ -69,7 +69,7 @@ export default function Backgrounds() {
                 <FontAwesomeIcon icon={faArrowsRotate} />
               </button>
               <button
-                className="btn btn-secondary m-2"
+                className="btn btn-secondary btn-sm m-2"
                 onClick={() => download()}
               >
                 <FontAwesomeIcon icon={faDownload} />
