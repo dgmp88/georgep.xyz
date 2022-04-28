@@ -1,7 +1,7 @@
 import Link from 'next/link';
 export function NavBar() {
   return (
-    <div className="navbar text-gray-100 ">
+    <div className="absolute navbar text-gray-100 ">
       <div className="flex-1">
         <Link href="/">
           <a className="btn btn-ghost normal-case text-xl">George Prichard</a>

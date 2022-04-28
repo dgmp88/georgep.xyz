@@ -1,41 +1,32 @@
 import { useState, useEffect } from 'react';
-import { SVG } from '@svgdotjs/svg.js';
 import * as colorUtils from '../../lib/colors';
-import { Triangles } from '../../lib/triangles';
+import { Triangles } from '../../lib/backgrounds/triangles';
 
 import { Color, Colors } from './colors';
 import { NumberSlider } from './numberslider';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsRotate, faDownload } from '@fortawesome/free-solid-svg-icons';
-
-import { downloadSVG } from './svg';
+import { Switch } from './switch';
 
 const defaultNTriangles = 500;
 const defaultColors = colorUtils.darkRainbow;
 let defaultEdgeCol = '#ee9b00'; // with some opacity
 let edgesOn = false;
 
-export function TrianglesApp() {
+export function TrianglesApp({ draw, refreshRef }) {
   const [nTriangles, setNTriangles] = useState(defaultNTriangles);
   const [edges, setEdges] = useState(edgesOn);
   const [edgeCol, setEdgeCol] = useState(defaultEdgeCol);
-  const [draw, setDraw] = useState(undefined);
   const [colors, setColors] = useState([...defaultColors]);
-  const [triangles, setTriangles] = useState(undefined);
   useEffect(
     () => {
-      // We have to create this in useEffect, as we can only open the SVG class when the page has rendered
-      const d = SVG().addTo('#svg');
-      setDraw(d);
-
-      const t = new Triangles(d, nTriangles, colors, edges, edgeCol);
+      if (draw === undefined) {
+        return;
+      }
+      const t = new Triangles(draw, nTriangles, colors, edges, edgeCol);
       window.addEventListener('resize', () => t.refresh());
-      setTriangles(t);
+      refreshRef.current = () => t.refresh();
 
       return function cleanup() {
-        d.clear();
-        d.remove();
+        draw.clear();
       };
     },
     // Only update when these change
@@ -63,22 +54,6 @@ export function TrianglesApp() {
         edgeCol={edgeCol}
         setEdgeCol={setEdgeCol}
       ></Edges>
-      <div className="flex justify-center">
-        <button
-          className="btn btn-primary m-2"
-          onClick={() => {
-            triangles.refresh();
-          }}
-        >
-          <FontAwesomeIcon icon={faArrowsRotate} />
-        </button>
-        <button
-          className="btn btn-secondary m-2"
-          onClick={() => downloadSVG(triangles.draw)}
-        >
-          <FontAwesomeIcon icon={faDownload} />
-        </button>
-      </div>
     </>
   );
 }
@@ -90,14 +65,7 @@ function Edges({ edges, setEdges, edgeCol, setEdgeCol }) {
         <div className="form-control w-1/3">
           <label className="label cursor-pointer">
             <span className="label-text font-medium">Edges</span>
-            <input
-              type="checkbox"
-              className="toggle"
-              onChange={() => {
-                setEdges(!edges);
-              }}
-              value={edges}
-            ></input>
+            <Switch value={edges} setValue={(x) => setEdges(x)}></Switch>
           </label>
         </div>
         <div

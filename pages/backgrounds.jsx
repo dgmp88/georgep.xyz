@@ -1,9 +1,11 @@
-import { useState, useEffect, createElement } from 'react';
+import { useState, useRef, createElement } from 'react';
 
+import { useDraw } from '../components/backgrounds/svg';
 import { NavBar } from '../components/navbar';
 import { TrianglesApp } from '../components/backgrounds/triangles';
 import { LinesApp } from '../components/backgrounds/lines';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsRotate, faDownload } from '@fortawesome/free-solid-svg-icons';
 const apps = {
   triangles: TrianglesApp,
   lines: LinesApp,
@@ -12,6 +14,8 @@ const apps = {
 export default function Backgrounds() {
   const [current, setCurrent] = useState('lines');
   const [uiHidden, setUiHidden] = useState(false);
+  const refreshRef = useRef(null);
+  const { draw, download } = useDraw();
 
   let app = apps[current];
   return (
@@ -54,7 +58,23 @@ export default function Backgrounds() {
               <p>Resize the window to get the export size you want.</p>
               {/* <p>Click the background to hide the designer</p> */}
             </div>
-            {createElement(app)}
+            {createElement(app, { draw, refreshRef })}
+            <div className="flex justify-center">
+              <button
+                className="btn btn-primary m-2"
+                onClick={() => {
+                  refreshRef.current();
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowsRotate} />
+              </button>
+              <button
+                className="btn btn-secondary m-2"
+                onClick={() => download()}
+              >
+                <FontAwesomeIcon icon={faDownload} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
