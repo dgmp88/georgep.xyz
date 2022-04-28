@@ -10,8 +10,9 @@ export function NavBar() {
       <div className="flex-none">
         <ul className="menu menu-horizontal p-0">
           <li>
-            <Link href="/backgrounds">Backgrounds</Link>
             <Link href="/blog">Blog</Link>
+            <Link href="/backgrounds">Backgrounds</Link>
+            <Link href="/games">Games</Link>
           </li>
         </ul>
       </div>
