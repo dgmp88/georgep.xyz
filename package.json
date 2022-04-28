@@ -3,13 +3,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "export": "next export",
+    "export": "ANALYZE=true next export",
     "debug": "node lib/math.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
+    "@next/bundle-analyzer": "^12.1.5",
     "@svgdotjs/svg.js": "^3.1.2",
     "chroma-js": "^2.4.2",
     "daisyui": "^2.14.1",
