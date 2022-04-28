@@ -1,8 +1,5 @@
 import { NavBar } from '../components/navbar';
 import { Background } from '../components/homeBackground';
-import Image from 'next/image';
-
-import mePic from '../public/images/me.jpg';
 
 function Home() {
   return (
@@ -12,7 +9,11 @@ function Home() {
       <div className="hero min-h-screen">
         <div className="hero-content prose text-center max-w-lg glass rounded-lg">
           <div>
-            <Image src={mePic} className="rounded-lg" />
+            <img
+              className="rounded-lg w-lg"
+              src="/images/me.jpg"
+              alt="George"
+            ></img>
           </div>
           <div className="">
             <h2 className="text-gray-100">Hi. I'm George</h2>
