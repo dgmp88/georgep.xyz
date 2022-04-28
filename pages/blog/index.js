@@ -1,11 +1,15 @@
 import Link from 'next/link';
 
 import { getSortedPostsList } from '../../lib/posts';
+import { NavBar } from '../../components/navbar';
+import { Background } from '../../components/homeBackground';
 
 export default function Home({ posts }) {
   return (
     <>
-      <div className="overflow-x-auto w-2/3 m-auto py-20">
+      <Background></Background>
+      <NavBar />
+      <div className="w-2/3 m-auto py-20">
         <table className="table w-full rounded-lg bg-base-100/75">
           <tbody>
             {posts.map((p) => (
