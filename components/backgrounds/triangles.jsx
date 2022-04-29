@@ -18,7 +18,7 @@ export function TrianglesApp({ draw, refreshRef }) {
   const [colors, setColors] = useState([...defaultColors]);
   useEffect(
     () => {
-      if (draw === undefined) {
+      if (draw === null) {
         return;
       }
       const t = new Triangles(draw, nTriangles, colors, edges, edgeCol);
@@ -30,7 +30,7 @@ export function TrianglesApp({ draw, refreshRef }) {
       };
     },
     // Only update when these change
-    [nTriangles, colors, edges, edgeCol]
+    [draw, nTriangles, colors, edges, edgeCol]
   );
 
   return (
