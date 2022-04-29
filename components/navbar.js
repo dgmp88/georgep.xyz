@@ -4,17 +4,17 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 export function NavBar() {
   return (
-    <div class="absolute navbar text-gray-100">
-      <div class="navbar-start">
-        <div class="dropdown">
-          <label tabindex="0" class="btn btn-ghost lg:hidden">
+    <div className="absolute navbar text-gray-100">
+      <div className="navbar-start">
+        <div className="dropdown">
+          <label tabIndex="0" className="btn btn-ghost lg:hidden">
             <FontAwesomeIcon icon={faBars} />
           </label>
           <ul
-            tabindex="0"
-            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-black/75  rounded-box"
+            tabIndex="0"
+            className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-black/75  rounded-box"
           >
-            <ul class="menu menu-horizontal p-0">
+            <ul className="menu menu-horizontal p-0">
               <li>
                 <Link href="/blog">Blog</Link>
               </li>
@@ -31,8 +31,8 @@ export function NavBar() {
           <a className="btn btn-ghost normal-case text-xl">George Prichard</a>
         </Link>
       </div>
-      <div class="navbar-end hidden lg:flex">
-        <ul class="menu menu-horizontal p-0">
+      <div className="navbar-end hidden lg:flex">
+        <ul className="menu menu-horizontal p-0">
           <li>
             <Link href="/blog">Blog</Link>
           </li>
@@ -44,25 +44,6 @@ export function NavBar() {
           </li>
         </ul>
       </div>
-      {/* <div class="navbar-end">
-        <a class="btn">Get started</a>
-      </div> */}
     </div>
-    // <div className="absolute navbar text-gray-100 ">
-    //   <div className="flex-1">
-    //     <Link href="/">
-    //       <a className="btn btn-ghost normal-case text-xl">George Prichard</a>
-    //     </Link>
-    //   </div>
-    //   <div className="flex-none">
-    //     <ul className="menu menu-horizontal p-0">
-    // <li>
-    //   <Link href="/blog">Blog</Link>
-    //   <Link href="/backgrounds">Backgrounds</Link>
-    //   <Link href="/games">Games</Link>
-    // </li>
-    //     </ul>
-    //   </div>
-    // </div>
   );
 }
