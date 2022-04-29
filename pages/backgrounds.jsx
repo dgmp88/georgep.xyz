@@ -4,11 +4,13 @@ import { useDraw } from '../components/backgrounds/svg';
 import { NavBar } from '../components/navbar';
 import { TrianglesApp } from '../components/backgrounds/triangles';
 import { LinesApp } from '../components/backgrounds/lines';
+import { PolygonsApp } from '../components/backgrounds/polygons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate, faDownload } from '@fortawesome/free-solid-svg-icons';
 const apps = {
   triangles: TrianglesApp,
   lines: LinesApp,
+  polygons: PolygonsApp,
 };
 
 export default function Backgrounds() {

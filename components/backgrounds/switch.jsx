@@ -1,4 +1,5 @@
 export function Switch({ value, setValue }) {
+  console.log(value);
   return (
     <input
       type="checkbox"
@@ -7,6 +8,7 @@ export function Switch({ value, setValue }) {
         setValue(!value);
       }}
       value={value}
+      checked={value}
     ></input>
   );
 }

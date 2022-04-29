@@ -16,7 +16,7 @@ export function LinesApp({ draw, refreshRef }) {
   const [nLines, setNLines] = useState(defaultNLines);
   const [nPoints, setNPoints] = useState(defaultNPoints);
   const [maxHeight, setMaxHeight] = useState(defaultMaxHeight);
-  const [animate, setAnimate] = useState(false);
+  const [animate, setAnimate] = useState(true);
   const [colors, setColors] = useState([...defaultColors]);
 
   useEffect(

@@ -89,6 +89,22 @@ function Colors({ colors, setColors }) {
     <>
       <div>
         <div className="font-medium">Colors</div>
+        <span
+          className="btn btn-secondary btn-xs m-3"
+          onClick={(event) => {
+            let colorsTmp = [...colors];
+            colorsTmp.push(chroma.random().hex());
+            setColors(colorsTmp);
+          }}
+        >
+          <FontAwesomeIcon icon={faPlus} />
+        </span>
+        <label
+          htmlFor="my-modal"
+          className="btn btn-secondary btn-xs m-3 modal-button"
+        >
+          <FontAwesomeIcon icon={faBars} />
+        </label>
         <div className="flex flex-wrap justify-center align-middle">
           {colors.map((color, idx) => (
             <div key={color} className="px-1">
@@ -113,22 +129,7 @@ function Colors({ colors, setColors }) {
             </div>
           ))}
         </div>
-        <span
-          className="btn btn-secondary btn-xs m-3"
-          onClick={(event) => {
-            let colorsTmp = [...colors];
-            colorsTmp.push(chroma.random().hex());
-            setColors(colorsTmp);
-          }}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-        </span>
-        <label
-          htmlFor="my-modal"
-          className="btn btn-secondary btn-xs m-3 modal-button"
-        >
-          <FontAwesomeIcon icon={faBars} />
-        </label>
+
         <PasteModal setColors={setColors}></PasteModal>
       </div>
     </>
