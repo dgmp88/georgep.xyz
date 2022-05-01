@@ -22,23 +22,23 @@ export default function Backgrounds() {
   let app = apps[current];
   return (
     <>
-      <div className="absolute -z-1" id="svg">
+      <div
+        className="absolute -z-1"
+        id="svg"
+        onClick={() => {
+          setUiHidden(~uiHidden);
+        }}
+      >
         {/* This is the actual background  */}
       </div>
       <NavBar />
-      <div
-        className="hero min-h-screen py-12"
-        onClick={() => {
-          console.log('hit');
-          // setUiHidden(~uiHidden);
-        }}
-      >
+      <div className="hero min-h-screen py-12">
         <div
-          className={`hero-content text-center max-w-xl ${
+          className={`hero-content text-center w-1/2 ${
             uiHidden ? 'invisible' : 'visible'
           }`}
         >
-          <div className="rounded p-5 bg-base-100 bg-opacity-75">
+          <div className="rounded p-5 bg-base-100 bg-opacity-75 w-full">
             <h1 className="text-3xl font-bold">Background Designer</h1>
 
             <div className="tabs justify-center py-2">

@@ -148,7 +148,7 @@ export function PolygonsApp({ draw, refreshRef }) {
           setNumber={(n) => setN(n)}
         ></NumberSlider>
       </div>
-      <div className="flex">
+      <div className="flex py-3">
         <div className="font-medium px-2">X</div>
         <NumberSlider
           min={0}

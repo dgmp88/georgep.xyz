@@ -26,7 +26,7 @@ export function NumberSlider({
         max={max}
         step={step}
         defaultValue={value}
-        className="range range-primary"
+        className="range range-primary "
         onChange={(event) => {
           let n = parseFloat(event.target.value);
           runAfterTimeout(() => setNumber(n));
