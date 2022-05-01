@@ -1,5 +1,4 @@
 export function Switch({ value, setValue }) {
-  console.log(value);
   return (
     <input
       type="checkbox"

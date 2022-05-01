@@ -23,7 +23,7 @@ export default function Backgrounds() {
   return (
     <>
       <div
-        className="absolute -z-1"
+        className="fixed -z-1"
         id="svg"
         onClick={() => {
           setUiHidden(~uiHidden);
