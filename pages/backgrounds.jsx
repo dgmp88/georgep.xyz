@@ -34,11 +34,11 @@ export default function Backgrounds() {
       <NavBar />
       <div className="hero min-h-screen py-12">
         <div
-          className={`hero-content text-center w-1/2 ${
+          className={`hero-content text-center max-w-2xl ${
             uiHidden ? 'invisible' : 'visible'
           }`}
         >
-          <div className="rounded p-5 bg-base-100 bg-opacity-75 w-full">
+          <div className="rounded p-5 bg-base-100 bg-opacity-75">
             <h1 className="text-3xl font-bold">Background Designer</h1>
 
             <div className="tabs justify-center py-2">
