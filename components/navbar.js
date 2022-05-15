@@ -19,7 +19,7 @@ export function NavBar() {
                 <Link href="/blog">Blog</Link>
               </li>
               <li>
-                <Link href="/backgrounds">Backgrounds</Link>
+                <Link href="https://itsgeometry.com">Backgrounds</Link>
               </li>
               <li>
                 <Link href="/games">Games</Link>
@@ -40,7 +40,7 @@ export function NavBar() {
             <Link href="/blog">Blog</Link>
           </li>
           <li>
-            <Link href="/backgrounds">Backgrounds</Link>
+            <Link href="https://itsgeometry.com">Backgrounds</Link>
           </li>
           <li>
             <Link href="/games">Games</Link>
