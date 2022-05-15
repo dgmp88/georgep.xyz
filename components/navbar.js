@@ -24,6 +24,9 @@ export function NavBar() {
               <li>
                 <Link href="/games">Games</Link>
               </li>
+              <li>
+                <Link href="/cv.pdf">CV</Link>
+              </li>
             </ul>
           </ul>
         </div>
@@ -41,6 +44,9 @@ export function NavBar() {
           </li>
           <li>
             <Link href="/games">Games</Link>
+          </li>
+          <li>
+            <Link href="/cv.pdf">CV</Link>
           </li>
         </ul>
       </div>
