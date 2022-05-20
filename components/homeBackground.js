@@ -7,7 +7,8 @@ export function Background() {
         className="fixed w-screen h-screen"
         style={{
           zIndex: '-1',
-          backgroundImage: "url('/curves.svg')",
+          backgroundColor: '#555555',
+          backgroundImage: "url('/hex.svg')",
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
         }}
