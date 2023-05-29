@@ -24,6 +24,9 @@ class PostPage extends Component {
         <div className="w-2/3 m-auto py-20">
           <div className="prose lg:prose-lg mx-auto px-4 py-8 bg-base-100/75 rounded-lg ">
             <h1>{meta.title}</h1>
+            <h4 className="text-right font-light">
+              {new Date(meta.date).toDateString()}
+            </h4>
             <div dangerouslySetInnerHTML={{ __html: content }}></div>
           </div>
         </div>
