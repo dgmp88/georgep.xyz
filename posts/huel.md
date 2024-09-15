@@ -63,7 +63,7 @@ I felt stronger - I squatted heavier than I have for the last 6 months, and had 
 ></iframe>
 <p class="text-xs">Annoying 'mins per kilometer with fractional minutes'. e.g. 5:20 min / km = 5.33 (20s/60s = 0.33). Plotly doesn't handle min/km well.</p>
 
-There are only 4 data points there, so the boxplot is a tad grandious. 2 runs were bog standard. But my 2 fastest runs in the last 3 months were during that week. 
+There are only 4 data points there, so the boxplot is a tad grandiose. 2 runs were bog standard. But my 2 fastest runs in the last 3 months were during that week. 
 
 They weren't shorter than usual runs too, so I wasn't just doing short sprints. 
 
