@@ -6,7 +6,7 @@ date: 2024/09/15
 
 A buddy and I had a beer and were curious what it'd be like to live off Huel for a week. We set ourselves these goals: 
 
-1. Only eat huel 
+1. Only eat Huel 
 2. Don't drink any alcohol
 
 We were curious on the impact on 
@@ -27,7 +27,7 @@ We were curious on the impact on
 3. Huel also has lots of micros that I might be somewhat low on (e.g. omega 3's, prevalent in fish, less so in veggie food). 
 
 ## Instant Failure
-I failed on 'only eat huel' on day 1 as my amazing wife brought back some delicious rosette from Italy, so I changed the rules to 'have 2 Huel meals a day'.
+I failed on 'only eat Huel' on day 1 as my amazing wife brought back some delicious rosette from Italy, so I changed the rules to 'have 2 Huel meals a day'.
 
 <img src='/images/rossette.jpg' />
 <p class="text-xs">Not my rosette, which was mushroom. Image from <a href="https://www.tinastable.com/rosette-al-forno/">Tinas Table</a>. Rosette are amazing, go make them. </p>
@@ -134,10 +134,10 @@ I felt reasonably sharp this week, but I'm not sure much change from usual.
 My stomach often felt heavy, in a not-awful but not-pleasant way. Not quite like a big meal, more like there was something sitting in it. I think I'm not used to that much protein.
 
 ### Convenience 
-Not thinking about breakfast / lunch was pretty good. I may have run further than usual at lunch as I knew I could just drink huel at my desk and not miss more work. 
+Not thinking about breakfast / lunch was pretty good. I may have run further than usual at lunch as I knew I could just drink Huel at my desk and not miss more work. 
 
 ### Cost 
-If at the office I'll spend £8-12 on lunch 2x / week. ~2 huel portions would be equivalent, which is ~£3.34. 
+If at the office I'll spend £8-12 on lunch 2x / week. ~2 Huel portions would be equivalent, which is ~£3.34. 
 
 If at home:
 Lunch example: Beans on toast might cost £0.40 beans, £0.38 bagel, £0.35 cheese, then a £0.16 banana  = £1.29
