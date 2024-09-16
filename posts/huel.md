@@ -12,7 +12,7 @@ A buddy and I had a beer and were curious what it'd be like to live off Huel for
 We were curious on the impact on 
 
 - Weight
-- Excercise ability 
+- Exercise ability 
 - Poop quality 
 - Sleep quality
 - Energy levels 
@@ -23,14 +23,14 @@ We were curious on the impact on
 1. My macros are imperfect, partly as I'm vegetarian - many meals are pretty carb heavy (pasta, pizza, etc). Huel claims to have optimal macros. So with Huel I should 
     - Hit protein targets much more frequently.
     - Get healthy fats (most of the fat I eat is from cooking oils, a peanut butter addiction, cheese, etc)
-2. My baseline food is reasonably health, but not amazing. I eat out rather a lot (2x lunches, 2-3x dinners a week), which tends to be pretty unhealthy - rich, salty. My default lunch at home is baked beans on toast - OK, but not amazing. My dinners at home are often carb rich (e.g. pasta + vegetables). 
+2. My baseline food is reasonably healthy, but not amazing. I eat out rather a lot (2x lunches, 2-3x dinners a week), which tends to be pretty unhealthy - rich, salty. My default lunch at home is baked beans on toast - OK, but not amazing. My dinners at home are often carb rich (e.g. pasta + vegetables). 
 3. Huel also has lots of micros that I might be somewhat low on (e.g. omega 3's, prevalent in fish, less so in veggie food). 
 
 ## Instant Failure
 I failed on 'only eat Huel' on day 1 as my amazing wife brought back some delicious rosette from Italy, so I changed the rules to 'have 2 Huel meals a day'.
 
 <img src='/images/rossette.jpg' />
-<p class="text-xs">Not my rosette, which was mushroom. Image from <a href="https://www.tinastable.com/rosette-al-forno/">Tinas Table</a>. Rosette are amazing, go make them. </p>
+<p class="text-xs">Not my rosette, which was mushroom. Image from <a href="https://www.tinastable.com/rosette-al-forno/">Tina's Table</a>. Rosette are amazing, go make them. </p>
 
 I failed on don't drink alcohol on days 4 and 6 because my social life has a worrying focus on going to pubs.
 
@@ -42,7 +42,7 @@ I had 4 store bought 'ready to drink', which is the default one without extra pr
 
 I had at least 1,000 calories from Huel each day, and often more - e.g. on the first day I had 1,800 calories per day.
 
-I started on 05/09/2024 and ended 11/09/2024. 
+I started 05/09/2024 and ended 11/09/2024. 
 
 # Results 
 
@@ -61,7 +61,7 @@ I felt stronger - I squatted heavier than I have for the last 6 months, and had 
   src="/iframes/huel_avg_pace.html"
   frameborder="0"
 ></iframe>
-<p class="text-xs">Annoying 'mins per kilometer with fractional minutes'. e.g. 5:20 min / km = 5.33 (20s/60s = 0.33). Plotly doesn't handle min/km well.</p>
+<p class="text-xs">Annoying 'mins per kilometre with fractional minutes'. e.g. 5:20 min / km = 5.33 (20s/60s = 0.33). Plotly doesn't handle min/km well.</p>
 
 There are only 4 data points there, so the boxplot is a tad grandiose. 2 runs were bog standard. But my 2 fastest runs in the last 3 months were during that week. 
 
