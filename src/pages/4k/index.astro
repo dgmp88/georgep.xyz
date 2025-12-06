@@ -1,0 +1,16 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import FourK from '../../components/FourK.jsx';
+import { SITE_TITLE } from '../../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`4K Weeks | ${SITE_TITLE}`} description="4,000 weeks life visualization" />
+  </head>
+  <body class="bg-white">
+    <FourK client:load />
+  </body>
+</html>
+

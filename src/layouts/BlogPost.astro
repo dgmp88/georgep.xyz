@@ -1,0 +1,34 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Background from '../components/Background.astro';
+import { SITE_TITLE } from '../consts';
+
+interface Props {
+  title: string;
+  date: Date;
+}
+
+const { title, date } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`${title} | ${SITE_TITLE}`} />
+  </head>
+  <body>
+    <Background />
+    <Header />
+    <main class="w-full m-auto py-20">
+      <article class="prose lg:prose-lg w-3/4 max-w-4xl mx-auto px-4 py-8 bg-base-100/75 rounded-lg">
+        <h1>{title}</h1>
+        <h4 class="text-right font-light">
+          {date.toDateString()}
+        </h4>
+        <slot />
+      </article>
+    </main>
+  </body>
+</html>
+

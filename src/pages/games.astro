@@ -1,0 +1,40 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Background from '../components/Background.astro';
+import { Play } from '../components/Play.jsx';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Games | ${SITE_TITLE}`} description="Browser games" />
+  </head>
+  <body>
+    <Background />
+    <Header />
+    <main class="w-2/3 m-auto py-20">
+      <div class="prose text-center lg:prose-lg mx-auto px-4 py-8 bg-base-100/75 rounded-lg">
+        <p>
+          These were originally made as android apps using{' '}
+          <a href="https://libgdx.com/">LibGDX</a> several years back. They're
+          now relatively easy to compile for the browser, so it's fun to have
+          them here. They may be a touch buggy, but the core features seem to
+          work.
+        </p>
+        <h1>Dinowar</h1>
+        <p>
+          Dinosaur strategy game made with{' '}
+          <a href="https://www.dglencross.com/">David</a> and graphics by{' '}
+          <a href="https://emile.work">Emile</a>.
+        </p>
+        <Play client:load game="dinowar" />
+        <h1 class="pt-16">Lunee</h1>
+        <p>Physics based space game. Graphics by me, sorry about that.</p>
+        <Play client:load game="lunee" />
+      </div>
+    </main>
+  </body>
+</html>
+
