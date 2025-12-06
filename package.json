@@ -9,9 +9,15 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.17",
     "astro": "^5.16.4",
     "daisyui": "^5.5.8",
+    "lodash": "^4.17.21",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.1.17"
   }
 }

@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Background from '../../components/Background.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Blog | ${SITE_TITLE}`} description="Blog posts" />
+  </head>
+  <body>
+    <Background />
+    <Header />
+    <main class="w-2/3 m-auto py-20">
+      <table class="table w-full rounded-lg bg-base-100/75">
+        <tbody>
+          {posts.map((post) => (
+            <tr>
+              <td class="bg-inherit">
+                {post.data.date.toISOString().split('T')[0].replace(/-/g, '/')}
+              </td>
+              <td class="bg-inherit">
+                <a href={`/blog/${post.id}/`} class="block font-bold">
+                  {post.data.title}
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
+

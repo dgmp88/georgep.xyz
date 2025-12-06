@@ -13,80 +13,149 @@
 - **Circles/Pixi**: The `/circles` page is an orphaned demo not linked from anywhere. Delete `pages/circles.js` and `components/pixi.js`.
 - **Unused files**: `components/homeBackgroundMovingLines.js` (unused), `lib/math.js` (only in debug script)
 
-## Migration Strategy
+## Migration Progress
 
-### Phase 0: Archive Current Files
+### ✅ Phase 0: Archive Current Files (DONE)
 
-Move all current project files into `_deprecated/` to avoid conflicts:
-
+All legacy files moved to `_deprecated/`:
 - `components/`, `css/`, `lib/`, `pages/`, `posts/`
 - `next.config.js`, `postcss.config.js`, `tailwind.config.js`, `theme.config.js`
-- `package.json`, `package-lock.json`, `node_modules/`,
+- `package.json`, `package-lock.json`, `node_modules/`
 
-Keep in root: `public/`, `README.md`, `.git/`, `notebooks/`
+Kept in root: `public/`, `README.md`, `.git/`, `notebooks/`
 
-### Phase 1: Project Setup
+### ✅ Phase 1: Project Setup (DONE)
 
-1. Initialize Astro in the now-clean directory:
-   - Create `astro.config.mjs` with React and Tailwind integrations
-   - Update `package.json` with Astro deps, remove Next.js deps
-   - Create `tsconfig.json` for Astro
+**Completed:**
+- [x] Astro project initialized (`astro.config.mjs`, `tsconfig.json`)
+- [x] Tailwind v4 installed (via Vite plugin, not `@astrojs/tailwind`)
+- [x] DaisyUI v5 installed
+- [x] Basic `src/` structure created (layouts, pages, components, styles)
+- [x] Global CSS with Tailwind + DaisyUI imports
+- [x] React integration (`@astrojs/react`, `react`, `react-dom`)
+- [x] Other deps: `lodash`, `sharp` (for 4K page + image optimization)
+- [x] DaisyUI theme configured in `src/styles/global.css`
+- [x] `site` added to `astro.config.mjs`
 
-2. Create new `tailwind.config.mjs` with:
-   - Astro content paths (`./src/**/*.{astro,jsx,tsx}`)
-   - Updated syntax (`content` instead of `purge`, remove deprecated `mode: 'jit'`)
-   - DaisyUI 4.x theme config (may need adjustments from v2 syntax)
+#### DaisyUI v5 Theme Setup
 
-3. Create `src/styles/` and copy CSS from `_deprecated/css/` (skip `prism.css` - using Shiki)
+Add to `src/styles/global.css` after the plugin import:
 
-### Phase 2: Create Astro Structure
+```css
+@import "tailwindcss";
+@plugin "daisyui";
 
+@theme {
+  /* DaisyUI v5 uses CSS variables for theming */
+}
+
+/* Custom theme - DaisyUI v5 approach */
+[data-theme="mytheme"] {
+  --color-primary: #005f73;
+  --color-secondary: #bb3e03;
+  --color-accent: green;
+  --color-base-100: transparent;
+}
+```
+
+Note: DaisyUI v5 changed theming significantly from v2. Check [DaisyUI v5 docs](https://daisyui.com/docs/themes/) for exact syntax. Check _deprecated folder for existing themeing/colors.
+
+#### Install React Integration
+
+```bash
+npx astro add react
+# Or manually:
+npm install @astrojs/react react react-dom
+```
+
+Then update `astro.config.mjs`:
+```js
+import { defineConfig } from 'astro/config';
+import tailwindcss from "@tailwindcss/vite";
+import react from '@astrojs/react';
+
+export default defineConfig({
+  site: 'https://georgep.xyz',
+  integrations: [react()],
+  vite: {
+    plugins: [tailwindcss()],
+  },
+});
+```
+
+### ✅ Phase 2: Create Astro Structure (DONE)
+
+Final structure:
 ```
 src/
+  consts.ts             ✅ created (site title, description constants)
+  content.config.ts     ✅ defined blog collection schema (Astro 5 location - in src/ root)
   layouts/
-    BaseLayout.astro    (replaces _app.js - includes analytics, global styles, Background, NavBar)
-    BlogPost.astro      (extends BaseLayout for blog posts)
+    BlogPost.astro      ✅ created (full HTML document layout for blog posts)
   components/
-    Navbar.astro        (convert from React to pure Astro, inline SVG for menu icon)
-    Background.astro    (simple CSS background component)
-    Play.jsx            (keep as React - needs client-side interactivity)
-    FourK.jsx           (keep as React - canvas interactivity)
+    BaseHead.astro      ✅ created (head content: meta tags, CSS import, analytics)
+    Header.astro        ✅ converted from _deprecated/components/navbar.js
+    Background.astro    ✅ converted from _deprecated/components/homeBackground.js
+    Play.jsx            ✅ migrated from _deprecated/components/play.jsx (keep React)
+    FourK.jsx           ✅ extracted from _deprecated/pages/4k/index.js (keep React)
   lib/
-    colors.js           (copy from _deprecated/lib/ - used by FourK)
+    colors.js           ✅ migrated from _deprecated/lib/colors.js (removed chroma-js deps)
   content/
-    config.ts           (define blog collection schema)
-    blog/               (move markdown posts here)
+    blog/               ✅ 10 markdown posts moved here
   pages/
-    index.astro
+    index.astro         ✅ converted from _deprecated/pages/index.jsx
     blog/
-      index.astro
-      [slug].astro      (dynamic blog routes - NOT [...slug])
-    games.astro
-    4k/index.astro
+      index.astro       ✅ created
+      [...slug].astro   ✅ created (dynamic blog routes - uses post.id in Astro 5)
+    games.astro         ✅ created
+    4k/index.astro      ✅ created
+  styles/
+    global.css          ✅ configured with DaisyUI theme
 ```
 
-### Phase 3: Content Collections Setup
+#### Site Constants
 
-- Create `src/content/config.ts` with blog collection schema (title, date)
-- Copy 10 blog posts from `_deprecated/posts/` to `src/content/blog/`
-- Skip `backgrounds.md` (no longer needed)
-- Configure Shiki syntax highlighting in `astro.config.mjs` (replaces Prism)
+Create `src/consts.ts`:
+```ts
+export const SITE_TITLE = 'George P';
+export const SITE_DESCRIPTION = 'Your site description';
+```
 
-### Phase 4: Convert Pages
+#### BaseHead Component
 
-| Current (in _deprecated/) | New | Notes |
-|---------------------------|-----|-------|
-| `pages/index.jsx` | `src/pages/index.astro` | Static Astro component |
-| `pages/blog/index.js` | `src/pages/blog/index.astro` | Use `getCollection('blog')` |
-| `pages/blog/[slug].js` | `src/pages/blog/[slug].astro` | Use `getStaticPaths` + Content Collections |
-| `pages/games.jsx` | `src/pages/games.astro` | Keep Play component with `client:only="react"` |
-| `pages/4k/index.js` | `src/pages/4k/index.astro` | Keep FourK component with `client:load` |
+Create `src/components/BaseHead.astro` - handles all `<head>` content:
+```astro
+---
+import '../styles/global.css';
+import { SITE_TITLE } from '../consts';
 
-### Phase 5: Google Analytics
+interface Props {
+  title: string;
+  description?: string;
+}
 
-Add to `BaseLayout.astro` `<head>`:
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const { title, description = '' } = Astro.props;
+---
 
-```html
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/hex.svg" />
+<meta name="generator" content={Astro.generator} />
+
+<link rel="canonical" href={canonicalURL} />
+
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+
+<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-DZGP2WBCWD"></script>
 <script is:inline>
   window.dataLayer = window.dataLayer || [];
@@ -96,58 +165,81 @@ Add to `BaseLayout.astro` `<head>`:
 </script>
 ```
 
-### Phase 6: Cleanup
+### ✅ Phase 3: Content Collections Setup (DONE)
+
+- [x] Created `src/content.config.ts` (Astro 5 location - in src/ root)
+- [x] Copied 10 blog posts from `_deprecated/posts/` to `src/content/blog/`
+- [x] Skipped `backgrounds.md` (no longer needed)
+- [x] Shiki syntax highlighting is default in Astro (replaces Prism)
+
+### ✅ Phase 4: Convert Pages (DONE)
+
+| Current (in _deprecated/) | New | Status |
+|---------------------------|-----|--------|
+| `pages/index.jsx` | `src/pages/index.astro` | ✅ Done |
+| `pages/blog/index.js` | `src/pages/blog/index.astro` | ✅ Done |
+| `pages/blog/[slug].js` | `src/pages/blog/[...slug].astro` | ✅ Done |
+| `pages/games.jsx` | `src/pages/games.astro` | ✅ Done |
+| `pages/4k/index.js` | `src/pages/4k/index.astro` | ✅ Done |
+
+### 🔲 Phase 5: Cleanup
 
 After verifying the migration works:
-- Delete the entire `_deprecated/` directory
+- [ ] Delete the entire `_deprecated/` directory
+- [ ] Delete `_blog_demo_delete/` directory (reference template)
+- [ ] Delete `gp/` directory (if not needed)
 
-### Phase 7: Final Steps
+### 🔲 Phase 6: Final Steps
 
-- Verify `public/` contents work (images, games, cv.pdf, hex.svg)
-- Test build with `npm run build` and preview with `npm run preview`
+- [ ] Verify `public/` contents work (images, games, cv.pdf, hex.svg)
+- [ ] Test build with `npm run build`
+- [ ] Preview with `npm run preview`
 
 ## Dependencies
 
-### Keep
+### Current `package.json`
+```json
+{
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.17",
+    "astro": "^5.16.4",
+    "daisyui": "^5.5.8",
+    "tailwindcss": "^4.1.17"
+  }
+}
+```
+
+### Still Need to Add
+- `@astrojs/react` (React integration)
 - `react`, `react-dom` (for interactive components)
-- `chroma-js` (used by lib/colors.js → 4K page)
 - `lodash` (used in 4K page)
+- `sharp` (image optimization)
 
-### Remove
-- `next`, `@next/bundle-analyzer`
-- `gray-matter`, `showdown` (replaced by Astro's markdown handling)
-- `three`, `@svgdotjs/svg.js`, `delaunator` (only used by backgrounds)
-- `pixi.js` (circles page removed)
-- `prismjs` (replaced by Astro's built-in Shiki highlighting)
-- `@fortawesome/*` (navbar converts to pure Astro with inline SVG)
+### Optional Nice-to-Have
+- `@astrojs/sitemap` - auto-generates sitemap.xml
+- `@astrojs/mdx` - if you want React components inside markdown
 
-### Add
-- `astro`
-- `@astrojs/react`
-- `@astrojs/tailwind`
-
-### Upgrade
-- `tailwindcss` → latest (v3.4+)
-- `daisyui` → latest (v4.x) - note: theme config syntax changed from v2
-- `@tailwindcss/typography` → latest
+### Removed (no longer in package.json)
+- ~~`next`, `@next/bundle-analyzer`~~
+- ~~`gray-matter`, `showdown`~~ (replaced by Astro's markdown handling)
+- ~~`three`, `@svgdotjs/svg.js`, `delaunator`~~ (only used by backgrounds)
+- ~~`pixi.js`~~ (circles page removed)
+- ~~`chroma-js`~~ (only used by backgrounds; 4K page's `lerpPalette` is pure JS)
+- ~~`prismjs`~~ (replaced by Astro's built-in Shiki)
+- ~~`@fortawesome/*`~~ (navbar will use inline SVG)
 
 ## Notes
 
-### DaisyUI v2 → v4 Changes
-The custom theme will need updating. Old v2 config:
-```js
-daisyui: {
-  themes: [{
-    mytheme: {
-      primary: '#005f73',
-      secondary: '#bb3e03',
-      accent: 'green',
-      'base-100': '#ffffff00',
-    },
-  }],
-}
-```
-Check DaisyUI v4 docs for any required color keys or syntax changes.
+### Tailwind v4 Changes from v3
+- Uses Vite plugin instead of PostCSS
+- CSS-first configuration (no `tailwind.config.js`)
+- Import syntax: `@import "tailwindcss";`
+- Plugin syntax: `@plugin "daisyui";`
+
+### DaisyUI v5 Changes from v2
+- CSS variable-based theming
+- Different theme configuration syntax
+- Check [DaisyUI v5 docs](https://daisyui.com/docs/themes/) for migration guide
 
 ### Shiki vs Prism
 Astro uses Shiki by default for code highlighting. Benefits:
@@ -155,3 +247,51 @@ Astro uses Shiki by default for code highlighting. Benefits:
 - Highlighting happens at build time
 - VS Code theme compatibility
 - No need for `prism.css` or `Prism.highlightAll()` calls
+
+### Astro 5 Blog Page Pattern
+
+The official template pattern for `src/pages/blog/[...slug].astro`:
+
+```astro
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },  // NOTE: post.id not post.slug
+    props: post,
+  }));
+}
+
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost {...post.data}>
+  <Content />
+</BlogPost>
+```
+
+### Blog Index Pattern
+
+For `src/pages/blog/index.astro`, sort posts by date and link with trailing slash:
+
+```astro
+---
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+{posts.map((post) => (
+  <a href={`/blog/${post.id}/`}>
+    {post.data.title}
+  </a>
+))}
+```
