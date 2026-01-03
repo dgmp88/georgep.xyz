@@ -1,0 +1,111 @@
+/* Physio Timer - Refined Styles */
+@import "tailwindcss";
+
+/* Refined color palette */
+:root {
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-accent: #3b82f6;
+  --color-accent-soft: #dbeafe;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* Subtle buttons */
+.btn-refined {
+  @apply inline-flex items-center justify-center;
+  @apply px-4 py-2 rounded-lg;
+  @apply border-0 bg-transparent;
+  @apply text-sm font-normal cursor-pointer;
+  @apply transition-all duration-200;
+  color: var(--color-text-muted);
+}
+
+.btn-refined:hover {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.btn-refined.primary {
+  @apply font-medium;
+  background: var(--color-accent);
+  color: white;
+}
+
+.btn-refined.primary:hover {
+  background: #2563eb;
+}
+
+/* Refined table */
+.table-refined {
+  @apply w-full;
+  border-collapse: collapse;
+}
+
+.table-refined thead th {
+  @apply pb-3 text-left;
+  @apply text-xs font-medium uppercase tracking-wider;
+  color: var(--color-text-muted);
+  background: transparent;
+}
+
+.table-refined thead th:nth-child(1) {
+  width: 70%;
+}
+
+.table-refined thead th:nth-child(2) {
+  width: 30%;
+}
+
+.table-refined tbody td {
+  @apply py-3;
+}
+
+/* Refined inputs */
+.input-refined {
+  @apply w-full px-2 py-2 rounded-none;
+  @apply text-sm;
+  color: var(--color-text);
+  border: none;
+  height: 2rem;
+  background:
+    linear-gradient(to right, var(--color-border) 0%, var(--color-border) 100%) no-repeat,
+    transparent;
+  background-size: var(--underline-width, 5ch) 1px;
+  background-position: left bottom;
+  transition: background-size 0.2s ease, background-image 0.2s ease;
+}
+
+.input-refined:hover {
+  background-image:
+    linear-gradient(to right, var(--color-text-muted) 0%, var(--color-text-muted) 100%),
+    transparent;
+}
+
+.input-refined:focus {
+  background-image:
+    linear-gradient(to right, var(--color-accent) 0%, var(--color-accent) 100%),
+    transparent;
+  outline: none;
+}
+
+/* Delete button - always visible */
+.delete-btn {
+  @apply px-2 py-1 rounded-md;
+  @apply border-0 bg-transparent cursor-pointer;
+  @apply text-sm transition-colors duration-200;
+  color: #9ca3af;
+}
+
+.delete-btn:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+/* Softer radial progress */
+.radial-progress {
+  color: var(--color-accent) !important;
+}

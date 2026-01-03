@@ -2,16 +2,8 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui";
 
-/* DaisyUI v5 theme configuration */
-[data-theme="mytheme"] {
-  --color-primary: #005f73;
-  --color-secondary: #bb3e03;
-  --color-accent: green;
-  --color-base-100: #ffffff;
-}
-
-/* Set default theme */
-:root {
+/* Custom theme fallback - only applies when no data-theme is set */
+html:not([data-theme]) {
   --color-primary: #005f73;
   --color-secondary: #bb3e03;
   --color-accent: green;

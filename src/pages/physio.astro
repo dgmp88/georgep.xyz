@@ -1,0 +1,520 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import "../styles/physio.css";
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <BaseHead
+      title="Physio Timer"
+      description="Simple timer for physio exercises"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="min-h-screen flex items-center justify-center p-4">
+      <div class="w-full max-w-2xl">
+        <!-- Edit Mode -->
+        <div id="edit-mode" class="rounded-lg p-6">
+          <h1
+            class="text-3xl font-light mb-8 text-center"
+            style="color: var(--color-text)"
+          >
+            Physio Timer
+          </h1>
+
+          <div class="mb-8">
+            <div class="overflow-x-auto">
+              <table class="table-refined">
+                <thead>
+                  <tr>
+                    <th>Exercise</th>
+                    <th>Duration (seconds)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="exercise-list">
+                  <!-- Exercises will be inserted here -->
+                </tbody>
+              </table>
+            </div>
+
+            <button id="add-exercise" class="btn-refined mt-6 w-full">
+              + Add Exercise
+            </button>
+          </div>
+
+          <div class="mb-6">
+            <label
+              class="block mb-2 text-sm"
+              style="color: var(--color-text-muted)">Number of Sets:</label
+            >
+            <input
+              type="number"
+              id="num-sets"
+              min="1"
+              max="10"
+              class="input-refined w-full"
+              value="3"
+            />
+          </div>
+
+          <div class="text-center mb-6">
+            <p
+              class="text-sm"
+              style="color: var(--color-text-muted)"
+              id="total-time"
+            >
+              Total time: 0:00
+            </p>
+          </div>
+
+          <button id="start-workout" class="btn-refined primary w-full">
+            Start Workout
+          </button>
+        </div>
+
+        <!-- Timer Mode -->
+        <div id="timer-mode" class="hidden">
+          <div class="text-center">
+            <!-- Completed exercises -->
+            <div
+              id="completed-exercises"
+              class="mb-4 text-sm opacity-50 space-y-1"
+            >
+              <!-- Completed exercises will appear here -->
+            </div>
+
+            <!-- Main timer display -->
+            <div
+              id="timer-display"
+              class="glass rounded-lg p-12 mb-4 cursor-pointer transition-all duration-500"
+            >
+              <h2 id="current-exercise" class="text-4xl font-bold mb-8">
+                LEFT LEG
+              </h2>
+
+              <div class="flex justify-center mb-8">
+                <div
+                  id="radial-progress"
+                  class="radial-progress text-primary text-6xl font-bold"
+                  style="--value:100; --size:16rem; --thickness:1rem;"
+                  role="progressbar"
+                >
+                  <span id="countdown">30</span>
+                </div>
+              </div>
+
+              <p id="set-indicator" class="text-sm opacity-70">Set 1 of 3</p>
+
+              <!-- Pause hint (hidden when paused) -->
+              <div
+                id="pause-hint"
+                class="mt-4 text-xs opacity-50 animate-pulse"
+              >
+                Tap anywhere or press spacebar to pause
+              </div>
+            </div>
+
+            <!-- Upcoming exercises -->
+            <div id="upcoming-exercises" class="text-sm opacity-50 space-y-1">
+              <!-- Upcoming exercises will appear here -->
+            </div>
+
+            <!-- Paused modal -->
+            <dialog id="paused-modal" class="modal">
+              <div class="modal-box text-center">
+                <p class="text-4xl mb-4">⏸ Paused</p>
+                <p class="opacity-70 mb-4">Press ESC key or click outside to resume</p>
+                <button id="exit-workout" class="btn-refined">Exit to Edit</button>
+              </div>
+              <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+              </form>
+            </dialog>
+
+            <!-- Finish modal -->
+            <dialog id="finish-modal" class="modal">
+              <div class="modal-box text-center">
+                <p class="text-5xl mb-6">🎉 Complete!</p>
+                <button id="restart-workout" class="btn-refined primary mr-2"
+                  >Restart</button
+                >
+                <button id="edit-workout" class="btn-refined"
+                  >Edit Workout</button
+                >
+              </div>
+              <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+              </form>
+            </dialog>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Default exercises
+      const DEFAULT_EXERCISES = [
+        { name: "Left Leg", duration: 30 },
+        { name: "Pause", duration: 5 },
+        { name: "Right Leg", duration: 30 },
+        { name: "Pause", duration: 5 },
+      ];
+
+      // State
+      let exercises = [];
+      let numSets = 3;
+      let currentExerciseIndex = 0;
+      let currentSet = 1;
+      let timeRemaining = 0;
+      let timerInterval = null;
+      let isPaused = false;
+
+      // Load from localStorage or use defaults
+      function loadData() {
+        const saved = localStorage.getItem("physioTimer");
+        if (saved) {
+          const data = JSON.parse(saved);
+          exercises = data.exercises || DEFAULT_EXERCISES;
+          numSets = data.numSets || 3;
+        } else {
+          exercises = [...DEFAULT_EXERCISES];
+        }
+      }
+
+      // Save to localStorage
+      function saveData() {
+        localStorage.setItem(
+          "physioTimer",
+          JSON.stringify({
+            exercises,
+            numSets,
+          }),
+        );
+      }
+
+      // Render exercise list in edit mode
+      function renderExercises() {
+        const list = document.getElementById("exercise-list");
+        list.innerHTML = "";
+
+        exercises.forEach((ex, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>
+              <input
+                type="text"
+                class="input-refined w-full"
+                value="${ex.name}"
+                data-index="${index}"
+                data-field="name"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                class="input-refined w-full"
+                value="${ex.duration}"
+                min="1"
+                data-index="${index}"
+                data-field="duration"
+              />
+            </td>
+            <td>
+              <button class="delete-btn" data-delete="${index}">✕</button>
+            </td>
+          `;
+          list.appendChild(row);
+        });
+
+        updateTotalTime();
+        setupInputUnderlines();
+      }
+
+      // Update total time display
+      function updateTotalTime() {
+        const totalSeconds =
+          exercises.reduce((sum, ex) => sum + parseInt(ex.duration), 0) *
+          numSets;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        document.getElementById("total-time").textContent =
+          `Total time: ${minutes}:${seconds.toString().padStart(2, "0")}`;
+      }
+
+      // Handle exercise input changes
+      document
+        .getElementById("exercise-list")
+        .addEventListener("input", (e) => {
+          const target = e.target;
+          const index = parseInt(target.dataset.index);
+          const field = target.dataset.field;
+
+          if (field === "name") {
+            exercises[index].name = target.value;
+          } else if (field === "duration") {
+            exercises[index].duration = parseInt(target.value) || 1;
+          }
+
+          saveData();
+          updateTotalTime();
+        });
+
+      // Handle delete buttons
+      document
+        .getElementById("exercise-list")
+        .addEventListener("click", (e) => {
+          if (e.target.dataset.delete !== undefined) {
+            const index = parseInt(e.target.dataset.delete);
+            exercises.splice(index, 1);
+            saveData();
+            renderExercises();
+          }
+        });
+
+      // Add exercise
+      document.getElementById("add-exercise").addEventListener("click", () => {
+        exercises.push({ name: "New Exercise", duration: 30 });
+        saveData();
+        renderExercises();
+      });
+
+      // Handle number of sets change
+      document.getElementById("num-sets").addEventListener("input", (e) => {
+        numSets = parseInt(e.target.value) || 1;
+        saveData();
+        updateTotalTime();
+      });
+
+      // Start workout
+      document.getElementById("start-workout").addEventListener("click", () => {
+        if (exercises.length === 0) {
+          alert("Add at least one exercise!");
+          return;
+        }
+
+        currentExerciseIndex = 0;
+        currentSet = 1;
+        isPaused = false;
+
+        document.getElementById("edit-mode").classList.add("hidden");
+        document.getElementById("timer-mode").classList.remove("hidden");
+
+        startCurrentExercise();
+      });
+
+      // Start current exercise
+      function startCurrentExercise() {
+        const exercise = exercises[currentExerciseIndex];
+        timeRemaining = exercise.duration;
+
+        updateTimerDisplay();
+
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(tick, 1000);
+      }
+
+      // Timer tick
+      function tick() {
+        if (isPaused) return;
+
+        timeRemaining--;
+        updateTimerDisplay();
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          moveToNext();
+        }
+      }
+
+      // Move to next exercise
+      function moveToNext() {
+        currentExerciseIndex++;
+
+        if (currentExerciseIndex >= exercises.length) {
+          currentExerciseIndex = 0;
+          currentSet++;
+
+          if (currentSet > numSets) {
+            finishWorkout();
+            return;
+          }
+        }
+
+        startCurrentExercise();
+      }
+
+      // Update timer display
+      function updateTimerDisplay() {
+        const exercise = exercises[currentExerciseIndex];
+        const totalDuration = exercise.duration;
+        const progress = (timeRemaining / totalDuration) * 100;
+
+        document.getElementById("current-exercise").textContent =
+          exercise.name.toUpperCase();
+        document.getElementById("countdown").textContent = timeRemaining;
+        document
+          .getElementById("radial-progress")
+          .style.setProperty("--value", progress);
+        document.getElementById("set-indicator").textContent =
+          `Set ${currentSet} of ${numSets}`;
+
+        // Update completed exercises
+        const completed = [];
+        for (let set = 1; set < currentSet; set++) {
+          exercises.forEach((ex) => {
+            completed.push(`✓ ${ex.name} (${ex.duration}s)`);
+          });
+        }
+        for (let i = 0; i < currentExerciseIndex; i++) {
+          completed.push(`✓ ${exercises[i].name} (${exercises[i].duration}s)`);
+        }
+
+        document.getElementById("completed-exercises").innerHTML = completed
+          .slice(-3)
+          .map((text) => `<div>${text}</div>`)
+          .join("");
+
+        // Update upcoming exercises
+        const upcoming = [];
+        for (let i = currentExerciseIndex + 1; i < exercises.length; i++) {
+          upcoming.push({
+            name: exercises[i].name,
+            duration: exercises[i].duration,
+          });
+        }
+
+        // Add remaining sets
+        for (let set = currentSet + 1; set <= numSets; set++) {
+          exercises.forEach((ex) => {
+            upcoming.push({ name: ex.name, duration: ex.duration });
+          });
+        }
+
+        const upcomingText = upcoming
+          .slice(0, 3)
+          .map((ex, i) => {
+            const prefix = i === 0 ? "Next: " : "Then: ";
+            return `<div>${prefix}${ex.name} (${ex.duration}s)</div>`;
+          })
+          .join("");
+
+        document.getElementById("upcoming-exercises").innerHTML = upcomingText;
+      }
+
+      // Toggle pause
+      function togglePause() {
+        isPaused = !isPaused;
+        const modal = document.getElementById("paused-modal") as HTMLDialogElement;
+        const hint = document.getElementById("pause-hint");
+
+        if (isPaused) {
+          modal.showModal();
+          hint.classList.add("hidden");
+        } else {
+          modal.close();
+          hint.classList.remove("hidden");
+        }
+      }
+
+      // Click anywhere to pause
+      document
+        .getElementById("timer-display")
+        .addEventListener("click", togglePause);
+
+      // Resume when modal closes (ESC or backdrop click)
+      (document.getElementById("paused-modal") as HTMLDialogElement).addEventListener("close", () => {
+        if (isPaused) {
+          isPaused = false;
+          document.getElementById("pause-hint").classList.remove("hidden");
+        }
+      });
+
+      // Exit workout from pause modal
+      document.getElementById("exit-workout").addEventListener("click", () => {
+        clearInterval(timerInterval);
+        (document.getElementById("paused-modal") as HTMLDialogElement).close();
+        document.getElementById("timer-mode").classList.add("hidden");
+        document.getElementById("edit-mode").classList.remove("hidden");
+        isPaused = false;
+      });
+
+      // Spacebar to pause
+      document.addEventListener("keydown", (e) => {
+        if (
+          e.code === "Space" &&
+          !document.getElementById("timer-mode").classList.contains("hidden")
+        ) {
+          e.preventDefault();
+          togglePause();
+        }
+      });
+
+      // Finish workout
+      function finishWorkout() {
+        clearInterval(timerInterval);
+        (document.getElementById("finish-modal") as HTMLDialogElement).showModal();
+      }
+
+      // Restart workout
+      document
+        .getElementById("restart-workout")
+        .addEventListener("click", () => {
+          (document.getElementById("finish-modal") as HTMLDialogElement).close();
+          currentExerciseIndex = 0;
+          currentSet = 1;
+          isPaused = false;
+          startCurrentExercise();
+        });
+
+      // Edit workout
+      document.getElementById("edit-workout").addEventListener("click", () => {
+        clearInterval(timerInterval);
+        (document.getElementById("finish-modal") as HTMLDialogElement).close();
+        document.getElementById("timer-mode").classList.add("hidden");
+        document.getElementById("edit-mode").classList.remove("hidden");
+      });
+
+      // Update input underline width based on text content
+      function updateInputUnderline(input) {
+        const minWidth = 5; // 5ch minimum
+
+        // Create a temporary span to measure text width
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        const computedStyle = window.getComputedStyle(input);
+        context.font = computedStyle.font;
+
+        const text = input.value || input.placeholder || "";
+        const textWidth = context.measureText(text).width;
+
+        // Add padding (input has px-2 which is 0.5rem = 8px on each side)
+        const paddingWidth = 16;
+        const totalWidth = Math.max(textWidth + paddingWidth, minWidth * 8); // 8px per ch roughly
+
+        input.style.setProperty("--underline-width", `${totalWidth}px`);
+      }
+
+      // Set up input underline tracking
+      function setupInputUnderlines() {
+        const inputs = document.querySelectorAll(".input-refined");
+        inputs.forEach((input) => {
+          updateInputUnderline(input);
+          input.addEventListener("input", () => updateInputUnderline(input));
+        });
+      }
+
+      // Initialize
+      loadData();
+      renderExercises();
+      document.getElementById("num-sets").value = numSets;
+    </script>
+  </body>
+</html>
