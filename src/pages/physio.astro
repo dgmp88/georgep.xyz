@@ -176,6 +176,13 @@ import "../styles/physio.css";
       let timeRemaining = 0;
       let timerInterval = null;
       let isPaused = false;
+      const dingSound = new Audio("/sounds/physio-ding.mp3");
+      dingSound.volume = 1;
+
+      function playDing() {
+        dingSound.currentTime = 0;
+        void dingSound.play().catch(() => {});
+      }
 
       // Load from localStorage or use defaults
       function loadData() {
@@ -329,6 +336,7 @@ import "../styles/physio.css";
         updateTimerDisplay();
 
         if (timeRemaining <= 0) {
+          playDing();
           clearInterval(timerInterval);
           moveToNext();
         }
