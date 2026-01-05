@@ -109,3 +109,12 @@ body {
 .radial-progress {
   color: var(--color-accent) !important;
 }
+
+.streak-steps .step:before {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.streak-steps .step {
+  @apply text-xs;
+}

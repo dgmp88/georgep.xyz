@@ -29,6 +29,35 @@ import "../styles/physio.css";
             Physio Timer
           </h1>
 
+          <div class="rounded-lg p-4 mb-8 border border-gray-200">
+            <div class="flex flex-col gap-4">
+              <div class="stats stats-vertical sm:stats-horizontal w-full text-left text-xs">
+                <div class="stat">
+                  <div class="stat-title text-xs" style="color: var(--color-text-muted)">
+                    Total Days Done
+                  </div>
+                  <div class="stat-value text-xl font-semibold" id="total-days">0</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-title text-xs" style="color: var(--color-text-muted)">
+                    Current Streak
+                  </div>
+                  <div class="stat-value text-xl font-semibold" id="current-streak">0</div>
+                </div>
+              </div>
+
+              <div>
+                <p class="text-sm mb-2" style="color: var(--color-text-muted)">
+                  Last 7 days
+                </p>
+                <ul
+                  class="steps steps-vertical lg:steps-horizontal justify-center streak-steps"
+                  id="streak-steps"
+                ></ul>
+              </div>
+            </div>
+          </div>
+
           <div class="mb-8">
             <div class="overflow-x-auto">
               <table class="table-refined">
@@ -94,7 +123,7 @@ import "../styles/physio.css";
             <!-- Main timer display -->
             <div
               id="timer-display"
-              class="glass rounded-lg p-12 mb-4 cursor-pointer transition-all duration-500"
+              class="rounded-lg p-12 mb-4 cursor-pointer transition-all duration-500 border border-gray-200"
             >
               <h2 id="current-exercise" class="text-4xl font-bold mb-8">
                 LEFT LEG
@@ -168,6 +197,8 @@ import "../styles/physio.css";
         { name: "Pause", duration: 5 },
       ];
 
+      const COMPLETION_KEY = "physioCompletionDates";
+
       // State
       let exercises = [];
       let numSets = 3;
@@ -176,6 +207,7 @@ import "../styles/physio.css";
       let timeRemaining = 0;
       let timerInterval = null;
       let isPaused = false;
+      let completionDates = [];
 
       // Load from localStorage or use defaults
       function loadData() {
@@ -198,6 +230,77 @@ import "../styles/physio.css";
             numSets,
           }),
         );
+      }
+
+      // Load completion data
+      function loadCompletionData() {
+        const saved = localStorage.getItem(COMPLETION_KEY);
+        completionDates = saved ? JSON.parse(saved) : [];
+        completionDates = Array.from(new Set(completionDates)).sort();
+      }
+
+      function saveCompletionData() {
+        localStorage.setItem(COMPLETION_KEY, JSON.stringify(completionDates));
+      }
+
+      function formatDateKey(date) {
+        const copy = new Date(date);
+        copy.setHours(0, 0, 0, 0);
+        return copy.toISOString().split("T")[0];
+      }
+
+      function recordCompletion(date = new Date()) {
+        const key = formatDateKey(date);
+        if (!completionDates.includes(key)) {
+          completionDates.push(key);
+          completionDates.sort();
+          saveCompletionData();
+        }
+        renderStreak();
+      }
+
+      function getLastSevenDays() {
+        const today = new Date();
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+          const day = new Date();
+          day.setDate(today.getDate() - i);
+          day.setHours(0, 0, 0, 0);
+          days.push(day);
+        }
+        return days;
+      }
+
+      function getCurrentStreak() {
+        const set = new Set(completionDates);
+        let streak = 0;
+        const cursor = new Date();
+        while (set.has(formatDateKey(cursor))) {
+          streak++;
+          cursor.setDate(cursor.getDate() - 1);
+        }
+        return streak;
+      }
+
+      function renderStreak() {
+        const steps = document.getElementById("streak-steps");
+        const totalEl = document.getElementById("total-days");
+        const streakEl = document.getElementById("current-streak");
+        if (!steps || !totalEl || !streakEl) return;
+
+        const set = new Set(completionDates);
+        steps.innerHTML = "";
+
+        getLastSevenDays().forEach((day) => {
+          const dateKey = formatDateKey(day);
+          const li = document.createElement("li");
+          li.className = `step ${set.has(dateKey) ? "step-primary" : ""}`;
+          li.innerHTML = `<div class="text-[10px] font-medium text-center">${day.getDate()}</div>`;
+          steps.appendChild(li);
+        });
+
+        totalEl.textContent = completionDates.length.toString();
+        streakEl.textContent = getCurrentStreak().toString();
       }
 
       // Render exercise list in edit mode
@@ -460,6 +563,7 @@ import "../styles/physio.css";
       // Finish workout
       function finishWorkout() {
         clearInterval(timerInterval);
+        recordCompletion();
         (document.getElementById("finish-modal") as HTMLDialogElement).showModal();
       }
 
@@ -513,8 +617,10 @@ import "../styles/physio.css";
 
       // Initialize
       loadData();
+      loadCompletionData();
       renderExercises();
       document.getElementById("num-sets").value = numSets;
+      renderStreak();
     </script>
   </body>
 </html>
