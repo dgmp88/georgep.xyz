@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lucia's Birthday Concert Menu</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --cream: #fff9f0;
+                --dark: #2c2416;
+                --accent: #b8860b;
+                --light-accent: #d4af37;
+                --gray: #665544;
+                --light-gray: #e8dcc8;
+            }
+
+            body {
+                font-family: "Lora", serif;
+                background: linear-gradient(
+                    135deg,
+                    var(--cream) 0%,
+                    #fff5e6 100%
+                );
+                color: var(--dark);
+                line-height: 1.6;
+                min-height: 100vh;
+                padding: 2rem 1rem;
+            }
+
+            .container {
+                max-width: 900px;
+                margin: 0 auto;
+                background: white;
+                box-shadow:
+                    0 20px 60px rgba(0, 0, 0, 0.12),
+                    0 0 1px rgba(0, 0, 0, 0.1);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            .header {
+                background: linear-gradient(to bottom, var(--dark), #3a2e1e);
+                padding: 3rem 2rem 2rem;
+                text-align: center;
+                position: relative;
+                border-bottom: 3px solid var(--accent);
+            }
+
+            .violin-icon {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 1.5rem;
+                opacity: 0.9;
+                animation: fadeIn 1s ease-in;
+            }
+
+            .violin-icon img {
+                width: 100%;
+                height: 100%;
+                filter: brightness(0) invert(1);
+            }
+
+            h1 {
+                font-family: "Cormorant Garamond", serif;
+                font-size: 2.8rem;
+                font-weight: 600;
+                color: var(--cream);
+                margin-bottom: 0.5rem;
+                letter-spacing: 0.02em;
+                animation: fadeIn 1s ease-in 0.2s backwards;
+            }
+
+            .subtitle {
+                font-family: "Cormorant Garamond", serif;
+                font-size: 1.2rem;
+                color: var(--light-accent);
+                font-style: italic;
+                animation: fadeIn 1s ease-in 0.4s backwards;
+            }
+
+            .intro {
+                padding: 2.5rem 2rem;
+                text-align: center;
+                background: var(--cream);
+                border-bottom: 1px solid var(--light-gray);
+            }
+
+            .intro p {
+                font-size: 1.1rem;
+                color: var(--gray);
+                max-width: 600px;
+                margin: 0 auto;
+                line-height: 1.7;
+            }
+
+            .concerts {
+                padding: 2rem;
+            }
+
+            .genre-section {
+                margin-bottom: 3rem;
+                animation: fadeIn 0.8s ease-in backwards;
+            }
+
+            .genre-section:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+            .genre-section:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .genre-header {
+                font-family: "Cormorant Garamond", serif;
+                font-size: 1.8rem;
+                font-weight: 600;
+                color: var(--accent);
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid var(--light-accent);
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .genre-icon {
+                font-size: 1.5rem;
+            }
+
+            .concert {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                background: white;
+                border: 1px solid var(--light-gray);
+                border-left: 4px solid var(--accent);
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .concert:hover {
+                transform: translateX(4px);
+                box-shadow: 0 4px 20px rgba(184, 134, 11, 0.15);
+                border-left-color: var(--light-accent);
+            }
+
+            .concert-date {
+                font-family: "Cormorant Garamond", serif;
+                font-size: 0.95rem;
+                color: var(--accent);
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+                letter-spacing: 0.03em;
+            }
+
+            .concert-title {
+                font-size: 1.3rem;
+                font-weight: 500;
+                color: var(--dark);
+                margin-bottom: 0.5rem;
+                line-height: 1.3;
+            }
+
+            .concert-venue {
+                font-size: 0.95rem;
+                color: var(--gray);
+                margin-bottom: 0.8rem;
+            }
+
+            .concert-description {
+                font-size: 0.95rem;
+                color: var(--gray);
+                line-height: 1.6;
+                margin-bottom: 1rem;
+            }
+
+            .concert-link {
+                display: inline-block;
+                color: var(--accent);
+                text-decoration: none;
+                font-weight: 500;
+                font-size: 0.9rem;
+                padding: 0.5rem 1.2rem;
+                border: 1.5px solid var(--accent);
+                border-radius: 2px;
+                transition: all 0.3s ease;
+                letter-spacing: 0.02em;
+            }
+
+            .concert-link:hover {
+                background: var(--accent);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3);
+            }
+
+            .footer {
+                background: var(--dark);
+                color: var(--cream);
+                text-align: center;
+                padding: 2rem;
+                font-style: italic;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @media (max-width: 768px) {
+                body {
+                    padding: 0;
+                }
+
+                .container {
+                    border-radius: 0;
+                }
+
+                h1 {
+                    font-size: 2rem;
+                }
+
+                .header,
+                .intro,
+                .concerts {
+                    padding: 1.5rem 1rem;
+                }
+
+                .concert {
+                    padding: 1rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header class="header">
+                <div class="violin-icon">
+                    <img src="/images/violin.png" alt="Violin" />
+                </div>
+                <h1>Luci's Birthday Concert Menu</h1>
+            </header>
+
+            <main class="concerts">
+                <!-- Classical Concerts -->
+                <section class="genre-section">
+                    <h2 class="genre-header">
+                        <span class="genre-icon">🎻</span>
+                        Classical
+                    </h2>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, Jan 28, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Maxim Vengerov and Polina Osetinskaya in Recital
+                        </div>
+                        <div class="concert-venue">Barbican Centre</div>
+                        <div class="concert-description">
+                            World-renowned violinist with Polina Osetinskaya
+                            performing Schubert, Shostakovich, and Brahms
+                            sonatas
+                        </div>
+                        <a
+                            href="https://www.barbican.org.uk/whats-on/classical-music"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Thu, Jan 29, 2026, 19:00</div>
+                        <div class="concert-title">
+                            Patricia Kopatchinskaja - Illés and Rachmaninoff
+                        </div>
+                        <div class="concert-venue">Barbican Centre</div>
+                        <div class="concert-description">
+                            LSO Artist Portrait: World premiere of Márton Illés'
+                            Vont-ér plus Rachmaninoff Symphony No. 2
+                        </div>
+                        <a
+                            href="https://www.lso.co.uk/whats-on/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sun, Feb 1, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Alena Baeva - Santtu and Alena Baeva
+                        </div>
+                        <div class="concert-venue">Royal Festival Hall</div>
+                        <div class="concert-description">
+                            Alena Baeva joins the Philharmonia Orchestra for
+                            Prokofiev's, Rachmaninoff and Stravinsky
+                        </div>
+                        <a
+                            href="https://philharmonia.co.uk/whats-on/santtu-and-alena-baeva/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Mon, Feb 2, 2026, 19:30</div>
+                        <div class="concert-title">
+                            National Symphony Orchestra - Northern Lights and
+                            New World
+                        </div>
+                        <div class="concert-venue">Cadogan Hall</div>
+                        <div class="concert-description">
+                            NSO season opener featuring Svendsen Romance for
+                            Violin & Orchestra with Dvořák's 'New World'
+                            Symphony
+                        </div>
+                        <a
+                            href="https://cadoganhall.com/whats-on/national-symphony-orchestra-northern-lights-and-new-world/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, Feb 4, 2026, 19:30</div>
+                        <div class="concert-title">
+                            London Philharmonic - Bohemian Rhapsodies
+                        </div>
+                        <div class="concert-venue">Royal Festival Hall</div>
+                        <div class="concert-description">
+                            Bohemian Rhapsodiest: Martinů Violin Concerto No. 2
+                            with works by Bacewicz, Lutosławski, and Janáček
+                        </div>
+                        <a
+                            href="https://lpo.org.uk/whats-on/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Fri, Feb 6, 2026</div>
+                        <div class="concert-title">
+                            BBC Symphony Orchestra - Oramo conducts Stravinsky's
+                            Persephone
+                        </div>
+                        <div class="concert-venue">Barbican Centre</div>
+                        <div class="concert-description">
+                            Magnus Lindberg Violin Concerto No. 1 with
+                            Stravinsky's Persephone
+                        </div>
+                        <a
+                            href="https://www.barbican.org.uk/our-story/press-room/barbican-announces-its-classical-music-season-for-2025-2026"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Mon, Feb 9, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Julia Majewska - Korngold Violin Concerto
+                        </div>
+                        <div class="concert-venue">Cadogan Hall</div>
+                        <div class="concert-description">
+                            Korngold Violin Concerto with Hanson's 'Romantic'
+                            Symphony—Hollywood-inspired program Cadogan Hall
+                        </div>
+                        <a
+                            href="https://cadoganhall.com/whats-on/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, Feb 11, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Kryštof Kohout - Chabrier Sibelius & Elgar
+                        </div>
+                        <div class="concert-venue">Cadogan Hall</div>
+                        <div class="concert-description">
+                            YMSO: Sibelius Violin Concerto with Elgar's Enigma
+                            Variations Cadogan Hall
+                        </div>
+                        <a
+                            href="https://cadoganhall.com/whats-on/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, Feb 18, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Anne-Sophie Mutter - Anne-Sophie Mutter plays
+                            Tchaikovsky
+                        </div>
+                        <div class="concert-venue">Royal Festival Hall</div>
+                        <div class="concert-description">
+                            Living legend performs Tchaikovsky Violin Concerto
+                            with LPO; Sibelius and Beethoven Symphony No. 7
+                            London Philharmonic Orchestra
+                        </div>
+                        <a
+                            href="https://lpo.org.uk/event/anne-sophie-mutter-plays-tchaikovsky/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Thu, Feb 26, 2026, 19:00</div>
+                        <div class="concert-title">
+                            Patricia Kopatchinskaja - Berg & Rachmaninoff
+                        </div>
+                        <div class="concert-venue">Barbican Centre</div>
+                        <div class="concert-description">
+                            LSO: Berg's sublime Violin Concerto with Debussy and
+                            Rachmaninoff London Symphony OrchestraLondon
+                            Symphony Orchestra
+                        </div>
+                        <a
+                            href="https://www.barbican.org.uk/whats-on/2026/event/london-symphony-orchestragianandrea-noseda"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Tue, Mar 3, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Théotime Langlois de Swarte - Bach Vitali and
+                            Vivaldi
+                        </div>
+                        <div class="concert-venue">Wigmore Hall</div>
+                        <div class="concert-description">
+                            Baroque violin recital: Vivaldi, J.S. Bach, Vitali's
+                            'La Follia' with Justin Taylor (harpsichord)
+                        </div>
+                        <a
+                            href="https://www.wigmore-hall.org.uk/whats-on/202603031930"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, Mar 4, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Alexandra Tirsu - Alexandra Tirsu plays Prokofiev
+                        </div>
+                        <div class="concert-venue">Cadogan Hall</div>
+                        <div class="concert-description">
+                            RPO: Moldovan virtuoso performs Prokofiev Violin
+                            Concerto No. 1 with Rachmaninov Symphony No. 2
+                            Cadogan Hall
+                        </div>
+                        <a
+                            href="https://www.songkick.com/concerts/42611068-royal-philharmonic-orchestra-at-cadogan-hall"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Fri, Apr 10, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Pieter Schoeman & Kristina Blaumane - Brahms's
+                            Double
+                        </div>
+                        <div class="concert-venue">Royal Festival Hall</div>
+                        <div class="concert-description">
+                            LPO principals perform Brahms Double Concerto for
+                            Violin & Cello London Philharmonic Orchestra with
+                            Schumann Symphony No. 4 London Philharmonic
+                            Orchestra
+                        </div>
+                        <a
+                            href="https://lpo.org.uk/whats-on/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sun, Apr 19, 2026, 15:00</div>
+                        <div class="concert-title">
+                            Nicola Benedetti - Nicola Benedetti plays Elgar
+                        </div>
+                        <div class="concert-venue">Royal Festival Hall</div>
+                        <div class="concert-description">
+                            Britain's favourite violinist performs Elgar's
+                            tempestuous Violin Concerto with Philharmonia
+                            Orchestra PhilharmoniaSouthbank Centre
+                        </div>
+                        <a
+                            href="https://philharmonia.co.uk/whats-on/nicola-benedetti-plays-elgar/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sun, May 3, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Charlotte Spruit - National Symphony Orchestra Roman
+                            Sun Russian Soul
+                        </div>
+                        <div class="concert-venue">Cadogan Hall</div>
+                        <div class="concert-description">
+                            NSO: All-Tchaikovsky program featuring Violin
+                            Concerto in D major and Symphony No. 4 Classical
+                            Events
+                        </div>
+                        <a
+                            href="https://cadoganhall.com/whats-on/national-symphony-orchestra-tchaikovsky-roman-sun-russian-soul/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Tue, May 12, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Ray Chen - Mahler x Korngold
+                        </div>
+                        <div class="concert-venue">Royal Albert Hall</div>
+                        <div class="concert-description">
+                            Star violinist performs Korngold Violin Concerto
+                            (Hollywood themes) with RPO; Mahler Symphony No. 5
+                            Bachtrack
+                        </div>
+                        <a
+                            href="https://www.songkick.com/concerts/42612697-royal-philharmonic-orchestra-at-royal-albert-hall"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, May 13, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Hilary Hahn - Hilary Hahn violin; Tom Poster piano
+                        </div>
+                        <div class="concert-venue">Wigmore Hall</div>
+                        <div class="concert-description">
+                            Intimate recital with Tom Poster: Bun-Ching Lam,
+                            Debussy, Fauré Wigmore Hall Violin Sonatas No. 1 & 2
+                        </div>
+                        <a
+                            href="https://www.wigmore-hall.org.uk/whats-on/202605131930"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Mon, May 25, 2026</div>
+                        <div class="concert-title">
+                            Alina Ibragimova - 125th Anniversary Festival
+                            Opening Recital
+                        </div>
+                        <div class="concert-venue">Wigmore Hall</div>
+                        <div class="concert-description">
+                            125th Anniversary Festival opening: Solo violin
+                            works by Bach and Beethoven Broadway World with
+                            Thomas Adès
+                        </div>
+                        <a
+                            href="https://www.wigmore-hall.org.uk/news/wigmore-hall-celebrates-125-years-with-landmark-festival"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Mon, May 25, 2026, 20:00</div>
+                        <div class="concert-title">
+                            Nicola Benedetti - Dresdner Musikfestspiele
+                        </div>
+                        <div class="concert-venue">Royal Albert Hall</div>
+                        <div class="concert-description">
+                            LPO Tour: Elgar Violin Concerto with Elgar Symphony
+                            No. 1 London Philharmonic Orchestra
+                        </div>
+                        <a
+                            href="https://lpo.org.uk/whats-on/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, Jun 10, 2026</div>
+                        <div class="concert-title">
+                            Trio Concept - ECHO Rising Stars
+                        </div>
+                        <div class="concert-venue">Barbican Centre</div>
+                        <div class="concert-description">
+                            ECHO Rising Stars: Piano trio works by Lili
+                            Boulanger, Ravel, and Casella
+                        </div>
+                        <a
+                            href="https://www.barbican.org.uk/our-story/press-room/barbican-announces-its-classical-music-season-for-2025-2026"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, Jun 10, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Clara-Jumi Kang - Tchaikovsky's Symphony No. 5
+                        </div>
+                        <div class="concert-venue">Cadogan Hall</div>
+                        <div class="concert-description">
+                            RPO: Britten Violin Concerto (written on eve of
+                            WWII) with world premiere Joe Hisaishi miniature
+                            Cadogan Hall
+                        </div>
+                        <a
+                            href="https://www.songkick.com/concerts/42612734-royal-philharmonic-orchestra-at-cadogan-hall"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sat, Jun 20, 2026</div>
+                        <div class="concert-title">
+                            Carducci String Quartet - Ninfea Cruttwell-Reade
+                            Piano Quintet
+                        </div>
+                        <div class="concert-venue">Wigmore Hall</div>
+                        <div class="concert-description">
+                            World premiere of Ninfea Cruttwell-Reade piano
+                            quintet plus Elgar Piano Quintet in A minor
+                        </div>
+                        <a
+                            href="https://www.wigmore-hall.org.uk/news/wigmore-hall-celebrates-125-years-with-landmark-festival"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Wed, Jul 8, 2026, 19:30</div>
+                        <div class="concert-title">
+                            Coco Tomita - National Symphony Orchestra Landscapes
+                            in Sound
+                        </div>
+                        <div class="concert-venue">Cadogan Hall</div>
+                        <div class="concert-description">
+                            NSO season finale: Bruch Violin Concerto No. 1 with
+                            Smetana and Rachmaninov Symphony No. 2 Classical
+                            Events
+                        </div>
+                        <a
+                            href="https://cadoganhall.com/whats-on/national-symphony-orchestra-bruch-and-rachmaninov-landscapes-in-sound/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Late May–Early Jun 2026</div>
+                        <div class="concert-title">
+                            Christian Tetzlaff - Bach's Sonatas and Partitas for
+                            Solo Violin
+                        </div>
+                        <div class="concert-venue">Wigmore Hall</div>
+                        <div class="concert-description">
+                            Rare complete Bach Sonatas and Partitas for solo
+                            violin (BWV 1001-1006), marking his 60th birthday
+                        </div>
+                        <a
+                            href="https://www.wigmore-hall.org.uk/news/wigmore-hall-celebrates-125-years-with-landmark-festival"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+                </section>
+
+                <!-- Folk Concerts -->
+                <section class="genre-section">
+                    <h2 class="genre-header">
+                        <span class="genre-icon">🎵</span>
+                        Folk & Traditional
+                    </h2>
+
+                    <article class="concert">
+                        <div class="concert-date">Fri, Jan 30, 2026</div>
+                        <div class="concert-title">Mazaika Duo</div>
+                        <div class="concert-venue">Green Note Camden</div>
+                        <div class="concert-description">
+                            Russian/Eastern European traditional music featuring
+                            fiddle
+                        </div>
+                        <a
+                            href="https://www.greennote.co.uk/production/mazaika-duo-2/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sun, Feb 1, 2026, 19:30</div>
+                        <div class="concert-title">
+                            The Friel Sisters - St. Brigid's Concert
+                        </div>
+                        <div class="concert-venue">
+                            Irish Cultural Centre, Hammersmith
+                        </div>
+                        <div class="concert-description">
+                            St. Brigid's Day celebration: Acclaimed Irish
+                            traditional musicians with fiddle-driven sound
+                        </div>
+                        <a
+                            href="https://irishculturalcentre.co.uk/event/st-brigids-concert-the-friel-sisters/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Thu, Feb 26, 2026</div>
+                        <div class="concert-title">
+                            Hop Skotshne - Hop Skotshne
+                        </div>
+                        <div class="concert-venue">Green Note, Camden</div>
+                        <div class="concert-description">
+                            Klezmer ensemble: Traditional Eastern European
+                            Jewish music with prominent violin
+                        </div>
+                        <a
+                            href="https://www.greennote.co.uk/production/hop-skotshne-2/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sat, Feb 28, 2026</div>
+                        <div class="concert-title">
+                            Taff Rapids Stringband - Taff Rapids Stringband
+                        </div>
+                        <div class="concert-venue">Green Note, Camden</div>
+                        <div class="concert-description">
+                            Bluegrass stringband featuring fiddle
+                        </div>
+                        <a
+                            href="https://www.greennote.co.uk/production/taff-rapids-stringband/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sat, Feb 28, 2026, 20:00</div>
+                        <div class="concert-title">
+                            Kevin Burke, Dermot Byrne, Noriana Kennedy & Jim
+                            Murray - IMDL and MNT present
+                        </div>
+                        <div class="concert-venue">
+                            Irish Cultural Centre, Hammersmith
+                        </div>
+                        <div class="concert-description">
+                            Legendary Bothy Band fiddler Kevin Burke in
+                            exceptional nationwide tour Irishculturalcentre
+                        </div>
+                        <a
+                            href="https://irishculturalcentre.co.uk/event/imdl-and-mnt-present-kevin-burke-dermot-byrne-noriana-kennedy-jim-murray/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sat, Mar 14, 2026, 20:00</div>
+                        <div class="concert-title">
+                            Paddy Glackin & Noel Hill - Paddy Glackin & Noel
+                            Hill
+                        </div>
+                        <div class="concert-venue">
+                            Irish Cultural Centre, Hammersmith
+                        </div>
+                        <div class="concert-description">
+                            Irish traditional masters: Renowned fiddler Paddy
+                            Glackin with concertina virtuoso Noel Hill
+                            Irishculturalcentre
+                        </div>
+                        <a
+                            href="https://irishculturalcentre.co.uk/event/paddy-glackin-noel-hill/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sat, Mar 28, 2026, 18:30</div>
+                        <div class="concert-title">
+                            Fairport Convention - Fairport Convention
+                        </div>
+                        <div class="concert-venue">Union Chapel, Islington</div>
+                        <div class="concert-description">
+                            British folk-rock legends featuring fiddlers Ric
+                            Sanders and Chris Leslie
+                        </div>
+                        <a
+                            href="https://unionchapel.org.uk/whats-on/fairport-convention"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Sun, Apr 12, 2026, 19:30</div>
+                        <div class="concert-title">The Haar - The Haar</div>
+                        <div class="concert-venue">
+                            Irish Cultural Centre, Hammersmith
+                        </div>
+                        <div class="concert-description">
+                            One of UK/Irish folk's most in-demand acts;
+                            irishculturalcentre features fiddle prominently
+                            Irishculturalcentre
+                        </div>
+                        <a
+                            href="https://irishculturalcentre.co.uk/event/the-haar-2/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Fri, Apr 17, 2026, 20:00</div>
+                        <div class="concert-title">
+                            Heidi Talbot - Heidi Talbot
+                        </div>
+                        <div class="concert-venue">
+                            Irish Cultural Centre, Hammersmith
+                        </div>
+                        <div class="concert-description">
+                            Irish-American folk star (Cherish the Ladies) with
+                            traditional Irish/Scottish repertoire
+                            Irishculturalcentre
+                        </div>
+                        <a
+                            href="https://irishculturalcentre.co.uk/event/heidi-talbot/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Fri, May 15, 2026, 19:00</div>
+                        <div class="concert-title">
+                            Seth Lakeman - Seth Lakeman: FREEDOM FIELDS 20TH
+                            ANNIVERSARY
+                        </div>
+                        <div class="concert-venue">Union Chapel, Islington</div>
+                        <div class="concert-description">
+                            Mercury Prize-nominated English folk fiddler:
+                            "Freedom Fields" 20th Anniversary Tour
+                        </div>
+                        <a
+                            href="https://unionchapel.org.uk/whats-on/seth-lakeman"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">Thu, Jun 4, 2026, 18:30</div>
+                        <div class="concert-title">
+                            Dreamers' Circus - DMP & FIRE IN THE MOUNTAIN
+                            PRESENT: DREAMERS' CIRCUS
+                        </div>
+                        <div class="concert-venue">Union Chapel, Islington</div>
+                        <div class="concert-description">
+                            Danish/Nordic folk trio featuring violinist Rune
+                            Tonsgaard Sørensen
+                        </div>
+                        <a
+                            href="https://unionchapel.org.uk/whats-on/dmp-fire-in-the-moutain-present-dreamers-circus"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+
+                    <article class="concert">
+                        <div class="concert-date">
+                            Fri–Sat, Mar 27–28, 2026, 8pm
+                        </div>
+                        <div class="concert-title">
+                            McGoldrick McCusker Doyle - McGoldrick McCusker
+                            Doyle Tour 2026
+                        </div>
+                        <div class="concert-venue">
+                            Irish Cultural Centre, Hammersmith
+                        </div>
+                        <div class="concert-description">
+                            Folk triumvirate featuring Scottish fiddler John
+                            McCusker; top-class folk songs and tunes
+                            Irishculturalcentreirishculturalcentre
+                        </div>
+                        <a
+                            href="https://irishculturalcentre.co.uk/event/mcgoldrick-mccusker-doyle-tour-2026/"
+                            class="concert-link"
+                            target="_blank">View Details</a
+                        >
+                    </article>
+                </section>
+            </main>
+        </div>
+    </body>
+</html>
