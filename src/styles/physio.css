@@ -1,42 +1,45 @@
-/* Physio Timer - Refined Styles */
+/* Physio Timer - Refined Styles, light text on the site's dark Background */
 @import "tailwindcss";
 
 /* Refined color palette */
 :root {
-  --color-text: #1a1a1a;
-  --color-text-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-accent: #3b82f6;
-  --color-accent-soft: #dbeafe;
+  --color-text: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.6);
+  --color-border: rgba(255, 255, 255, 0.2);
+  --color-accent: #60a5fa;
+  --color-accent-soft: rgba(96, 165, 250, 0.16);
+  color-scheme: dark;
 }
 
 body {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  color: var(--color-text);
 }
 
-/* Subtle buttons */
+/* Pill buttons, matching the homepage links */
 .btn-refined {
   @apply inline-flex items-center justify-center;
-  @apply px-4 py-2 rounded-lg;
-  @apply border-0 bg-transparent;
-  @apply text-sm font-normal cursor-pointer;
+  @apply px-5 py-2 rounded-full;
+  @apply text-sm font-medium cursor-pointer;
   @apply transition-all duration-200;
-  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text);
 }
 
 .btn-refined:hover {
-  background: var(--color-accent-soft);
-  color: var(--color-accent);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .btn-refined.primary {
-  @apply font-medium;
-  background: var(--color-accent);
-  color: white;
+  @apply font-semibold;
+  border-color: transparent;
+  background: white;
+  color: #0a0a0a;
 }
 
 .btn-refined.primary:hover {
-  background: #2563eb;
+  background: rgba(255, 255, 255, 0.85);
 }
 
 /* Refined table */
@@ -97,15 +100,29 @@ body {
   @apply px-2 py-1 rounded-md;
   @apply border-0 bg-transparent cursor-pointer;
   @apply text-sm transition-colors duration-200;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .delete-btn:hover {
-  color: #ef4444;
-  background: #fee2e2;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.15);
+}
+
+/* Frosted card behind the running timer */
+.timer-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
 }
 
 /* Softer radial progress */
 .radial-progress {
   color: var(--color-accent) !important;
+}
+
+/* Dark modals to match */
+.modal-box {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(23, 23, 23, 0.9);
+  color: var(--color-text);
 }
