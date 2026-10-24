@@ -4,7 +4,7 @@ Run with `npm run dev`
 
 # Deploy
 
-Deployment happens with any push to master
+Vercel deploys any push to master to https://www.georgep.xyz (DNS is in Cloudflare).
 
 ```
 src/content/blog - put markdown in here for automagic blog posts
