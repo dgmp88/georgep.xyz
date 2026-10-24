@@ -1,0 +1,794 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <BaseHead
+      title="Ruler"
+      description="An on-screen ruler with centimetre grid, calibrated to your display"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style is:global>
+      :root {
+        --bg: #fbfbfa;
+        --text: #1a1a1a;
+        --muted: #6b7280;
+        --grid-half: rgba(30, 60, 110, 0.06);
+        --grid-cm: rgba(30, 60, 110, 0.13);
+        --tick: #1f2937;
+        --accent: #3b82f6;
+        --accent-soft: #dbeafe;
+        --panel: rgba(255, 255, 255, 0.92);
+        --border: #e5e7eb;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #121315;
+          --text: #ececec;
+          --muted: #9ca3af;
+          --grid-half: rgba(160, 190, 240, 0.07);
+          --grid-cm: rgba(160, 190, 240, 0.15);
+          --tick: #e5e7eb;
+          --accent: #60a5fa;
+          --accent-soft: rgba(96, 165, 250, 0.16);
+          --panel: rgba(28, 30, 34, 0.94);
+          --border: #33363c;
+        }
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+      }
+
+      #grid {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        cursor: crosshair;
+        touch-action: none;
+      }
+      #grid.dragging {
+        cursor: grabbing;
+      }
+
+      .hud {
+        position: fixed;
+        font-size: 12px;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+        pointer-events: none;
+      }
+      #readout {
+        left: 16px;
+        bottom: 14px;
+      }
+      #readout strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      #topbar {
+        position: fixed;
+        top: 12px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+      }
+      .btn:hover {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .btn.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: white;
+        font-weight: 500;
+      }
+      .btn.primary:hover {
+        filter: brightness(1.08);
+      }
+
+      #panel {
+        position: fixed;
+        top: 52px;
+        right: 16px;
+        width: max(360px, calc(8.56 * var(--ppc) * 1px + 40px));
+        max-width: calc(100vw - 32px);
+        max-height: calc(100vh - 68px);
+        overflow-y: auto;
+        box-sizing: border-box;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      #panel[hidden] {
+        display: none;
+      }
+      #panel h2 {
+        margin: 0 0 12px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      #panel h3 {
+        margin: 18px 0 6px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      #panel p {
+        margin: 6px 0;
+      }
+      .note {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      #guess {
+        font-size: 15px;
+      }
+      #search {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 7px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        font: inherit;
+      }
+      #search:focus {
+        outline: 2px solid var(--accent-soft);
+        border-color: var(--accent);
+      }
+      #results {
+        list-style: none;
+        margin: 6px 0 0;
+        padding: 4px;
+        max-height: 216px;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      #results button {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        width: 100%;
+        padding: 6px 8px;
+        border: 0;
+        border-radius: 6px;
+        background: none;
+        color: var(--text);
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+      #results button:hover,
+      #results button.selected {
+        background: var(--accent-soft);
+      }
+      #results .tag {
+        color: var(--muted);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      #results .empty {
+        padding: 6px 8px;
+        color: var(--muted);
+      }
+      .link {
+        margin-top: 12px;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--accent);
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .link:hover {
+        text-decoration: underline;
+      }
+
+      /* Ghost ID-1 card (85.60 × 53.98 mm), sized via --ppc (CSS px per cm) */
+      .card-wrap {
+        display: flex;
+        justify-content: center;
+        padding: 14px 0 10px;
+      }
+      .card {
+        position: relative;
+        width: calc(8.56 * var(--ppc) * 1px);
+        height: calc(5.398 * var(--ppc) * 1px);
+        border-radius: calc(0.318 * var(--ppc) * 1px);
+        border: 1px dashed var(--accent);
+        background: var(--accent-soft);
+        opacity: 0.75;
+      }
+      .card .chip {
+        position: absolute;
+        left: calc(0.9 * var(--ppc) * 1px);
+        top: calc(1.9 * var(--ppc) * 1px);
+        width: calc(1.1 * var(--ppc) * 1px);
+        height: calc(0.85 * var(--ppc) * 1px);
+        border-radius: calc(0.12 * var(--ppc) * 1px);
+        border: 1px solid var(--accent);
+        opacity: 0.5;
+      }
+      .card .dims {
+        position: absolute;
+        right: 10px;
+        bottom: 8px;
+        font-size: 11px;
+        color: var(--accent);
+      }
+      .slider-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .slider-row input {
+        flex: 1;
+        accent-color: var(--accent);
+      }
+      .slider-row output {
+        width: 52px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="grid"></canvas>
+
+    <div id="readout" class="hud"></div>
+
+    <div id="topbar">
+      <span id="status"></span>
+      <button id="toggle-panel" class="btn">Calibrate</button>
+    </div>
+
+    <div id="panel" hidden>
+      <h2>Your screen</h2>
+      <p id="guess"></p>
+      <p class="note" id="scale-info"></p>
+
+      <h3>Not right?</h3>
+      <input
+        id="search"
+        type="search"
+        placeholder="Search, e.g. “air 15” or “27 4k”"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <ul id="results"></ul>
+
+      <button id="show-card" class="link">Can't find it? Measure with a card</button>
+      <div id="card-section" hidden>
+        <h3>Measure with a card</h3>
+        <p class="note">
+          Hold any bank card or driving licence against the outline and slide
+          until the edges line up.
+        </p>
+        <div class="card-wrap">
+          <div class="card">
+            <div class="chip"></div>
+            <span class="dims">85.60 × 53.98 mm</span>
+          </div>
+        </div>
+        <div class="slider-row">
+          <input id="adjust" type="range" min="-50" max="100" step="0.05" value="0" />
+          <output id="adjust-out">0.0%</output>
+        </div>
+        <button id="reset-adjust" class="link">Reset</button>
+      </div>
+
+      <div class="actions">
+        <span></span>
+        <button id="done" class="btn primary">Done</button>
+      </div>
+    </div>
+
+    <script>
+      // Screen specs. Modes are macOS "looks like" resolutions as [w, h, dpr],
+      // which is what the browser reports as screen.width/height.
+      // Apple panels use ppi; generic monitors use diagonal inches.
+      const DEVICES = [
+        { id: "mba13", name: "MacBook Air 13.6″ (M2 and later)", native: [2560, 1664], ppi: 224,
+          modes: [[1024, 665], [1280, 832], [1470, 956], [1710, 1112]] },
+        { id: "mba15", name: "MacBook Air 15.3″", native: [2880, 1864], ppi: 224,
+          modes: [[1024, 663], [1280, 828], [1440, 932], [1710, 1107], [1920, 1243]] },
+        { id: "mbp14", name: "MacBook Pro 14.2″ (2021 and later)", native: [3024, 1964], ppi: 254,
+          modes: [[1024, 665], [1147, 745], [1352, 878], [1512, 982], [1800, 1169]] },
+        { id: "mbp16", name: "MacBook Pro 16.2″ (2021 and later)", native: [3456, 2234], ppi: 254,
+          modes: [[1168, 755], [1312, 848], [1496, 967], [1728, 1117], [2056, 1329]] },
+        { id: "mb13", name: "MacBook Air / Pro 13.3″ (2016–2022)", native: [2560, 1600], ppi: 227,
+          modes: [[1024, 640], [1280, 800], [1440, 900], [1680, 1050]] },
+        { id: "mbp15", name: "MacBook Pro 15.4″ (2012–2019)", native: [2880, 1800], ppi: 220,
+          modes: [[1024, 640], [1280, 800], [1440, 900], [1680, 1050], [1920, 1200]] },
+        { id: "mbp16i", name: "MacBook Pro 16″ (2019)", native: [3072, 1920], ppi: 226,
+          modes: [[1152, 720], [1344, 840], [1536, 960], [1792, 1120], [2048, 1280]] },
+        { id: "imac24", name: "iMac 24″", native: [4480, 2520], ppi: 218,
+          modes: [[1600, 900], [1920, 1080], [2240, 1260], [2560, 1440]] },
+        { id: "imac215", name: "iMac 21.5″ (4K)", native: [4096, 2304], ppi: 219,
+          modes: [[1600, 900], [2048, 1152], [2304, 1296]] },
+        { id: "studio27", name: "Studio Display / iMac 27″ (5K)", native: [5120, 2880], ppi: 218,
+          modes: [[2048, 1152], [2560, 1440], [2880, 1620], [3200, 1800]] },
+        { id: "xdr32", name: "Pro Display XDR 32″", native: [6016, 3384], ppi: 218,
+          modes: [[2560, 1440], [3008, 1692], [3384, 1904]] },
+        { id: "fhd24", name: "24″ 1080p monitor", native: [1920, 1080], diag: 24,
+          modes: [[1920, 1080, 1]] },
+        { id: "qhd27", name: "27″ 1440p monitor", native: [2560, 1440], diag: 27,
+          modes: [[2560, 1440, 1]] },
+        { id: "uhd27", name: "27″ 4K monitor", native: [3840, 2160], diag: 27,
+          modes: [[1920, 1080, 2], [2560, 1440, 2], [3840, 2160, 1]] },
+        { id: "uhd32", name: "32″ 4K monitor", native: [3840, 2160], diag: 32,
+          modes: [[1920, 1080, 2], [2560, 1440, 2], [3840, 2160, 1]] },
+        { id: "uw34", name: "34″ ultrawide monitor", native: [3440, 1440], diag: 34,
+          modes: [[3440, 1440, 1]] },
+      ];
+      const CSS_PX_PER_CM = 96 / 2.54;
+      const STORAGE_KEY = "ruler.calibration";
+
+      function widthCm(d) {
+        const [w, h] = d.native;
+        return d.ppi ? (w / d.ppi) * 2.54 : (d.diag * 2.54 * w) / Math.hypot(w, h);
+      }
+
+      // Rank devices against a reported screen: exact "looks like" mode first,
+      // then by how close the aspect ratio is to the native panel.
+      function matchDevices({ width, height, dpr }) {
+        const aspect = width / height;
+        const scored = [];
+        for (const d of DEVICES) {
+          const mode = d.modes.find(([w, h]) => Math.abs(w - width) <= 1 && Math.abs(h - height) <= 2);
+          const nativeAspect = d.native[0] / d.native[1];
+          const aspectDiff = Math.abs(aspect - nativeAspect) / nativeAspect;
+          let score;
+          if (mode) score = Math.round(dpr) === (mode[2] ?? 2) ? 0 : 1;
+          else if (aspectDiff < 0.01) score = 2 + aspectDiff * 100;
+          else continue;
+          scored.push({ device: d, score });
+        }
+        return scored.sort((a, b) => a.score - b.score).map((s) => s.device);
+      }
+
+      // Calibration is stored per screen shape so a laptop and an external
+      // monitor can each keep their own.
+      function screenKey() {
+        return (window.screen.width / window.screen.height).toFixed(2);
+      }
+
+      function loadAll() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveCalibration() {
+        try {
+          const all = loadAll();
+          all[screenKey()] = { deviceId: calibration.deviceId, adjust: calibration.adjust };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+        } catch {}
+      }
+
+      // State
+      let calibration = { deviceId: null, adjust: 0, saved: false };
+      let candidates = [];
+      let ppc = CSS_PX_PER_CM;
+      let origin = null;
+      let pointer = null;
+      let pinned = null; // box corner as an offset from the origin, once fixed by a click
+      let press = null; // where the current click started, until it becomes a drag
+      let dragging = false;
+      const DRAG_THRESHOLD = 4;
+
+      const canvas = document.getElementById("grid");
+      const ctx = canvas.getContext("2d");
+      const searchInput = document.getElementById("search");
+      const results = document.getElementById("results");
+      const cardSection = document.getElementById("card-section");
+      const adjustInput = document.getElementById("adjust");
+      const adjustOut = document.getElementById("adjust-out");
+      const panel = document.getElementById("panel");
+
+      function loadCalibration() {
+        candidates = matchDevices({
+          width: window.screen.width,
+          height: window.screen.height,
+          dpr: window.devicePixelRatio,
+        });
+        const saved = loadAll()[screenKey()];
+        calibration = saved
+          ? { ...saved, saved: true }
+          : { deviceId: candidates[0]?.id ?? null, adjust: 0, saved: false };
+      }
+
+      function computePpc() {
+        const d = DEVICES.find((x) => x.id === calibration.deviceId);
+        const base = d ? window.screen.width / widthCm(d) : CSS_PX_PER_CM;
+        ppc = base * (1 + calibration.adjust / 100);
+        document.documentElement.style.setProperty("--ppc", ppc);
+      }
+
+      function renderResults() {
+        // Every word must appear in the name; ″ and punctuation are ignored
+        const normalise = (t) => t.toLowerCase().replace(/[″"()]/g, " ");
+        const words = normalise(searchInput.value).split(/\s+/).filter(Boolean);
+        const matches = (d) => words.every((w) => normalise(d.name).includes(w));
+        const list = [...candidates, ...DEVICES.filter((d) => !candidates.includes(d))].filter(matches);
+        results.innerHTML = list.length
+          ? list
+              .map(
+                (d) =>
+                  `<li><button data-id="${d.id}" class="${d.id === calibration.deviceId ? "selected" : ""}">` +
+                  `<span>${d.name}</span>` +
+                  `<span class="tag">${d.id === calibration.deviceId ? "✓ selected" : candidates.includes(d) ? "likely" : ""}</span>` +
+                  `</button></li>`,
+              )
+              .join("")
+          : `<li class="empty">No matches. Try the card below.</li>`;
+      }
+
+      function renderControls() {
+        const d = DEVICES.find((x) => x.id === calibration.deviceId);
+        const name = d ? d.name : "your screen";
+        const physW = window.screen.width / ppc;
+        const physH = window.screen.height / ppc;
+        const diag = Math.hypot(physW, physH) / 2.54;
+        const tuned = calibration.adjust ? " (card adjusted)" : "";
+
+        document.getElementById("guess").innerHTML = !d
+          ? "We couldn't recognise this screen. Search for it below, or measure with a card."
+          : calibration.saved
+            ? `Using <strong>${name}</strong>${tuned}`
+            : `Looks like a <strong>${name}</strong>`;
+        document.getElementById("scale-info").textContent =
+          `Screen ≈ ${physW.toFixed(1)} × ${physH.toFixed(1)} cm (${diag.toFixed(1)}″) · ${ppc.toFixed(2)} px/cm. ` +
+          `Keep browser zoom at 100% (⌘0).`;
+        document.getElementById("status").textContent = d
+          ? `${calibration.saved ? "" : "Guessed: "}${d.name}${tuned}`
+          : "Unknown screen";
+
+        adjustInput.value = calibration.adjust;
+        adjustOut.textContent = `${calibration.adjust > 0 ? "+" : ""}${Number(calibration.adjust).toFixed(1)}%`;
+        if (!d || calibration.adjust) cardSection.hidden = false;
+        renderResults();
+      }
+
+      function update() {
+        computePpc();
+        renderControls();
+        draw();
+      }
+
+      function commit() {
+        calibration.saved = true;
+        saveCalibration();
+        update();
+      }
+
+      // --- Calibration controls --------------------------------------------
+
+      function selectDevice(id) {
+        calibration.deviceId = id;
+        calibration.adjust = 0;
+        commit();
+      }
+
+      searchInput.addEventListener("input", renderResults);
+      searchInput.addEventListener("keydown", (e) => {
+        const first = results.querySelector("button");
+        if (e.key === "Enter" && first) selectDevice(first.dataset.id);
+      });
+      results.addEventListener("click", (e) => {
+        const button = e.target.closest("button");
+        if (button) selectDevice(button.dataset.id);
+      });
+
+      document.getElementById("show-card").addEventListener("click", () => {
+        cardSection.hidden = !cardSection.hidden;
+      });
+
+      adjustInput.addEventListener("input", () => {
+        calibration.adjust = Number(adjustInput.value);
+        commit();
+      });
+
+      document.getElementById("reset-adjust").addEventListener("click", () => {
+        calibration.adjust = 0;
+        commit();
+      });
+
+      document.getElementById("toggle-panel").addEventListener("click", () => {
+        panel.hidden = !panel.hidden;
+      });
+      document.getElementById("done").addEventListener("click", () => {
+        commit();
+        panel.hidden = true;
+      });
+
+      // --- Drawing ------------------------------------------------------------
+
+      function draw() {
+        const dpr = window.devicePixelRatio || 1;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
+          canvas.width = Math.round(w * dpr);
+          canvas.height = Math.round(h * dpr);
+        }
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        origin ??= { x: Math.round(w / 2), y: Math.round(h / 2) };
+        const { x: ox, y: oy } = origin;
+        const css = getComputedStyle(document.documentElement);
+        const color = (name) => css.getPropertyValue(name).trim();
+        // Snap to device pixels so 1px lines stay crisp
+        const snap = (v) => (Math.round(v * dpr) + 0.5) / dpr;
+
+        // Grid: half-centimetre and centimetre lines, aligned to the origin
+        const half = ppc / 2;
+        for (const [step, stroke, every] of [[half, "--grid-half", 2], [ppc, "--grid-cm", 1]]) {
+          ctx.strokeStyle = color(stroke);
+          ctx.lineWidth = 1 / dpr;
+          ctx.beginPath();
+          for (let i = Math.floor(-ox / step); i <= (w - ox) / step; i++) {
+            if (every === 2 && i % 2 === 0) continue;
+            const x = snap(ox + i * step);
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+          }
+          for (let i = Math.floor(-oy / step); i <= (h - oy) / step; i++) {
+            if (every === 2 && i % 2 === 0) continue;
+            const y = snap(oy + i * step);
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+          }
+          ctx.stroke();
+        }
+
+        const target = measureTarget();
+        if (target) {
+          ctx.fillStyle = color("--accent-soft");
+          ctx.globalAlpha = 0.5;
+          ctx.fillRect(Math.min(ox, target.x), Math.min(oy, target.y), Math.abs(target.x - ox), Math.abs(target.y - oy));
+          ctx.globalAlpha = 1;
+        }
+
+        // Rulers: the axis line is the measuring edge, ticks hang off one side
+        const mm = ppc / 10;
+        const tickLen = (i) => (i % 10 === 0 ? 14 : i % 5 === 0 ? 9 : 5);
+        ctx.strokeStyle = color("--tick");
+        ctx.fillStyle = color("--tick");
+        ctx.lineWidth = 1 / dpr;
+        ctx.font = "500 11px Inter, system-ui, sans-serif";
+        ctx.beginPath();
+        ctx.moveTo(0, snap(oy));
+        ctx.lineTo(w, snap(oy));
+        ctx.moveTo(snap(ox), 0);
+        ctx.lineTo(snap(ox), h);
+        const showMm = mm >= 3;
+        for (let i = Math.floor(-ox / mm); i <= (w - ox) / mm; i++) {
+          if (!showMm && i % 5 !== 0) continue;
+          const x = snap(ox + i * mm);
+          ctx.moveTo(x, oy);
+          ctx.lineTo(x, oy + tickLen(i));
+        }
+        for (let i = Math.floor(-oy / mm); i <= (h - oy) / mm; i++) {
+          if (!showMm && i % 5 !== 0) continue;
+          const y = snap(oy + i * mm);
+          ctx.moveTo(ox, y);
+          ctx.lineTo(ox + tickLen(i), y);
+        }
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        for (let i = Math.ceil(-ox / ppc); i <= (w - ox) / ppc; i++) {
+          if (i !== 0) ctx.fillText(String(Math.abs(i)), ox + i * ppc, oy + 17);
+        }
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        for (let i = Math.ceil(-oy / ppc); i <= (h - oy) / ppc; i++) {
+          if (i !== 0) ctx.fillText(String(Math.abs(i)), ox + 18, oy + i * ppc);
+        }
+
+        // Pill with text, rotated by angle (radians) around its centre
+        const pill = (text, cx, cy, { font = "600 12px Inter, system-ui, sans-serif", fg = color("--text"), angle = 0 } = {}) => {
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(angle);
+          ctx.font = font;
+          const tw = ctx.measureText(text).width + 12;
+          ctx.fillStyle = color("--panel");
+          ctx.strokeStyle = color("--border");
+          ctx.beginPath();
+          ctx.roundRect(-tw / 2, -10, tw, 20, 5);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = fg;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(text, 0, 0.5);
+          ctx.restore();
+        };
+
+        // Measurement box from origin to cursor, each edge labelled with its length
+        if (target) {
+          const { x: px, y: py } = target;
+          const dx = Math.abs(px - ox) / ppc;
+          const dy = Math.abs(py - oy) / ppc;
+          ctx.strokeStyle = color("--accent");
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(ox, py);
+          ctx.lineTo(px, py);
+          ctx.lineTo(px, oy);
+          ctx.moveTo(ox, oy);
+          ctx.lineTo(px, py);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          const sx = Math.sign(px - ox) || 1;
+          const sy = Math.sign(py - oy) || 1;
+          if (dx > 0.3) pill(`${dx.toFixed(2)} cm`, (ox + px) / 2, py + sy * 14);
+          if (dy > 0.3) pill(`${dy.toFixed(2)} cm`, px + sx * 14, (oy + py) / 2, { angle: -Math.PI / 2 });
+          if (dx > 0.3 && dy > 0.3) {
+            // Along the diagonal, kept upright
+            let angle = Math.atan2(py - oy, px - ox);
+            if (angle > Math.PI / 2) angle -= Math.PI;
+            if (angle < -Math.PI / 2) angle += Math.PI;
+            pill(`${Math.hypot(dx, dy).toFixed(2)} cm`, (ox + px) / 2, (oy + py) / 2, {
+              font: "400 11px Inter, system-ui, sans-serif",
+              fg: color("--muted"),
+              angle,
+            });
+          }
+        }
+
+        ctx.fillStyle = color("--accent");
+        ctx.beginPath();
+        ctx.arc(ox, oy, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        renderReadout();
+      }
+
+      // The box follows the cursor unless a click has fixed it in place
+      function measureTarget() {
+        if (pinned) return { x: origin.x + pinned.x, y: origin.y + pinned.y };
+        return dragging ? null : pointer;
+      }
+
+      function renderReadout() {
+        const readout = document.getElementById("readout");
+        const help = "Click to fix the box · drag to move the grid · double-click to centre · arrow keys nudge 1 mm";
+        const target = measureTarget();
+        if (!target) {
+          readout.textContent = help;
+          return;
+        }
+        const dx = (target.x - origin.x) / ppc;
+        const dy = (target.y - origin.y) / ppc;
+        readout.innerHTML =
+          `x <strong>${Math.abs(dx).toFixed(2)} cm</strong> · y <strong>${Math.abs(dy).toFixed(2)} cm</strong>` +
+          ` · distance <strong>${Math.hypot(dx, dy).toFixed(2)} cm</strong>`;
+      }
+
+      // --- Interaction --------------------------------------------------------
+
+      // Drag pans the grid (a fixed box moves with it); a click without
+      // dragging fixes the box at that point, and clicking again releases it.
+      canvas.addEventListener("pointerdown", (e) => {
+        canvas.setPointerCapture(e.pointerId);
+        press = { x: e.clientX, y: e.clientY, origin: { ...origin } };
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        pointer = { x: e.clientX, y: e.clientY };
+        if (press && !dragging && Math.hypot(pointer.x - press.x, pointer.y - press.y) > DRAG_THRESHOLD) {
+          dragging = true;
+          canvas.classList.add("dragging");
+        }
+        if (dragging) {
+          origin = { x: press.origin.x + pointer.x - press.x, y: press.origin.y + pointer.y - press.y };
+        }
+        draw();
+      });
+      canvas.addEventListener("pointerup", (e) => {
+        if (press && !dragging) {
+          pinned = pinned ? null : { x: e.clientX - origin.x, y: e.clientY - origin.y };
+        }
+        press = null;
+        dragging = false;
+        canvas.classList.remove("dragging");
+        draw();
+      });
+      canvas.addEventListener("pointerleave", () => {
+        pointer = null;
+        draw();
+      });
+      canvas.addEventListener("dblclick", () => {
+        origin = null;
+        pinned = null;
+        draw();
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          panel.hidden = true;
+          pinned = null;
+          draw();
+        }
+        if (panel.contains(document.activeElement)) return;
+        const step = (e.shiftKey ? 1 : 0.1) * ppc;
+        const moves = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+        if (!moves[e.key] || !origin) return;
+        e.preventDefault();
+        origin = { x: origin.x + moves[e.key][0], y: origin.y + moves[e.key][1] };
+        draw();
+      });
+
+      // Zoom and moving between screens both fire resize
+      window.addEventListener("resize", () => {
+        loadCalibration();
+        update();
+      });
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+      document.fonts?.ready.then(draw);
+
+      loadCalibration();
+      if (!calibration.saved) panel.hidden = false;
+      update();
+    </script>
+  </body>
+</html>
