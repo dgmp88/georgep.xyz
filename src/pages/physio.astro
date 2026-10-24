@@ -1,29 +1,25 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
+import Background from "../components/Background.astro";
 import "../styles/physio.css";
 ---
 
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <BaseHead
       title="Physio Timer"
       description="Simple timer for physio exercises"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
+    <Background />
     <div class="min-h-screen flex items-center justify-center p-4">
       <div class="w-full max-w-2xl">
         <!-- Edit Mode -->
         <div id="edit-mode" class="rounded-lg p-6">
           <h1
-            class="text-3xl font-light mb-8 text-center"
+            class="font-display text-4xl font-normal mb-8 text-center"
             style="color: var(--color-text)"
           >
             Physio Timer
@@ -94,7 +90,7 @@ import "../styles/physio.css";
             <!-- Main timer display -->
             <div
               id="timer-display"
-              class="glass rounded-lg p-12 mb-4 cursor-pointer transition-all duration-500"
+              class="timer-card rounded-2xl p-12 mb-4 cursor-pointer transition-all duration-500"
             >
               <h2 id="current-exercise" class="text-4xl font-bold mb-8">
                 LEFT LEG
