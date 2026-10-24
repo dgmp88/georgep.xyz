@@ -23,34 +23,32 @@ const formatDate = (d: Date) =>
   <body>
     <Background />
     <Header />
-    <main class="max-w-3xl mx-auto px-4 pt-28 pb-20">
-      <div class="panel p-6 sm:p-10">
-        <h1 class="font-display text-4xl">Blog</h1>
-        {years.map((year) => (
-          <section class="mt-10">
-            <h2 class="text-sm font-medium text-white/50">{year}</h2>
-            <ul class="mt-2 divide-y divide-white/10">
-              {posts
-                .filter((p) => p.data.date.getFullYear() === year)
-                .map((post) => (
-                  <li>
-                    <a
-                      href={`/blog/${post.id}/`}
-                      class="group flex items-baseline gap-4 py-3"
-                    >
-                      <span class="w-14 shrink-0 text-sm tabular-nums text-white/50">
-                        {formatDate(post.data.date)}
-                      </span>
-                      <span class="font-medium group-hover:underline underline-offset-4">
-                        {post.data.title}
-                      </span>
-                    </a>
-                  </li>
-                ))}
-            </ul>
-          </section>
-        ))}
-      </div>
+    <main class="on-dark max-w-3xl mx-auto px-4 pt-24 pb-20">
+      <h1 class="font-display text-4xl">Blog</h1>
+      {years.map((year) => (
+        <section class="mt-10">
+          <h2 class="text-sm font-medium text-white/50">{year}</h2>
+          <ul class="mt-2 divide-y divide-white/10">
+            {posts
+              .filter((p) => p.data.date.getFullYear() === year)
+              .map((post) => (
+                <li>
+                  <a
+                    href={`/blog/${post.id}/`}
+                    class="group flex items-baseline gap-4 py-3"
+                  >
+                    <span class="w-14 shrink-0 text-sm tabular-nums text-white/50">
+                      {formatDate(post.data.date)}
+                    </span>
+                    <span class="font-medium group-hover:underline underline-offset-4">
+                      {post.data.title}
+                    </span>
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))}
     </main>
   </body>
 </html>

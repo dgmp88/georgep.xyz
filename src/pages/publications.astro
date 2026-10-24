@@ -26,72 +26,70 @@ const years = [...new Set(pubs.map(yearOf))];
   <body>
     <Background />
     <Header />
-    <main class="max-w-3xl mx-auto px-4 pt-28 pb-20">
-      <div class="panel p-6 sm:p-10">
-        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-          <h1 class="font-display text-4xl">Publications</h1>
-          <a
-            href={SCHOLAR_URL}
-            class="text-sm text-white/70 transition-colors hover:text-white"
-          >
-            Google Scholar →
-          </a>
-        </div>
-        {years.map((year) => (
-          <section class="mt-10">
-            <h2 class="text-sm font-medium text-white/50">{year}</h2>
-            <ul class="mt-2 divide-y divide-white/10">
-              {pubs
-                .filter((p) => yearOf(p) === year)
-                .map(({ data }) => (
-                  <li class="flex gap-4 py-4">
-                    {/* Logos sit on a tile so they keep their own colours; white-drawn marks get a dark one */}
-                    {data.logo ? (
-                      <div
-                        class:list={[
-                          'flex h-10 w-16 shrink-0 items-center justify-center rounded-md p-1.5 sm:h-12 sm:w-20',
-                          data.logoDark ? 'bg-black ring-1 ring-white/15' : 'bg-white',
-                        ]}
-                      >
-                        <img
-                          src={`/logos/${data.logo}`}
-                          alt=""
-                          class="max-h-full max-w-full object-contain"
-                          loading="lazy"
-                        />
-                      </div>
-                    ) : (
-                      <div class="flex h-10 w-16 shrink-0 items-center justify-center rounded-md bg-white/10 text-xs font-medium text-white/60 sm:h-12 sm:w-20">
-                        {data.venue.split(' ')[0]}
-                      </div>
-                    )}
-                    <div class="min-w-0">
-                      {data.url ? (
-                        <a
-                          href={data.url}
-                          class="font-medium hover:underline underline-offset-4"
-                        >
-                          {data.title}
-                        </a>
-                      ) : (
-                        <span class="font-medium">{data.title}</span>
-                      )}
-                      <p class="mt-1 text-sm text-white/70">
-                        {data.authors.map((a, i) => (
-                          <>
-                            {i > 0 && ', '}
-                            {a === ME ? <span class="whitespace-nowrap text-white">{a}</span> : a}
-                          </>
-                        ))}
-                      </p>
-                      <p class="mt-0.5 text-sm italic text-white/50">{data.venue}</p>
-                    </div>
-                  </li>
-                ))}
-            </ul>
-          </section>
-        ))}
+    <main class="on-dark max-w-3xl mx-auto px-4 pt-24 pb-20">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <h1 class="font-display text-4xl">Publications</h1>
+        <a
+          href={SCHOLAR_URL}
+          class="text-sm text-white/70 transition-colors hover:text-white"
+        >
+          Google Scholar →
+        </a>
       </div>
+      {years.map((year) => (
+        <section class="mt-10">
+          <h2 class="text-sm font-medium text-white/50">{year}</h2>
+          <ul class="mt-2 divide-y divide-white/10">
+            {pubs
+              .filter((p) => yearOf(p) === year)
+              .map(({ data }) => (
+                <li class="flex gap-4 py-4">
+                  {/* Logos sit on a tile so they keep their own colours; white-drawn marks get a dark one */}
+                  {data.logo ? (
+                    <div
+                      class:list={[
+                        'flex h-10 w-16 shrink-0 items-center justify-center rounded-md p-1.5 sm:h-12 sm:w-20',
+                        data.logoDark ? 'bg-black ring-1 ring-white/15' : 'bg-white',
+                      ]}
+                    >
+                      <img
+                        src={`/logos/${data.logo}`}
+                        alt=""
+                        class="max-h-full max-w-full object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <div class="flex h-10 w-16 shrink-0 items-center justify-center rounded-md bg-white/10 text-xs font-medium text-white/60 sm:h-12 sm:w-20">
+                      {data.venue.split(' ')[0]}
+                    </div>
+                  )}
+                  <div class="min-w-0">
+                    {data.url ? (
+                      <a
+                        href={data.url}
+                        class="font-medium hover:underline underline-offset-4"
+                      >
+                        {data.title}
+                      </a>
+                    ) : (
+                      <span class="font-medium">{data.title}</span>
+                    )}
+                    <p class="mt-1 text-sm text-white/70">
+                      {data.authors.map((a, i) => (
+                        <>
+                          {i > 0 && ', '}
+                          {a === ME ? <span class="whitespace-nowrap text-white">{a}</span> : a}
+                        </>
+                      ))}
+                    </p>
+                    <p class="mt-0.5 text-sm italic text-white/50">{data.venue}</p>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))}
     </main>
   </body>
 </html>
