@@ -124,7 +124,7 @@ import BaseHead from "../components/BaseHead.astro";
         position: fixed;
         top: 52px;
         right: 16px;
-        width: max(360px, calc(8.56 * var(--ppc) * 1px + 40px));
+        width: 360px;
         max-width: calc(100vw - 32px);
         max-height: calc(100vh - 68px);
         overflow-y: auto;
@@ -228,20 +228,59 @@ import BaseHead from "../components/BaseHead.astro";
         text-decoration: underline;
       }
 
-      /* Ghost ID-1 card (85.60 × 53.98 mm), sized via --ppc (CSS px per cm) */
-      .card-wrap {
+      /* Card mode: a life-size ID-1 card (85.60 × 53.98 mm) over the ruler,
+         sized via --ppc (CSS px per cm) */
+      #card-mode {
+        position: fixed;
+        inset: 0;
         display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        padding: 14px 0 10px;
+        gap: 20px;
+        padding: 16px;
+        pointer-events: none;
+      }
+      #card-mode[hidden] {
+        display: none;
+      }
+      body.card-mode #topbar,
+      body.card-mode #panel,
+      body.card-mode #readout {
+        display: none;
+      }
+      .card-hint,
+      .card-controls {
+        box-sizing: border-box;
+        max-width: min(440px, 100%);
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        font-size: 13px;
+        text-align: center;
+        pointer-events: auto;
+      }
+      .card-hint {
+        margin: 0;
+        color: var(--muted);
       }
       .card {
+        --w: 8.56;
+        --h: 5.398;
         position: relative;
-        width: calc(8.56 * var(--ppc) * 1px);
-        height: calc(5.398 * var(--ppc) * 1px);
+        flex: none;
+        width: calc(var(--w) * var(--ppc) * 1px);
+        height: calc(var(--h) * var(--ppc) * 1px);
         border-radius: calc(0.318 * var(--ppc) * 1px);
         border: 1px dashed var(--accent);
         background: var(--accent-soft);
-        opacity: 0.75;
+        opacity: 0.8;
+      }
+      /* Upright when the card is wider than the screen, e.g. a phone */
+      .card.portrait {
+        --w: 5.398;
+        --h: 8.56;
       }
       .card .chip {
         position: absolute;
@@ -253,6 +292,12 @@ import BaseHead from "../components/BaseHead.astro";
         border: 1px solid var(--accent);
         opacity: 0.5;
       }
+      .card.portrait .chip {
+        left: calc(1.9 * var(--ppc) * 1px);
+        top: calc(0.9 * var(--ppc) * 1px);
+        width: calc(0.85 * var(--ppc) * 1px);
+        height: calc(1.1 * var(--ppc) * 1px);
+      }
       .card .dims {
         position: absolute;
         right: 10px;
@@ -260,17 +305,25 @@ import BaseHead from "../components/BaseHead.astro";
         font-size: 11px;
         color: var(--accent);
       }
+      .card-controls {
+        width: 100%;
+      }
       .slider-row {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
       }
       .slider-row input {
         flex: 1;
+        min-width: 0;
         accent-color: var(--accent);
       }
+      .slider-row .btn {
+        width: 32px;
+        padding: 4px 0;
+      }
       .slider-row output {
-        width: 52px;
+        width: 48px;
         text-align: right;
         font-variant-numeric: tabular-nums;
         color: var(--muted);
@@ -278,8 +331,17 @@ import BaseHead from "../components/BaseHead.astro";
       .actions {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         gap: 8px;
         margin-top: 16px;
+      }
+      .card-controls .actions {
+        margin-top: 12px;
+      }
+      @media (max-width: 560px) {
+        #status {
+          display: none;
+        }
       }
     </style>
   </head>
@@ -309,24 +371,6 @@ import BaseHead from "../components/BaseHead.astro";
       <ul id="results"></ul>
 
       <button id="show-card" class="link">Can't find it? Measure with a card</button>
-      <div id="card-section" hidden>
-        <h3>Measure with a card</h3>
-        <p class="note">
-          Hold any bank card or driving licence against the outline and slide
-          until the edges line up.
-        </p>
-        <div class="card-wrap">
-          <div class="card">
-            <div class="chip"></div>
-            <span class="dims">85.60 × 53.98 mm</span>
-          </div>
-        </div>
-        <div class="slider-row">
-          <input id="adjust" type="range" min="-50" max="100" step="0.05" value="0" />
-          <output id="adjust-out">0.0%</output>
-        </div>
-        <button id="reset-adjust" class="link">Reset</button>
-      </div>
 
       <div class="actions">
         <span></span>
@@ -334,33 +378,138 @@ import BaseHead from "../components/BaseHead.astro";
       </div>
     </div>
 
+    <div id="card-mode" hidden>
+      <p class="card-hint">
+        Hold any bank card or driving licence against the outline and slide
+        until the edges line up.
+      </p>
+      <div class="card">
+        <div class="chip"></div>
+        <span class="dims">85.60 × 53.98 mm</span>
+      </div>
+      <div class="card-controls">
+        <div class="slider-row">
+          <button id="adjust-down" class="btn" aria-label="Smaller">−</button>
+          <input id="adjust" type="range" min="-50" max="100" step="0.05" value="0" />
+          <button id="adjust-up" class="btn" aria-label="Bigger">+</button>
+          <output id="adjust-out">0.0%</output>
+        </div>
+        <div class="actions">
+          <button id="card-cancel" class="btn">Cancel</button>
+          <button id="reset-adjust" class="link">Reset</button>
+          <button id="card-done" class="btn primary">Done</button>
+        </div>
+      </div>
+    </div>
+
     <script>
-      // Screen specs. Modes are macOS "looks like" resolutions as [w, h, dpr],
-      // which is what the browser reports as screen.width/height.
-      // Apple panels use ppi; generic monitors use diagonal inches.
+      // Screen specs. Modes are what the browser reports as screen.width ×
+      // screen.height and devicePixelRatio, e.g. macOS "looks like" resolutions
+      // or Windows scaling (dpr defaults to 2). Sizes are given as ppi, or as
+      // diagonal inches for generic screens. os limits which devices count as
+      // likely for the visitor's platform; screens without one fit any desktop.
+      // models are the model names Chrome on Android reports; Samsung SM- codes
+      // match as prefixes to cover regional variants (SM-S911B, SM-S911U, ...).
       const DEVICES = [
-        { id: "mba13", name: "MacBook Air 13.6″ (M2 and later)", native: [2560, 1664], ppi: 224,
+        { id: "mba13", os: "mac", name: "MacBook Air 13.6″ (M2 and later)", native: [2560, 1664], ppi: 224,
           modes: [[1024, 665], [1280, 832], [1470, 956], [1710, 1112]] },
-        { id: "mba15", name: "MacBook Air 15.3″", native: [2880, 1864], ppi: 224,
+        { id: "mba15", os: "mac", name: "MacBook Air 15.3″", native: [2880, 1864], ppi: 224,
           modes: [[1024, 663], [1280, 828], [1440, 932], [1710, 1107], [1920, 1243]] },
-        { id: "mbp14", name: "MacBook Pro 14.2″ (2021 and later)", native: [3024, 1964], ppi: 254,
+        { id: "mbp14", os: "mac", name: "MacBook Pro 14.2″ (2021 and later)", native: [3024, 1964], ppi: 254,
           modes: [[1024, 665], [1147, 745], [1352, 878], [1512, 982], [1800, 1169]] },
-        { id: "mbp16", name: "MacBook Pro 16.2″ (2021 and later)", native: [3456, 2234], ppi: 254,
+        { id: "mbp16", os: "mac", name: "MacBook Pro 16.2″ (2021 and later)", native: [3456, 2234], ppi: 254,
           modes: [[1168, 755], [1312, 848], [1496, 967], [1728, 1117], [2056, 1329]] },
-        { id: "mb13", name: "MacBook Air / Pro 13.3″ (2016–2022)", native: [2560, 1600], ppi: 227,
+        { id: "mb13", os: "mac", name: "MacBook Air / Pro 13.3″ (2016–2022)", native: [2560, 1600], ppi: 227,
           modes: [[1024, 640], [1280, 800], [1440, 900], [1680, 1050]] },
-        { id: "mbp15", name: "MacBook Pro 15.4″ (2012–2019)", native: [2880, 1800], ppi: 220,
+        { id: "mbp15", os: "mac", name: "MacBook Pro 15.4″ (2012–2019)", native: [2880, 1800], ppi: 220,
           modes: [[1024, 640], [1280, 800], [1440, 900], [1680, 1050], [1920, 1200]] },
-        { id: "mbp16i", name: "MacBook Pro 16″ (2019)", native: [3072, 1920], ppi: 226,
+        { id: "mbp16i", os: "mac", name: "MacBook Pro 16″ (2019)", native: [3072, 1920], ppi: 226,
           modes: [[1152, 720], [1344, 840], [1536, 960], [1792, 1120], [2048, 1280]] },
-        { id: "imac24", name: "iMac 24″", native: [4480, 2520], ppi: 218,
+        { id: "imac24", os: "mac", name: "iMac 24″", native: [4480, 2520], ppi: 218,
           modes: [[1600, 900], [1920, 1080], [2240, 1260], [2560, 1440]] },
-        { id: "imac215", name: "iMac 21.5″ (4K)", native: [4096, 2304], ppi: 219,
+        { id: "imac215", os: "mac", name: "iMac 21.5″ (4K)", native: [4096, 2304], ppi: 219,
           modes: [[1600, 900], [2048, 1152], [2304, 1296]] },
         { id: "studio27", name: "Studio Display / iMac 27″ (5K)", native: [5120, 2880], ppi: 218,
           modes: [[2048, 1152], [2560, 1440], [2880, 1620], [3200, 1800]] },
         { id: "xdr32", name: "Pro Display XDR 32″", native: [6016, 3384], ppi: 218,
           modes: [[2560, 1440], [3008, 1692], [3384, 1904]] },
+        { id: "ip17pm", os: "ios", name: "iPhone 16 Pro Max / 17 Pro Max / 18 Pro Max (6.9″)", native: [1320, 2868], ppi: 460, modes: [[440, 956, 3]] },
+        { id: "ip17p", os: "ios", name: "iPhone 16 Pro / 17 / 17 Pro / 18 Pro (6.3″)", native: [1206, 2622], ppi: 460, modes: [[402, 874, 3]] },
+        { id: "ipair", os: "ios", name: "iPhone Air (6.5″)", native: [1260, 2736], ppi: 460, modes: [[420, 912, 3]] },
+        { id: "ip16", os: "ios", name: "iPhone 14 Pro / 15 / 15 Pro / 16 (6.1″)", native: [1179, 2556], ppi: 460, modes: [[393, 852, 3]] },
+        { id: "ip16pl", os: "ios", name: "iPhone 14 Pro Max / 15 Plus / 15 Pro Max / 16 Plus (6.7″)", native: [1290, 2796], ppi: 460, modes: [[430, 932, 3]] },
+        { id: "ip12", os: "ios", name: "iPhone 12 / 12 Pro / 13 / 13 Pro / 14 / 16e / 17e (6.1″)", native: [1170, 2532], ppi: 460, modes: [[390, 844, 3]] },
+        { id: "ip12pm", os: "ios", name: "iPhone 12 Pro Max / 13 Pro Max / 14 Plus (6.7″)", native: [1284, 2778], ppi: 458, modes: [[428, 926, 3]] },
+        { id: "ip12mini", os: "ios", name: "iPhone 12 mini / 13 mini (5.4″)", native: [1080, 2340], ppi: 476, modes: [[375, 812, 3]] },
+        { id: "ipx", os: "ios", name: "iPhone X / XS / 11 Pro (5.8″)", native: [1125, 2436], ppi: 458, modes: [[375, 812, 3]] },
+        { id: "ipxsmax", os: "ios", name: "iPhone XS Max / 11 Pro Max (6.5″)", native: [1242, 2688], ppi: 458, modes: [[414, 896, 3]] },
+        { id: "ipxr", os: "ios", name: "iPhone XR / 11 (6.1″)", native: [828, 1792], ppi: 326, modes: [[414, 896, 2]] },
+        { id: "ip8", os: "ios", name: "iPhone 6 / 7 / 8 / SE 2nd & 3rd gen (4.7″)", native: [750, 1334], ppi: 326, modes: [[375, 667, 2]] },
+        { id: "ip8p", os: "ios", name: "iPhone 6 Plus / 7 Plus / 8 Plus (5.5″)", native: [1080, 1920], ppi: 401, modes: [[414, 736, 3]] },
+        { id: "ipse1", os: "ios", name: "iPhone 5 / 5s / SE 1st gen (4″)", native: [640, 1136], ppi: 326, modes: [[320, 568, 2]] },
+        { id: "ipadp13", os: "ios", name: "iPad Pro 13″ (M4 and later)", native: [2064, 2752], ppi: 264, modes: [[1032, 1376, 2]] },
+        { id: "ipadp11", os: "ios", name: "iPad Pro 11″ (M4 and later)", native: [1668, 2420], ppi: 264, modes: [[834, 1210, 2]] },
+        { id: "ipad13", os: "ios", name: "iPad Air 13″ / iPad Pro 12.9″", native: [2048, 2732], ppi: 264, modes: [[1024, 1366, 2]] },
+        { id: "ipad11", os: "ios", name: "iPad Air 11″ / Air 4th–5th gen / iPad 10th gen / iPad A16 (10.9″)", native: [1640, 2360], ppi: 264, modes: [[820, 1180, 2]] },
+        { id: "ipadp11o", os: "ios", name: "iPad Pro 11″ (1st–4th gen)", native: [1668, 2388], ppi: 264, modes: [[834, 1194, 2]] },
+        { id: "ipad105", os: "ios", name: "iPad Pro 10.5″ / iPad Air 3rd gen", native: [1668, 2224], ppi: 264, modes: [[834, 1112, 2]] },
+        { id: "ipad102", os: "ios", name: "iPad 7th–9th gen (10.2″)", native: [1620, 2160], ppi: 264, modes: [[810, 1080, 2]] },
+        { id: "ipad97", os: "ios", name: "iPad Air 2 / iPad Pro 9.7″ / iPad 5th–6th gen (9.7″)", native: [1536, 2048], ppi: 264, modes: [[768, 1024, 2]] },
+        { id: "ipadmini6", os: "ios", name: "iPad mini 6th gen and later (8.3″)", native: [1488, 2266], ppi: 326, modes: [[744, 1133, 2]] },
+        { id: "ipadmini5", os: "ios", name: "iPad mini 4 / 5th gen (7.9″)", native: [1536, 2048], ppi: 326, modes: [[768, 1024, 2]] },
+        { id: "s25u", os: "android", name: "Galaxy S25 Ultra (6.9″)", models: ["SM-S938"], native: [1080, 2340], ppi: 373.5, modes: [[384, 832, 2.8125], [384, 832, 3.75]] },
+        { id: "s25", os: "android", name: "Galaxy S25 (6.2″)", models: ["SM-S931"], native: [1080, 2340], ppi: 416, modes: [[360, 780, 3]] },
+        { id: "px10", os: "android", name: "Pixel 10 (6.3″)", models: ["Pixel 10"], native: [1080, 2424], ppi: 422, modes: [[412, 924, 2.625]] },
+        { id: "px9a", os: "android", name: "Pixel 9a (6.3″)", models: ["Pixel 9a"], native: [1080, 2424], ppi: 422, modes: [[412, 924, 2.625]] },
+        { id: "s24u", os: "android", name: "Galaxy S24 Ultra (6.8″)", models: ["SM-S928"], native: [1080, 2340], ppi: 378.75, modes: [[384, 832, 2.8125], [384, 832, 3.75]] },
+        { id: "s24p", os: "android", name: "Galaxy S24+ (6.7″)", models: ["SM-S926"], native: [1080, 2340], ppi: 384.75, modes: [[384, 832, 2.8125], [384, 832, 3.75]] },
+        { id: "s24", os: "android", name: "Galaxy S24 (6.2″)", models: ["SM-S921"], native: [1080, 2340], ppi: 416, modes: [[360, 780, 3]] },
+        { id: "a55", os: "android", name: "Galaxy A55 (6.6″)", models: ["SM-A556"], native: [1080, 2340], ppi: 390, modes: [[384, 832, 2.8125]] },
+        { id: "a35", os: "android", name: "Galaxy A35 (6.6″)", models: ["SM-A356"], native: [1080, 2340], ppi: 390, modes: [[384, 832, 2.8125]] },
+        { id: "a25", os: "android", name: "Galaxy A25 (6.5″)", models: ["SM-A256"], native: [1080, 2340], ppi: 396, modes: [[384, 832, 2.8125]] },
+        { id: "a15", os: "android", name: "Galaxy A15 (6.5″)", models: ["SM-A155", "SM-A156"], native: [1080, 2340], ppi: 396, modes: [[384, 832, 2.8125]] },
+        { id: "px9pxl", os: "android", name: "Pixel 9 Pro XL (6.8″)", models: ["Pixel 9 Pro XL"], native: [1008, 2244], ppi: 364.5, modes: [[448, 998, 2.25], [448, 998, 3]] },
+        { id: "px9p", os: "android", name: "Pixel 9 Pro (6.3″)", models: ["Pixel 9 Pro"], native: [960, 2142], ppi: 371.25, modes: [[427, 952, 2.25], [427, 952, 3]] },
+        { id: "px9", os: "android", name: "Pixel 9 (6.3″)", models: ["Pixel 9"], native: [1080, 2424], ppi: 422, modes: [[412, 924, 2.625]] },
+        { id: "px8a", os: "android", name: "Pixel 8a (6.1″)", models: ["Pixel 8a"], native: [1080, 2400], ppi: 430, modes: [[412, 915, 2.625]] },
+        { id: "rn13", os: "android", name: "Redmi Note 13 4G (6.67″)", models: ["23129RAA4G", "23129RA5FL", "23124RA7EO"], native: [1080, 2400], ppi: 395, modes: [[393, 873, 2.75]] },
+        { id: "s23u", os: "android", name: "Galaxy S23 Ultra (6.8″)", models: ["SM-S918"], native: [1080, 2316], ppi: 375, modes: [[384, 824, 2.8125], [384, 824, 3.75]] },
+        { id: "s23p", os: "android", name: "Galaxy S23+ (6.6″)", models: ["SM-S916"], native: [1080, 2340], ppi: 393, modes: [[384, 832, 2.8125]] },
+        { id: "s23", os: "android", name: "Galaxy S23 (6.1″)", models: ["SM-S911"], native: [1080, 2340], ppi: 425, modes: [[360, 780, 3]] },
+        { id: "s23fe", os: "android", name: "Galaxy S23 FE (6.4″)", models: ["SM-S711"], native: [1080, 2340], ppi: 403, modes: [[384, 832, 2.8125]] },
+        { id: "a54", os: "android", name: "Galaxy A54 (6.4″)", models: ["SM-A546"], native: [1080, 2340], ppi: 403, modes: [[384, 832, 2.8125]] },
+        { id: "px8p", os: "android", name: "Pixel 8 Pro (6.7″)", models: ["Pixel 8 Pro"], native: [1008, 2244], ppi: 366.75, modes: [[448, 998, 2.25], [448, 998, 3]] },
+        { id: "px8", os: "android", name: "Pixel 8 (6.2″)", models: ["Pixel 8"], native: [1080, 2400], ppi: 428, modes: [[412, 915, 2.625]] },
+        { id: "px7a", os: "android", name: "Pixel 7a (6.1″)", models: ["Pixel 7a"], native: [1080, 2400], ppi: 429, modes: [[412, 915, 2.625]] },
+        { id: "rn12", os: "android", name: "Redmi Note 12 4G (6.67″)", models: ["23021RAA2Y", "23021RAAEG", "23021RAAEI", "23027RAD4I", "23028RA60L"], native: [1080, 2400], ppi: 395, modes: [[393, 873, 2.75]] },
+        { id: "s22u", os: "android", name: "Galaxy S22 Ultra (6.8″)", models: ["SM-S908"], native: [1080, 2316], ppi: 375, modes: [[384, 824, 2.8125], [384, 824, 3.75]] },
+        { id: "s22p", os: "android", name: "Galaxy S22+ (6.6″)", models: ["SM-S906"], native: [1080, 2340], ppi: 393, modes: [[384, 832, 2.8125]] },
+        { id: "s22", os: "android", name: "Galaxy S22 (6.1″)", models: ["SM-S901"], native: [1080, 2340], ppi: 425, modes: [[360, 780, 3]] },
+        { id: "px7p", os: "android", name: "Pixel 7 Pro (6.7″)", models: ["Pixel 7 Pro"], native: [1080, 2340], ppi: 384, modes: [[412, 892, 2.625], [412, 892, 3.5]] },
+        { id: "px7", os: "android", name: "Pixel 7 (6.3″)", models: ["Pixel 7"], native: [1080, 2400], ppi: 416, modes: [[412, 915, 2.625]] },
+        { id: "px6a", os: "android", name: "Pixel 6a (6.1″)", models: ["Pixel 6a"], native: [1080, 2400], ppi: 429, modes: [[412, 915, 2.625]] },
+        { id: "s21u", os: "android", name: "Galaxy S21 Ultra (6.8″)", models: ["SM-G998"], native: [1080, 2400], ppi: 386.25, modes: [[384, 854, 2.8125], [384, 854, 3.75]] },
+        { id: "s21p", os: "android", name: "Galaxy S21+ (6.7″)", models: ["SM-G996"], native: [1080, 2400], ppi: 394, modes: [[384, 854, 2.8125]] },
+        { id: "s21", os: "android", name: "Galaxy S21 (6.2″)", models: ["SM-G991"], native: [1080, 2400], ppi: 421, modes: [[360, 800, 3]] },
+        { id: "s21fe", os: "android", name: "Galaxy S21 FE (6.4″)", models: ["SM-G990"], native: [1080, 2340], ppi: 411, modes: [[360, 780, 3]] },
+        { id: "a52", os: "android", name: "Galaxy A52 (6.5″)", models: ["SM-A525", "SM-A526"], native: [1080, 2400], ppi: 405, modes: [[412, 915, 2.625]] },
+        { id: "a52s", os: "android", name: "Galaxy A52s (6.5″)", models: ["SM-A528"], native: [1080, 2400], ppi: 405, modes: [[384, 854, 2.8125]] },
+        { id: "px6p", os: "android", name: "Pixel 6 Pro (6.7″)", models: ["Pixel 6 Pro"], native: [1080, 2340], ppi: 384, modes: [[412, 892, 2.625], [412, 892, 3.5]] },
+        { id: "px6", os: "android", name: "Pixel 6 (6.4″)", models: ["Pixel 6"], native: [1080, 2400], ppi: 411, modes: [[412, 915, 2.625]] },
+        { id: "win14", os: "windows", name: "14″ laptop, 1080p", native: [1920, 1080], diag: 14,
+          modes: [[1280, 720, 1.5]] },
+        { id: "win133", os: "windows", name: "13.3″ laptop, 1080p", native: [1920, 1080], diag: 13.3,
+          modes: [[1280, 720, 1.5]] },
+        { id: "win156", os: "windows", name: "15.6″ laptop, 1080p", native: [1920, 1080], diag: 15.6,
+          modes: [[1536, 864, 1.25]] },
+        { id: "win156hd", os: "windows", name: "15.6″ laptop, 1366 × 768", native: [1366, 768], diag: 15.6,
+          modes: [[1366, 768, 1]] },
+        { id: "win14wu", os: "windows", name: "14″ laptop, 1920 × 1200", native: [1920, 1200], diag: 14,
+          modes: [[1280, 800, 1.5]] },
+        { id: "win16wu", os: "windows", name: "16″ laptop, 1920 × 1200", native: [1920, 1200], diag: 16,
+          modes: [[1536, 960, 1.25]] },
+        { id: "win14qhd", os: "windows", name: "14″ laptop, 2560 × 1600", native: [2560, 1600], diag: 14,
+          modes: [[1707, 1067, 1.5], [1280, 800, 2]] },
         { id: "fhd24", name: "24″ 1080p monitor", native: [1920, 1080], diag: 24,
           modes: [[1920, 1080, 1]] },
         { id: "qhd27", name: "27″ 1440p monitor", native: [2560, 1440], diag: 27,
@@ -375,22 +524,45 @@ import BaseHead from "../components/BaseHead.astro";
       const CSS_PX_PER_CM = 96 / 2.54;
       const STORAGE_KEY = "ruler.calibration";
 
-      function widthCm(d) {
-        const [w, h] = d.native;
-        return d.ppi ? (w / d.ppi) * 2.54 : (d.diag * 2.54 * w) / Math.hypot(w, h);
+      // Everything is compared short side / long side, as phones rotate and iOS
+      // never swaps screen.width and screen.height
+      const sides = (a, b) => [Math.min(a, b), Math.max(a, b)];
+
+      function shortSideCm(d) {
+        const [s, l] = sides(...d.native);
+        return d.ppi ? (s / d.ppi) * 2.54 : (d.diag * 2.54 * s) / Math.hypot(s, l);
       }
 
-      // Rank devices against a reported screen: exact "looks like" mode first,
-      // then by how close the aspect ratio is to the native panel.
+      function clientOs() {
+        const ua = navigator.userAgent;
+        if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return "ios";
+        if (/Android/.test(ua)) return "android";
+        if (/Macintosh/.test(ua)) return "mac";
+        return "windows";
+      }
+
+      // Rank devices against a reported screen: exact mode first, then by how
+      // close the aspect ratio is to the native panel.
       function matchDevices({ width, height, dpr }) {
-        const aspect = width / height;
+        const [s, l] = sides(width, height);
+        const os = clientOs();
+        const mobile = os === "ios" || os === "android";
         const scored = [];
         for (const d of DEVICES) {
-          const mode = d.modes.find(([w, h]) => Math.abs(w - width) <= 1 && Math.abs(h - height) <= 2);
-          const nativeAspect = d.native[0] / d.native[1];
-          const aspectDiff = Math.abs(aspect - nativeAspect) / nativeAspect;
+          const modelMatch = (m) => m === clientModel || (m.startsWith("SM-") && clientModel.startsWith(m));
+          if (clientModel && d.models?.some(modelMatch)) {
+            scored.push({ device: d, score: -1 });
+            continue;
+          }
+          if (d.os ? d.os !== os : mobile) continue;
+          const mode = d.modes.find(([w, h]) => {
+            const [ms, ml] = sides(w, h);
+            return Math.abs(ms - s) <= 1 && Math.abs(ml - l) <= 2;
+          });
+          const [ns, nl] = sides(...d.native);
+          const aspectDiff = Math.abs(l / s - nl / ns) / (nl / ns);
           let score;
-          if (mode) score = Math.round(dpr) === (mode[2] ?? 2) ? 0 : 1;
+          if (mode) score = Math.abs(dpr - (mode[2] ?? 2)) < 0.02 ? 0 : 1;
           else if (aspectDiff < 0.01) score = 2 + aspectDiff * 100;
           else continue;
           scored.push({ device: d, score });
@@ -401,7 +573,8 @@ import BaseHead from "../components/BaseHead.astro";
       // Calibration is stored per screen shape so a laptop and an external
       // monitor can each keep their own.
       function screenKey() {
-        return (window.screen.width / window.screen.height).toFixed(2);
+        const [s, l] = sides(window.screen.width, window.screen.height);
+        return (l / s).toFixed(2);
       }
 
       function loadAll() {
@@ -429,13 +602,16 @@ import BaseHead from "../components/BaseHead.astro";
       let pinned = null; // box corner as an offset from the origin, once fixed by a click
       let press = null; // where the current click started, until it becomes a drag
       let dragging = false;
+      let clientModel = ""; // e.g. "Pixel 8", only available in Chrome on Android
+      let cardMode = null; // { adjustBefore } while measuring with a card
       const DRAG_THRESHOLD = 4;
 
       const canvas = document.getElementById("grid");
       const ctx = canvas.getContext("2d");
       const searchInput = document.getElementById("search");
       const results = document.getElementById("results");
-      const cardSection = document.getElementById("card-section");
+      const cardModeEl = document.getElementById("card-mode");
+      const card = cardModeEl.querySelector(".card");
       const adjustInput = document.getElementById("adjust");
       const adjustOut = document.getElementById("adjust-out");
       const panel = document.getElementById("panel");
@@ -454,7 +630,7 @@ import BaseHead from "../components/BaseHead.astro";
 
       function computePpc() {
         const d = DEVICES.find((x) => x.id === calibration.deviceId);
-        const base = d ? window.screen.width / widthCm(d) : CSS_PX_PER_CM;
+        const base = d ? Math.min(window.screen.width, window.screen.height) / shortSideCm(d) : CSS_PX_PER_CM;
         ppc = base * (1 + calibration.adjust / 100);
         document.documentElement.style.setProperty("--ppc", ppc);
       }
@@ -475,7 +651,7 @@ import BaseHead from "../components/BaseHead.astro";
                   `</button></li>`,
               )
               .join("")
-          : `<li class="empty">No matches. Try the card below.</li>`;
+          : `<li class="empty">No matches. Try measuring with a card.</li>`;
       }
 
       function renderControls() {
@@ -486,7 +662,10 @@ import BaseHead from "../components/BaseHead.astro";
         const diag = Math.hypot(physW, physH) / 2.54;
         const tuned = calibration.adjust ? " (card adjusted)" : "";
 
-        document.getElementById("guess").innerHTML = !d
+        const cardOnly = !d && calibration.saved && calibration.adjust;
+        document.getElementById("guess").innerHTML = cardOnly
+          ? "Using your card measurement"
+          : !d
           ? "We couldn't recognise this screen. Search for it below, or measure with a card."
           : calibration.saved
             ? `Using <strong>${name}</strong>${tuned}`
@@ -496,11 +675,13 @@ import BaseHead from "../components/BaseHead.astro";
           `Keep browser zoom at 100% (⌘0).`;
         document.getElementById("status").textContent = d
           ? `${calibration.saved ? "" : "Guessed: "}${d.name}${tuned}`
-          : "Unknown screen";
+          : cardOnly
+            ? "Card calibrated"
+            : "Unknown screen";
 
         adjustInput.value = calibration.adjust;
         adjustOut.textContent = `${calibration.adjust > 0 ? "+" : ""}${Number(calibration.adjust).toFixed(1)}%`;
-        if (!d || calibration.adjust) cardSection.hidden = false;
+        card.classList.toggle("portrait", window.innerWidth < 8.56 * ppc + 32);
         renderResults();
       }
 
@@ -534,18 +715,34 @@ import BaseHead from "../components/BaseHead.astro";
         if (button) selectDevice(button.dataset.id);
       });
 
-      document.getElementById("show-card").addEventListener("click", () => {
-        cardSection.hidden = !cardSection.hidden;
-      });
+      // Card mode takes over the ruler so the grid rescales live behind the card
+      function setCardMode(on) {
+        cardMode = on ? { adjustBefore: calibration.adjust } : null;
+        cardModeEl.hidden = !on;
+        document.body.classList.toggle("card-mode", on);
+        pinned = null;
+        if (on) origin = null; // centred, so the card sits symmetrically on the axes
+        update();
+      }
 
-      adjustInput.addEventListener("input", () => {
-        calibration.adjust = Number(adjustInput.value);
-        commit();
-      });
+      function setAdjust(value) {
+        calibration.adjust = Math.min(100, Math.max(-50, Math.round(value * 100) / 100));
+        update();
+      }
 
-      document.getElementById("reset-adjust").addEventListener("click", () => {
-        calibration.adjust = 0;
+      document.getElementById("show-card").addEventListener("click", () => setCardMode(true));
+      adjustInput.addEventListener("input", () => setAdjust(Number(adjustInput.value)));
+      document.getElementById("adjust-down").addEventListener("click", () => setAdjust(calibration.adjust - 0.1));
+      document.getElementById("adjust-up").addEventListener("click", () => setAdjust(calibration.adjust + 0.1));
+      document.getElementById("reset-adjust").addEventListener("click", () => setAdjust(0));
+      document.getElementById("card-cancel").addEventListener("click", () => {
+        calibration.adjust = cardMode.adjustBefore;
+        setCardMode(false);
+      });
+      document.getElementById("card-done").addEventListener("click", () => {
+        setCardMode(false);
         commit();
+        panel.hidden = true;
       });
 
       document.getElementById("toggle-panel").addEventListener("click", () => {
@@ -706,6 +903,7 @@ import BaseHead from "../components/BaseHead.astro";
 
       // The box follows the cursor unless a click has fixed it in place
       function measureTarget() {
+        if (cardMode) return null;
         if (pinned) return { x: origin.x + pinned.x, y: origin.y + pinned.y };
         return dragging ? null : pointer;
       }
@@ -745,7 +943,7 @@ import BaseHead from "../components/BaseHead.astro";
         draw();
       });
       canvas.addEventListener("pointerup", (e) => {
-        if (press && !dragging) {
+        if (press && !dragging && !cardMode) {
           pinned = pinned ? null : { x: e.clientX - origin.x, y: e.clientY - origin.y };
         }
         press = null;
@@ -764,6 +962,10 @@ import BaseHead from "../components/BaseHead.astro";
       });
 
       window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && cardMode) {
+          document.getElementById("card-cancel").click();
+          return;
+        }
         if (e.key === "Escape") {
           panel.hidden = true;
           pinned = null;
@@ -789,6 +991,15 @@ import BaseHead from "../components/BaseHead.astro";
       loadCalibration();
       if (!calibration.saved) panel.hidden = false;
       update();
+
+      // Android Chrome can name the exact phone, which separates phones that
+      // report identical screen sizes
+      navigator.userAgentData?.getHighEntropyValues(["model"]).then(({ model }) => {
+        if (!model) return;
+        clientModel = model;
+        loadCalibration();
+        update();
+      });
     </script>
   </body>
 </html>
