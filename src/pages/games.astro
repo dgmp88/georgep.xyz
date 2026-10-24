@@ -14,8 +14,9 @@ import { SITE_TITLE } from '../consts';
   <body>
     <Background />
     <Header />
-    <main class="max-w-3xl mx-auto px-4 pt-28 pb-20">
-      <div class="panel prose text-center lg:prose-lg max-w-none mx-auto px-6 py-8 sm:px-12">
+    <main class="on-dark max-w-3xl mx-auto px-4 pt-24 pb-20">
+      <div class="prose lg:prose-lg max-w-none">
+        <h1 class="font-display font-normal">Games</h1>
         <p>
           These were originally made as android apps using{' '}
           <a href="https://libgdx.com/">LibGDX</a> several years back. They're
@@ -23,14 +24,14 @@ import { SITE_TITLE } from '../consts';
           them here. They may be a touch buggy, but the core features seem to
           work.
         </p>
-        <h1>Dinowar</h1>
+        <h2 class="font-display font-normal">Dinowar</h2>
         <p>
           Dinosaur strategy game made with{' '}
           <a href="https://www.dglencross.com/">David</a> and graphics by{' '}
           <a href="https://emile.work">Emile</a>.
         </p>
         <Play client:load game="dinowar" />
-        <h1 class="pt-16">Lunee</h1>
+        <h2 class="pt-12 font-display font-normal">Lunee</h2>
         <p>Physics based space game. Graphics by me, sorry about that.</p>
         <Play client:load game="lunee" />
       </div>
