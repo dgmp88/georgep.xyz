@@ -19,5 +19,8 @@
     "react-dom": "^19.2.1",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.1.17"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
