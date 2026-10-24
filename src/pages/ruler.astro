@@ -92,6 +92,29 @@ import BaseHead from "../components/BaseHead.astro";
         color: var(--muted);
       }
 
+      .units {
+        display: inline-flex;
+        padding: 2px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+      }
+      .units button {
+        padding: 4px 9px;
+        border: 0;
+        border-radius: 6px;
+        background: none;
+        color: var(--muted);
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .units button[aria-pressed="true"] {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 500;
+      }
+
       .btn {
         display: inline-flex;
         align-items: center;
@@ -374,6 +397,10 @@ import BaseHead from "../components/BaseHead.astro";
 
     <div id="topbar">
       <span id="status"></span>
+      <div class="units" role="group" aria-label="Units">
+        <button data-unit="cm">cm</button>
+        <button data-unit="in">in</button>
+      </div>
       <button id="toggle-panel" class="btn">Calibrate</button>
     </div>
 
@@ -547,6 +574,38 @@ import BaseHead from "../components/BaseHead.astro";
       ];
       const CSS_PX_PER_CM = 96 / 2.54;
       const STORAGE_KEY = "ruler.calibration";
+      const UNIT_KEY = "ruler.unit";
+
+      // Each unit's length in cm and how its ticks subdivide: mm for cm,
+      // sixteenths for inches with longer half/quarter/eighth marks
+      const UNITS = {
+        cm: { cm: 1, divisions: 10, minor: 5, nudge: "1 mm", tickLen: (i) => (i % 10 === 0 ? 14 : i % 5 === 0 ? 9 : 5) },
+        in: {
+          cm: 2.54,
+          divisions: 16,
+          minor: 2,
+          nudge: "1/16 in",
+          tickLen: (i) => (i % 16 === 0 ? 14 : i % 8 === 0 ? 11 : i % 4 === 0 ? 8 : i % 2 === 0 ? 6 : 4),
+        },
+      };
+
+      // Inches where they're the everyday unit (US, Liberia, Myanmar), cm elsewhere
+      function defaultUnit() {
+        try {
+          const region = new Intl.Locale(navigator.language).maximize().region;
+          return ["US", "LR", "MM"].includes(region) ? "in" : "cm";
+        } catch {
+          return "cm";
+        }
+      }
+
+      function loadUnit() {
+        try {
+          const saved = localStorage.getItem(UNIT_KEY);
+          if (saved in UNITS) return saved;
+        } catch {}
+        return defaultUnit();
+      }
 
       // Everything is compared short side / long side, as phones rotate and iOS
       // never swaps screen.width and screen.height
@@ -627,6 +686,7 @@ import BaseHead from "../components/BaseHead.astro";
       let press = null; // where the current click started, until it becomes a drag
       let dragging = false;
       let clientModel = ""; // e.g. "Pixel 8", only available in Chrome on Android
+      let unit = loadUnit();
       let cardMode = null; // { adjustBefore } while measuring with a card
       const DRAG_THRESHOLD = 4;
 
@@ -803,9 +863,11 @@ import BaseHead from "../components/BaseHead.astro";
         // Snap to device pixels so 1px lines stay crisp
         const snap = (v) => (Math.round(v * dpr) + 0.5) / dpr;
 
-        // Grid: half-centimetre and centimetre lines, aligned to the origin
-        const half = ppc / 2;
-        for (const [step, stroke, every] of [[half, "--grid-half", 2], [ppc, "--grid-cm", 1]]) {
+        // Grid: whole and half unit lines, aligned to the origin
+        const u = UNITS[unit];
+        const upx = ppc * u.cm; // CSS px per unit
+        const half = upx / 2;
+        for (const [step, stroke, every] of [[half, "--grid-half", 2], [upx, "--grid-cm", 1]]) {
           ctx.strokeStyle = color(stroke);
           ctx.lineWidth = 1 / dpr;
           ctx.beginPath();
@@ -833,8 +895,7 @@ import BaseHead from "../components/BaseHead.astro";
         }
 
         // Rulers: the axis line is the measuring edge, ticks hang off one side
-        const mm = ppc / 10;
-        const tickLen = (i) => (i % 10 === 0 ? 14 : i % 5 === 0 ? 9 : 5);
+        const sub = upx / u.divisions;
         ctx.strokeStyle = color("--tick");
         ctx.fillStyle = color("--tick");
         ctx.lineWidth = 1 / dpr;
@@ -844,30 +905,31 @@ import BaseHead from "../components/BaseHead.astro";
         ctx.lineTo(w, snap(oy));
         ctx.moveTo(snap(ox), 0);
         ctx.lineTo(snap(ox), h);
-        const showMm = mm >= 3;
-        for (let i = Math.floor(-ox / mm); i <= (w - ox) / mm; i++) {
-          if (!showMm && i % 5 !== 0) continue;
-          const x = snap(ox + i * mm);
+        // Drop the finest ticks when they'd be closer than 3px
+        const every = sub >= 3 ? 1 : u.minor;
+        for (let i = Math.floor(-ox / sub); i <= (w - ox) / sub; i++) {
+          if (i % every !== 0) continue;
+          const x = snap(ox + i * sub);
           ctx.moveTo(x, oy);
-          ctx.lineTo(x, oy + tickLen(i));
+          ctx.lineTo(x, oy + u.tickLen(i));
         }
-        for (let i = Math.floor(-oy / mm); i <= (h - oy) / mm; i++) {
-          if (!showMm && i % 5 !== 0) continue;
-          const y = snap(oy + i * mm);
+        for (let i = Math.floor(-oy / sub); i <= (h - oy) / sub; i++) {
+          if (i % every !== 0) continue;
+          const y = snap(oy + i * sub);
           ctx.moveTo(ox, y);
-          ctx.lineTo(ox + tickLen(i), y);
+          ctx.lineTo(ox + u.tickLen(i), y);
         }
         ctx.stroke();
 
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
-        for (let i = Math.ceil(-ox / ppc); i <= (w - ox) / ppc; i++) {
-          if (i !== 0) ctx.fillText(String(Math.abs(i)), ox + i * ppc, oy + 17);
+        for (let i = Math.ceil(-ox / upx); i <= (w - ox) / upx; i++) {
+          if (i !== 0) ctx.fillText(String(Math.abs(i)), ox + i * upx, oy + 17);
         }
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
-        for (let i = Math.ceil(-oy / ppc); i <= (h - oy) / ppc; i++) {
-          if (i !== 0) ctx.fillText(String(Math.abs(i)), ox + 18, oy + i * ppc);
+        for (let i = Math.ceil(-oy / upx); i <= (h - oy) / upx; i++) {
+          if (i !== 0) ctx.fillText(String(Math.abs(i)), ox + 18, oy + i * upx);
         }
 
         // Pill with text, rotated by angle (radians) around its centre
@@ -893,8 +955,8 @@ import BaseHead from "../components/BaseHead.astro";
         // Measurement box from origin to cursor, each edge labelled with its length
         if (target) {
           const { x: px, y: py } = target;
-          const dx = Math.abs(px - ox) / ppc;
-          const dy = Math.abs(py - oy) / ppc;
+          const dx = Math.abs(px - ox) / upx;
+          const dy = Math.abs(py - oy) / upx;
           ctx.strokeStyle = color("--accent");
           ctx.setLineDash([4, 4]);
           ctx.beginPath();
@@ -908,14 +970,16 @@ import BaseHead from "../components/BaseHead.astro";
 
           const sx = Math.sign(px - ox) || 1;
           const sy = Math.sign(py - oy) || 1;
-          if (dx > 0.3) pill(`${dx.toFixed(2)} cm`, (ox + px) / 2, py + sy * 14);
-          if (dy > 0.3) pill(`${dy.toFixed(2)} cm`, px + sx * 14, (oy + py) / 2, { angle: -Math.PI / 2 });
-          if (dx > 0.3 && dy > 0.3) {
+          // Labels only once an edge is over 3 mm
+          const minLabel = 0.3 / u.cm;
+          if (dx > minLabel) pill(`${dx.toFixed(2)} ${unit}`, (ox + px) / 2, py + sy * 14);
+          if (dy > minLabel) pill(`${dy.toFixed(2)} ${unit}`, px + sx * 14, (oy + py) / 2, { angle: -Math.PI / 2 });
+          if (dx > minLabel && dy > minLabel) {
             // Along the diagonal, kept upright
             let angle = Math.atan2(py - oy, px - ox);
             if (angle > Math.PI / 2) angle -= Math.PI;
             if (angle < -Math.PI / 2) angle += Math.PI;
-            pill(`${Math.hypot(dx, dy).toFixed(2)} cm`, (ox + px) / 2, (oy + py) / 2, {
+            pill(`${Math.hypot(dx, dy).toFixed(2)} ${unit}`, (ox + px) / 2, (oy + py) / 2, {
               font: "400 11px Inter, system-ui, sans-serif",
               fg: color("--muted"),
               angle,
@@ -940,17 +1004,18 @@ import BaseHead from "../components/BaseHead.astro";
 
       function renderReadout() {
         const readout = document.getElementById("readout");
-        const help = "Click to fix the box · drag to move the grid · double-click to centre · arrow keys nudge 1 mm";
+        const u = UNITS[unit];
+        const help = `Click to fix the box · drag to move the grid · double-click to centre · arrow keys nudge ${u.nudge}`;
         const target = measureTarget();
         if (!target) {
           readout.textContent = help;
           return;
         }
-        const dx = (target.x - origin.x) / ppc;
-        const dy = (target.y - origin.y) / ppc;
+        const dx = (target.x - origin.x) / (ppc * u.cm);
+        const dy = (target.y - origin.y) / (ppc * u.cm);
         readout.innerHTML =
-          `x <strong>${Math.abs(dx).toFixed(2)} cm</strong> · y <strong>${Math.abs(dy).toFixed(2)} cm</strong>` +
-          ` · distance <strong>${Math.hypot(dx, dy).toFixed(2)} cm</strong>`;
+          `x <strong>${Math.abs(dx).toFixed(2)} ${unit}</strong> · y <strong>${Math.abs(dy).toFixed(2)} ${unit}</strong>` +
+          ` · distance <strong>${Math.hypot(dx, dy).toFixed(2)} ${unit}</strong>`;
       }
 
       // --- Interaction --------------------------------------------------------
@@ -1002,7 +1067,8 @@ import BaseHead from "../components/BaseHead.astro";
           draw();
         }
         if (panel.contains(document.activeElement)) return;
-        const step = (e.shiftKey ? 1 : 0.1) * ppc;
+        const u = UNITS[unit];
+        const step = (e.shiftKey ? 1 : 1 / u.divisions) * ppc * u.cm;
         const moves = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
         if (!moves[e.key] || !origin) return;
         e.preventDefault();
@@ -1011,6 +1077,24 @@ import BaseHead from "../components/BaseHead.astro";
       });
 
       // Zoom and moving between screens both fire resize
+      // --- Units --------------------------------------------------------------
+
+      const unitButtons = document.querySelectorAll(".units button");
+      function renderUnits() {
+        unitButtons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.unit === unit)));
+      }
+      unitButtons.forEach((b) =>
+        b.addEventListener("click", () => {
+          unit = b.dataset.unit;
+          try {
+            localStorage.setItem(UNIT_KEY, unit);
+          } catch {}
+          renderUnits();
+          draw();
+        }),
+      );
+      renderUnits();
+
       window.addEventListener("resize", () => {
         loadCalibration();
         update();
