@@ -45,9 +45,14 @@ const years = [...new Set(pubs.map(yearOf))];
                 .filter((p) => yearOf(p) === year)
                 .map(({ data }) => (
                   <li class="flex gap-4 py-4">
-                    {/* Logos sit on a white tile so they keep their own colours */}
+                    {/* Logos sit on a tile so they keep their own colours; white-drawn marks get a dark one */}
                     {data.logo ? (
-                      <div class="flex h-10 w-16 shrink-0 items-center justify-center rounded-md bg-white p-1.5 sm:h-12 sm:w-20">
+                      <div
+                        class:list={[
+                          'flex h-10 w-16 shrink-0 items-center justify-center rounded-md p-1.5 sm:h-12 sm:w-20',
+                          data.logoDark ? 'bg-black ring-1 ring-white/15' : 'bg-white',
+                        ]}
+                      >
                         <img
                           src={`/logos/${data.logo}`}
                           alt=""

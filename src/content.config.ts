@@ -18,6 +18,7 @@ const publications = defineCollection({
     date: z.coerce.date(),
     url: z.string().url().optional(),
     logo: z.string().optional(),
+    logoDark: z.boolean().optional(),
   }),
 });
 
