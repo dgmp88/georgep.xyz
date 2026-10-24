@@ -1,0 +1,60 @@
+# Imported from Google Scholar (user=pBP3YMQAAAAJ) and faultlineai.com/research.
+# Newest first. `date` is year-month; the page groups by year and sorts by date.
+# `logo` is a file in public/logos/ (journal mark where available, else publisher);
+# `logoDark` puts it on a dark tile, for marks drawn in white.
+- id: who-audits-the-auditors
+  title: Who audits the auditors — A framework for evaluating clinical AI evaluations
+  authors: [Witte K, Hou KYC, Ereira S, Carrington B, Prichard G, Rollwage M]
+  venue: Preprint
+  date: 2026-10
+  url: https://faultlineai.com/link/auditor-paper
+
+- id: clinical-ai-risk-taxonomy
+  title: Towards a data-driven taxonomy of clinical AI risks
+  authors: [Hou KYC, McFadyen J, Ereira S, Witte K, Nour MM, Carrington B, Prichard G, Rollwage M]
+  venue: NeurIPS GenAI4Health
+  date: 2026-10
+  url: https://faultlineai.com/link/taxonomy-paper
+  logo: neurips.svg
+
+- id: cognitive-layer-nature-medicine
+  title: A cognitive layer architecture to support large-language model performance in psychotherapy interactions
+  authors: [Rollwage M, McFadyen J, Juchems K, Balogh A, Pisupati S, Mircea M-T, Hauser TU, Prichard G, Harper R]
+  venue: Nature Medicine
+  date: 2026-05
+  url: https://www.nature.com/articles/s41591-026-04278-w
+  logo: nature-medicine.svg
+
+- id: ipsilateral-finger-representations
+  title: Ipsilateral finger representations in the sensorimotor cortex are driven by active movement processes, not passive sensory input
+  authors: [Berlot E, Prichard G, O'Reilly J, Ejaz N, Diedrichsen J]
+  venue: Journal of Neurophysiology
+  date: 2019-02
+  url: https://journals.physiology.org/doi/full/10.1152/jn.00439.2018
+  logo: journal-of-neurophysiology.svg
+  logoDark: true
+
+- id: tdcs-consolidation
+  title: Time- but not sleep-dependent consolidation of tDCS-enhanced visuomotor skills
+  authors: [Reis J, Fischer JT, Prichard G, Weiller C, Cohen LG, Fritsch B]
+  venue: Cerebral Cortex
+  date: 2015-01
+  url: https://academic.oup.com/cercor/article/25/1/109/366709
+  logo: cerebral-cortex.svg
+  logoDark: true
+
+- id: brain-stimulation-protocols
+  title: Effects of different electrical brain stimulation protocols on subcomponents of motor skill learning
+  authors: [Prichard G, Weiller C, Fritsch B, Reis J]
+  venue: Brain Stimulation
+  date: 2014-07
+  url: https://www.sciencedirect.com/science/article/pii/S1935861X14001648
+  logo: elsevier.svg
+
+- id: tdcs-dlpfc-reinforcement-learning
+  title: Transcranial direct current stimulation of right dorsolateral prefrontal cortex does not affect model-based or model-free reinforcement learning in humans
+  authors: [Smittenaar P, Prichard G, FitzGerald THB, Diedrichsen J, Dolan RJ]
+  venue: PLoS ONE
+  date: 2014-01
+  url: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0086850
+  logo: plos-one.svg
