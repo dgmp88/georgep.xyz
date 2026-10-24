@@ -15,11 +15,14 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
     <Header />
     <main class="min-h-screen flex items-center justify-center px-4">
       <div class="flex flex-col items-center text-center text-white">
-        <img
-          class="w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover object-top ring-4 ring-white/15 shadow-2xl"
-          src="/images/me.jpg"
-          alt="George"
-        />
+        <div class="w-40 h-40 sm:w-48 sm:h-48 overflow-hidden rounded-full ring-4 ring-white/15 shadow-2xl">
+          <!-- Slight zoom + shift so the face sits centred in the circle -->
+          <img
+            class="w-full h-full object-cover object-top scale-110 translate-x-[4%]"
+            src="/images/me.jpg"
+            alt="George"
+          />
+        </div>
         <h1 class="mt-8 text-4xl sm:text-5xl font-semibold tracking-tight">Hi, I'm George</h1>
         <div class="mt-8 flex gap-3">
           <a
