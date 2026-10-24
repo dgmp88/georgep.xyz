@@ -2,6 +2,7 @@
 // Header/Navbar component - converted from _deprecated/components/navbar.js
 const links = [
   { href: '/blog', label: 'Blog' },
+  { href: '/publications', label: 'Papers' },
   { href: '/games', label: 'Games' },
   { href: '/cv.pdf', label: 'CV' },
 ];
@@ -10,7 +11,7 @@ const links = [
 <header class="absolute inset-x-0 top-0 z-10">
   <nav class="max-w-3xl mx-auto px-4 h-16 flex items-baseline justify-between pt-5 text-white">
     <a href="/" class="whitespace-nowrap font-display text-xl">George Prichard</a>
-    <ul class="flex items-baseline gap-5 text-sm">
+    <ul class="flex items-baseline gap-3 text-sm sm:gap-5">
       {links.map((l) => (
         <li><a href={l.href} class="text-white/70 transition-colors hover:text-white">{l.label}</a></li>
       ))}
