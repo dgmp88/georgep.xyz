@@ -2,10 +2,23 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui";
 
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  /* Poiret One only ships in one weight, so pair with font-normal */
+  --font-display: "Poiret One", ui-sans-serif, system-ui, sans-serif;
+}
+
 /* Custom theme fallback - only applies when no data-theme is set */
 html:not([data-theme]) {
   --color-primary: #005f73;
   --color-secondary: #bb3e03;
   --color-accent: green;
   --color-base-100: #ffffff;
+}
+
+/* Frosted dark surface used for content cards across the site */
+@utility panel {
+  @apply rounded-2xl border border-white/10 bg-neutral-950/70 text-white shadow-2xl backdrop-blur-md;
+  /* daisyUI derives prose/menu text colours from this */
+  --color-base-content: var(--color-neutral-100);
 }
