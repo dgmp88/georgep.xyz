@@ -1,9 +1,4 @@
-node_modules
-.DS_Store
-.vercel
-.next
 *.log
-out/
 
 # build output
 dist/
@@ -26,6 +21,9 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# vercel cli
+.vercel
 
 # jetbrains setting folder
 .idea/
