@@ -100,6 +100,17 @@ import BaseHead from "../components/BaseHead.astro";
         font-weight: 500;
       }
 
+      #title {
+        position: fixed;
+        top: 18px;
+        left: 16px;
+        margin: 0;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        pointer-events: none;
+      }
+
       #topbar {
         position: fixed;
         top: 12px;
@@ -308,6 +319,7 @@ import BaseHead from "../components/BaseHead.astro";
       #card-mode[hidden] {
         display: none;
       }
+      body.card-mode #title,
       body.card-mode #topbar,
       body.card-mode #panel,
       body.card-mode #readout {
@@ -414,6 +426,8 @@ import BaseHead from "../components/BaseHead.astro";
 
     <div id="readout" class="hud"></div>
 
+    <h1 id="title">Online ruler · actual size</h1>
+
     <div id="topbar">
       <span id="status"></span>
       <div class="units" role="group" aria-label="Units">
@@ -439,6 +453,15 @@ import BaseHead from "../components/BaseHead.astro";
       <ul id="results"></ul>
 
       <button id="show-card" class="link">Can't find it? Measure with a card</button>
+
+      <h3>About</h3>
+      <p class="note">
+        Most online rulers assume every screen has 96 pixels per inch, so
+        they're the wrong size on almost every device. This one works out which
+        screen you have (iPhone, Android, iPad, Mac or Windows laptop) and uses
+        its real pixel density, so a centimetre on screen is a real centimetre.
+        If your device isn't listed, calibrate it once with any bank card.
+      </p>
 
       <div class="actions">
         <span></span>
