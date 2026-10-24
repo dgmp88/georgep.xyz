@@ -631,11 +631,13 @@ import BaseHead from "../components/BaseHead.astro";
         },
       };
 
-      // Inches where they're the everyday unit (US, Liberia, Myanmar), cm elsewhere
+      // Inches in American time zones, cm elsewhere. The time zone comes from
+      // the OS clock, so it's more reliable than the browser language, which
+      // is often en-US (or plain "en", which maximizes to US) outside the US.
       function defaultUnit() {
         try {
-          const region = new Intl.Locale(navigator.language).maximize().region;
-          return ["US", "LR", "MM"].includes(region) ? "in" : "cm";
+          const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          return zone.startsWith("America/") ? "in" : "cm";
         } catch {
           return "cm";
         }
