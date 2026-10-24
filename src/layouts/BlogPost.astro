@@ -20,15 +20,15 @@ const { title, date } = Astro.props;
   <body>
     <Background />
     <Header />
-    <main class="w-full m-auto py-20">
-      <article class="prose lg:prose-lg w-3/4 max-w-4xl mx-auto px-4 py-8 bg-base-100/75 rounded-lg">
-        <h1>{title}</h1>
-        <h4 class="text-right font-light">
-          {date.toDateString()}
-        </h4>
+    <main class="max-w-3xl mx-auto px-4 pt-28 pb-20">
+      <article class="panel prose lg:prose-lg max-w-none px-6 py-8 sm:px-12 sm:py-12">
+        <a href="/blog" class="text-sm text-white/50 no-underline hover:text-white">&larr; All posts</a>
+        <h1 class="mt-4 mb-2">{title}</h1>
+        <p class="mt-0 text-white/50">
+          {date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+        </p>
         <slot />
       </article>
     </main>
   </body>
 </html>
-

@@ -8,6 +8,11 @@ import { SITE_TITLE } from '../../consts';
 const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+
+// Group posts by year, newest first
+const years = [...new Set(posts.map((p) => p.data.date.getFullYear()))];
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 ---
 
 <!doctype html>
@@ -18,24 +23,34 @@ const posts = (await getCollection('blog')).sort(
   <body>
     <Background />
     <Header />
-    <main class="w-2/3 m-auto py-20">
-      <table class="table w-full rounded-lg bg-base-100/75">
-        <tbody>
-          {posts.map((post) => (
-            <tr>
-              <td class="bg-inherit">
-                {post.data.date.toISOString().split('T')[0].replace(/-/g, '/')}
-              </td>
-              <td class="bg-inherit">
-                <a href={`/blog/${post.id}/`} class="block font-bold">
-                  {post.data.title}
-                </a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <main class="max-w-2xl mx-auto px-4 pt-28 pb-20">
+      <div class="panel p-6 sm:p-10">
+        <h1 class="text-3xl font-semibold tracking-tight">Blog</h1>
+        {years.map((year) => (
+          <section class="mt-10">
+            <h2 class="text-sm font-medium text-white/50">{year}</h2>
+            <ul class="mt-2 divide-y divide-white/10">
+              {posts
+                .filter((p) => p.data.date.getFullYear() === year)
+                .map((post) => (
+                  <li>
+                    <a
+                      href={`/blog/${post.id}/`}
+                      class="group flex items-baseline gap-4 py-3"
+                    >
+                      <span class="w-14 shrink-0 text-sm tabular-nums text-white/50">
+                        {formatDate(post.data.date)}
+                      </span>
+                      <span class="font-medium group-hover:underline underline-offset-4">
+                        {post.data.title}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </section>
+        ))}
+      </div>
     </main>
   </body>
 </html>
-
