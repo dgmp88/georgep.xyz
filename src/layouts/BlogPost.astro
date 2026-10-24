@@ -23,7 +23,7 @@ const { title, date } = Astro.props;
     <main class="max-w-3xl mx-auto px-4 pt-28 pb-20">
       <article class="panel prose lg:prose-lg max-w-none px-6 py-8 sm:px-12 sm:py-12">
         <a href="/blog" class="text-sm text-white/50 no-underline hover:text-white">&larr; All posts</a>
-        <h1 class="mt-4 mb-2">{title}</h1>
+        <h1 class="mt-4 mb-2 font-display font-normal">{title}</h1>
         <p class="mt-0 text-white/50">
           {date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
         </p>

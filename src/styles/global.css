@@ -2,6 +2,12 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui";
 
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  /* Poiret One only ships in one weight, so pair with font-normal */
+  --font-display: "Poiret One", ui-sans-serif, system-ui, sans-serif;
+}
+
 /* Custom theme fallback - only applies when no data-theme is set */
 html:not([data-theme]) {
   --color-primary: #005f73;
